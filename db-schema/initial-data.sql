@@ -48,3 +48,44 @@ VALUES('01HYH5280AYRZMB5V93VWMS0TD', 'Feedback meeting');
 INSERT INTO public.meeting_kinds
 (meeting_kind_id, meeting_kind_name)
 VALUES('01HYH5467E3R6314WVZR1YKS6T', 'English classes');
+
+-- Task types
+INSERT INTO public.task_types
+(task_type_id, task_type_name)
+VALUES('1', 'Multiple choice');
+INSERT INTO public.task_types
+(task_type_id, task_type_name)
+VALUES('2', 'Multi-select');
+INSERT INTO public.task_types
+(task_type_id, task_type_name)
+VALUES('3', 'Gap filling');
+INSERT INTO public.task_types
+(task_type_id, task_type_name)
+VALUES('4', 'Open question');
+INSERT INTO public.task_types
+(task_type_id, task_type_name)
+VALUES('5', 'Spaced repetition');
+INSERT INTO public.task_types
+(task_type_id, task_type_name)
+VALUES('6', 'Word or phrase translation');
+INSERT INTO public.task_types
+(task_type_id, task_type_name)
+VALUES('7', 'Correct mistake');
+INSERT INTO public.task_types
+(task_type_id, task_type_name)
+VALUES('8', 'Debate or discussion');
+INSERT INTO public.task_types
+(task_type_id, task_type_name)
+VALUES('9', 'Discuss video or audio');
+INSERT INTO public.task_types
+(task_type_id, task_type_name)
+VALUES('10', 'Answer questions based on video or audio');
+INSERT INTO public.task_types
+(task_type_id, task_type_name)
+VALUES('11', 'Questions based on text');
+INSERT INTO public.task_types
+(task_type_id, task_type_name)
+VALUES('12', 'Matching');
+INSERT INTO public.task_types
+(task_type_id, task_type_name)
+VALUES('13', 'True or false');
