@@ -38,7 +38,21 @@ CREATE TABLE public.companies (
 CREATE TABLE public.lessons (
 	lesson_id varchar NOT NULL,
 	lesson_name varchar NOT NULL,
+	video_url varchar NULL,
 	CONSTRAINT lessons_pk PRIMARY KEY (lesson_id)
+);
+
+
+-- public.meeting_kinds definition
+
+-- Drop table
+
+-- DROP TABLE public.meeting_kinds;
+
+CREATE TABLE public.meeting_kinds (
+	meeting_kind_id varchar NOT NULL,
+	meeting_kind_name varchar NOT NULL,
+	CONSTRAINT meeting_kinds_pk PRIMARY KEY (meeting_kind_id)
 );
 
 
@@ -177,6 +191,7 @@ CREATE TABLE public.students (
 	student_id varchar NOT NULL,
 	class_id varchar NOT NULL,
 	user_id varchar NOT NULL,
+	date_joined varchar NOT NULL,
 	CONSTRAINT students_pk PRIMARY KEY (student_id)
 );
 
@@ -192,6 +207,20 @@ CREATE TABLE public.subjects (
 	subject_code varchar NOT NULL,
 	subject_name varchar NOT NULL,
 	CONSTRAINT subjects_pk PRIMARY KEY (subject_id)
+);
+
+
+-- public.tuition_languages definition
+
+-- Drop table
+
+-- DROP TABLE public.tuition_languages;
+
+CREATE TABLE public.tuition_languages (
+	tuition_lang_id varchar NOT NULL,
+	tuition_lang_name varchar NOT NULL,
+	tuition_lang_code varchar NOT NULL,
+	CONSTRAINT tuition_languages_pk PRIMARY KEY (tuition_lang_id)
 );
 
 
@@ -211,20 +240,6 @@ CREATE TABLE public.users (
 	CONSTRAINT users_pk PRIMARY KEY (user_id),
 	CONSTRAINT users_unique UNIQUE (email),
 	CONSTRAINT users_unique_1 UNIQUE (github_username)
-);
-
-
--- public.tuition_languages definition
-
--- Drop table
-
--- DROP TABLE public.tuition_languages;
-
-CREATE TABLE public.tuition_languages (
-	tuition_lang_id varchar NOT NULL,
-	tuition_lang_name varchar NOT NULL,
-	tuition_lang_code varchar NOT NULL,
-	CONSTRAINT tuition_languages_pk PRIMARY KEY (tuition_lang_id)
 );
 
 
@@ -281,6 +296,7 @@ CREATE TABLE public.paths_structures (
 	CONSTRAINT paths_structures_path_fk FOREIGN KEY (path_id) REFERENCES public.paths(path_id),
 	CONSTRAINT paths_structures_sections_fk FOREIGN KEY (section_id) REFERENCES public.sections(section_id)
 );
+COMMENT ON TABLE public.paths_structures IS 'This is a template structure. This is NOT the structure of each particular class!';
 
 
 -- public.projects definition
@@ -376,4 +392,62 @@ CREATE TABLE public.classes_mentors (
 	mentor_id varchar NOT NULL,
 	CONSTRAINT classes_mentors_classes_fk FOREIGN KEY (class_id) REFERENCES public.classes(class_id),
 	CONSTRAINT classes_mentors_mentors_fk FOREIGN KEY (mentor_id) REFERENCES public.mentors(mentor_id)
+);
+
+
+-- public.classes_lessons definition
+
+-- Drop table
+
+-- DROP TABLE public.classes_lessons;
+
+CREATE TABLE public.classes_lessons (
+	path_id varchar NOT NULL,
+	module_id varchar NOT NULL,
+	section_id varchar NULL,
+	lesson_id varchar NOT NULL,
+	class_id varchar NOT NULL,
+	class_lesson_id varchar NOT NULL,
+	CONSTRAINT classes_lessons_pk PRIMARY KEY (class_lesson_id),
+	CONSTRAINT classes_structures_classes_fk FOREIGN KEY (class_id) REFERENCES public.classes(class_id),
+	CONSTRAINT classes_structures_lessons_fk FOREIGN KEY (lesson_id) REFERENCES public.lessons(lesson_id),
+	CONSTRAINT classes_structures_modules_fk FOREIGN KEY (module_id) REFERENCES public.modules(module_id),
+	CONSTRAINT classes_structures_sections_fk FOREIGN KEY (section_id) REFERENCES public.sections(section_id)
+);
+COMMENT ON TABLE public.classes_lessons IS 'This is the final and immutable curriculum for a class. The curriculum is based on the path structure that existing at the time of class creation';
+
+
+-- public.student_questions definition
+
+-- Drop table
+
+-- DROP TABLE public.student_questions;
+
+CREATE TABLE public.student_questions (
+	student_id varchar NOT NULL,
+	question_text varchar NOT NULL,
+	answer_text varchar NULL,
+	class_lesson_id varchar NULL,
+	CONSTRAINT student_questions_classes_lessons_fk FOREIGN KEY (class_lesson_id) REFERENCES public.classes_lessons(class_lesson_id)
+);
+
+
+-- public.class_calls definition
+
+-- Drop table
+
+-- DROP TABLE public.class_calls;
+
+CREATE TABLE public.class_calls (
+	class_call_id varchar NOT NULL,
+	class_id varchar NOT NULL,
+	class_call_date varchar NOT NULL,
+	class_call_time varchar NOT NULL,
+	mentor_id varchar NOT NULL,
+	recording_url varchar NULL,
+	meeting_kind_id varchar NOT NULL,
+	CONSTRAINT class_calls_pk PRIMARY KEY (class_call_id),
+	CONSTRAINT class_calls_classes_fk FOREIGN KEY (class_id) REFERENCES public.classes(class_id),
+	CONSTRAINT class_calls_meeting_kinds_fk FOREIGN KEY (meeting_kind_id) REFERENCES public.meeting_kinds(meeting_kind_id),
+	CONSTRAINT class_calls_mentors_fk FOREIGN KEY (mentor_id) REFERENCES public.mentors(mentor_id)
 );
