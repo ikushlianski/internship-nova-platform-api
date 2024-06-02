@@ -14,6 +14,9 @@ VALUES('01HY8M21YZZFP49SSMRWSB41XJ', 'Student');
 INSERT INTO public.roles
 (role_id, role_name)
 VALUES('01HY8M2NTKA6SZGADNV5G59B2B', 'External Developer');
+INSERT INTO public.roles
+(role_id, role_name)
+VALUES('01HY8M23NV5G59B2BSALESROLE', 'Sales');
 
 -- Tuition languages
 INSERT INTO public.tuition_languages
