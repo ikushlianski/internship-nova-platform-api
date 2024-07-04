@@ -17,13 +17,6 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "paths": {
-      "@app/auth-z": [
-        "libs/auth-z/src"
-      ],
-      "@app/auth-z/*": [
-        "libs/auth-z/src/*"
-      ]
-    }
+    "paths": {}
   }
 }

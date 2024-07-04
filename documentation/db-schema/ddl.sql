@@ -82,6 +82,7 @@ CREATE TABLE public.mentors (
 CREATE TABLE public.modules (
 	module_id varchar NOT NULL,
 	module_name varchar NOT NULL,
+	module_description varchar NULL,
 	CONSTRAINT modules_pk PRIMARY KEY (module_id)
 );
 
@@ -192,6 +193,7 @@ CREATE TABLE public.students (
 	class_id varchar NOT NULL,
 	user_id varchar NOT NULL,
 	date_joined varchar NOT NULL,
+	is_active bool NULL,
 	CONSTRAINT students_pk PRIMARY KEY (student_id)
 );
 
@@ -207,6 +209,50 @@ CREATE TABLE public.subjects (
 	subject_code varchar NOT NULL,
 	subject_name varchar NOT NULL,
 	CONSTRAINT subjects_pk PRIMARY KEY (subject_id)
+);
+
+
+-- public.subjects_task_types definition
+
+-- Drop table
+
+-- DROP TABLE public.subjects_task_types;
+
+CREATE TABLE public.subjects_task_types (
+	subject_id varchar NOT NULL,
+	task_type_id varchar NOT NULL
+);
+COMMENT ON TABLE public.subjects_task_types IS 'Mapping of what subjects can have what task types';
+
+
+-- public.task_types definition
+
+-- Drop table
+
+-- DROP TABLE public.task_types;
+
+CREATE TABLE public.task_types (
+	task_type_id varchar NOT NULL,
+	task_type_name varchar NOT NULL,
+	task_type_description varchar NULL, -- Typical description of a task
+	CONSTRAINT task_types_pk PRIMARY KEY (task_type_id)
+);
+
+-- Column comments
+
+COMMENT ON COLUMN public.task_types.task_type_description IS 'Typical description of a task';
+
+
+-- public.tasks_statuses definition
+
+-- Drop table
+
+-- DROP TABLE public.tasks_statuses;
+
+CREATE TABLE public.tasks_statuses (
+	task_status_id varchar NOT NULL,
+	task_status_name varchar NOT NULL,
+	CONSTRAINT tasks_statuses_pk PRIMARY KEY (task_status_id)
 );
 
 
@@ -232,14 +278,9 @@ CREATE TABLE public.tuition_languages (
 
 CREATE TABLE public.users (
 	user_id varchar NOT NULL,
-	email varchar NULL,
-	github_username varchar NULL,
-	first_name varchar NULL,
-	last_name varchar NULL,
-	linkedin_url varchar NULL,
-	CONSTRAINT users_pk PRIMARY KEY (user_id),
-	CONSTRAINT users_unique UNIQUE (email),
-	CONSTRAINT users_unique_1 UNIQUE (github_username)
+	created_at varchar NOT NULL,
+	updated_at varchar NULL,
+	CONSTRAINT users_pk PRIMARY KEY (user_id)
 );
 
 
@@ -271,6 +312,7 @@ CREATE TABLE public.paths (
 	path_name varchar NULL,
 	path_level_id varchar NOT NULL,
 	path_code varchar NOT NULL, -- Code of the path user internally for automation. E.g. fe-angular-b, meaning frontend angular beginners
+	active_since varchar NULL,
 	CONSTRAINT path_pk PRIMARY KEY (path_id),
 	CONSTRAINT path_paths_levels_fk FOREIGN KEY (path_level_id) REFERENCES public.paths_levels(path_level_id)
 );
@@ -278,6 +320,23 @@ CREATE TABLE public.paths (
 -- Column comments
 
 COMMENT ON COLUMN public.paths.path_code IS 'Code of the path user internally for automation. E.g. fe-angular-b, meaning frontend angular beginners';
+
+
+-- public.paths_plans definition
+
+-- Drop table
+
+-- DROP TABLE public.paths_plans;
+
+CREATE TABLE public.paths_plans (
+	plan_id varchar NOT NULL,
+	plan_name varchar NOT NULL,
+	path_id varchar NOT NULL,
+	active_since varchar NULL,
+	archived_date varchar NULL,
+	CONSTRAINT paths_plans_pk PRIMARY KEY (plan_id),
+	CONSTRAINT paths_plans_paths_fk FOREIGN KEY (path_id) REFERENCES public.paths(path_id)
+);
 
 
 -- public.paths_structures definition
@@ -326,6 +385,43 @@ CREATE TABLE public.raffles (
 	prize_id varchar NULL,
 	CONSTRAINT raffles_pk PRIMARY KEY (raffle_id),
 	CONSTRAINT raffles_prizes_fk FOREIGN KEY (prize_id) REFERENCES public.prizes(prize_id)
+);
+
+
+-- public.tasks definition
+
+-- Drop table
+
+-- DROP TABLE public.tasks;
+
+CREATE TABLE public.tasks (
+	task_id varchar NOT NULL,
+	task_description varchar NOT NULL,
+	task_name varchar NOT NULL,
+	task_type_id varchar NOT NULL,
+	task_image_url varchar NULL,
+	subject_id varchar NULL,
+	CONSTRAINT tasks_pk PRIMARY KEY (task_id),
+	CONSTRAINT tasks_subjects_fk FOREIGN KEY (subject_id) REFERENCES public.subjects(subject_id),
+	CONSTRAINT tasks_task_types_fk FOREIGN KEY (task_type_id) REFERENCES public.task_types(task_type_id)
+);
+COMMENT ON TABLE public.tasks IS 'Template tasks (not actual class tasks)';
+
+
+-- public.tasks_options definition
+
+-- Drop table
+
+-- DROP TABLE public.tasks_options;
+
+CREATE TABLE public.tasks_options (
+	task_id varchar NULL,
+	option_id varchar NOT NULL,
+	option_text varchar NOT NULL,
+	option_index int2 NOT NULL,
+	is_correct bool NULL,
+	CONSTRAINT tasks_options_pk PRIMARY KEY (option_id),
+	CONSTRAINT tasks_options_tasks_fk FOREIGN KEY (task_id) REFERENCES public.tasks(task_id)
 );
 
 
@@ -381,20 +477,6 @@ CREATE TABLE public.classes (
 COMMENT ON COLUMN public.classes.class_code IS 'Should be generated automatically based on the course (path) code plus date';
 
 
--- public.classes_mentors definition
-
--- Drop table
-
--- DROP TABLE public.classes_mentors;
-
-CREATE TABLE public.classes_mentors (
-	class_id varchar NOT NULL,
-	mentor_id varchar NOT NULL,
-	CONSTRAINT classes_mentors_classes_fk FOREIGN KEY (class_id) REFERENCES public.classes(class_id),
-	CONSTRAINT classes_mentors_mentors_fk FOREIGN KEY (mentor_id) REFERENCES public.mentors(mentor_id)
-);
-
-
 -- public.classes_lessons definition
 
 -- Drop table
@@ -409,12 +491,44 @@ CREATE TABLE public.classes_lessons (
 	class_id varchar NOT NULL,
 	class_lesson_id varchar NOT NULL,
 	CONSTRAINT classes_lessons_pk PRIMARY KEY (class_lesson_id),
+	CONSTRAINT classes_lessons_paths_fk FOREIGN KEY (path_id) REFERENCES public.paths(path_id),
 	CONSTRAINT classes_structures_classes_fk FOREIGN KEY (class_id) REFERENCES public.classes(class_id),
 	CONSTRAINT classes_structures_lessons_fk FOREIGN KEY (lesson_id) REFERENCES public.lessons(lesson_id),
 	CONSTRAINT classes_structures_modules_fk FOREIGN KEY (module_id) REFERENCES public.modules(module_id),
 	CONSTRAINT classes_structures_sections_fk FOREIGN KEY (section_id) REFERENCES public.sections(section_id)
 );
 COMMENT ON TABLE public.classes_lessons IS 'This is the final and immutable curriculum for a class. The curriculum is based on the path structure that existing at the time of class creation';
+
+
+-- public.classes_mentors definition
+
+-- Drop table
+
+-- DROP TABLE public.classes_mentors;
+
+CREATE TABLE public.classes_mentors (
+	class_id varchar NOT NULL,
+	mentor_id varchar NOT NULL,
+	CONSTRAINT classes_mentors_classes_fk FOREIGN KEY (class_id) REFERENCES public.classes(class_id),
+	CONSTRAINT classes_mentors_mentors_fk FOREIGN KEY (mentor_id) REFERENCES public.mentors(mentor_id)
+);
+
+
+-- public.classes_students definition
+
+-- Drop table
+
+-- DROP TABLE public.classes_students;
+
+CREATE TABLE public.classes_students (
+	class_id varchar NOT NULL,
+	student_id varchar NOT NULL,
+	date_enrolled varchar NOT NULL,
+	date_left varchar NULL,
+	CONSTRAINT classes_students_pk PRIMARY KEY (class_id, student_id),
+	CONSTRAINT classes_students_classes_fk FOREIGN KEY (class_id) REFERENCES public.classes(class_id),
+	CONSTRAINT classes_students_students_fk FOREIGN KEY (student_id) REFERENCES public.students(student_id)
+);
 
 
 -- public.student_questions definition
@@ -430,6 +544,30 @@ CREATE TABLE public.student_questions (
 	class_lesson_id varchar NULL,
 	CONSTRAINT student_questions_classes_lessons_fk FOREIGN KEY (class_lesson_id) REFERENCES public.classes_lessons(class_lesson_id)
 );
+
+
+-- public.students_tasks definition
+
+-- Drop table
+
+-- DROP TABLE public.students_tasks;
+
+CREATE TABLE public.students_tasks (
+	student_id varchar NOT NULL,
+	task_id varchar NOT NULL,
+	answer varchar NULL, -- Array of correct answers or a free-form answer
+	answer_date varchar NULL,
+	task_status_id varchar NOT NULL,
+	correct_answer varchar NULL,
+	CONSTRAINT students_tasks_pk PRIMARY KEY (student_id, task_id),
+	CONSTRAINT students_tasks_students_fk FOREIGN KEY (student_id) REFERENCES public.students(student_id),
+	CONSTRAINT students_tasks_tasks_fk FOREIGN KEY (task_id) REFERENCES public.tasks(task_id),
+	CONSTRAINT students_tasks_tasks_statuses_fk FOREIGN KEY (task_status_id) REFERENCES public.tasks_statuses(task_status_id)
+);
+
+-- Column comments
+
+COMMENT ON COLUMN public.students_tasks.answer IS 'Array of correct answers or a free-form answer';
 
 
 -- public.class_calls definition

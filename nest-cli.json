@@ -1,40 +1,31 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "apps/nova-platform-api/src",
+  "sourceRoot": "apps/users/src",
   "compilerOptions": {
     "deleteOutDir": true,
     "webpack": true,
-    "tsConfigPath": "apps/nova-platform-api/tsconfig.app.json"
+    "tsConfigPath": "apps/users/tsconfig.app.json"
   },
   "monorepo": true,
-  "root": "apps/nova-platform-api",
+  "root": "apps/users",
   "projects": {
-    "nova-platform-api": {
+    "users": {
       "type": "application",
-      "root": "apps/nova-platform-api",
+      "root": "apps/users",
       "entryFile": "main",
-      "sourceRoot": "apps/nova-platform-api/src",
+      "sourceRoot": "apps/users/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/nova-platform-api/tsconfig.app.json"
+        "tsConfigPath": "apps/users/tsconfig.app.json"
       }
     },
-    "users-microservice": {
+    "client-app": {
       "type": "application",
-      "root": "apps/users-microservice",
+      "root": "apps/client-app",
       "entryFile": "main",
-      "sourceRoot": "apps/users-microservice/src",
+      "sourceRoot": "apps/client-app/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/users-microservice/tsconfig.app.json"
-      }
-    },
-    "auth-z": {
-      "type": "library",
-      "root": "libs/auth-z",
-      "entryFile": "index",
-      "sourceRoot": "libs/auth-z/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/auth-z/tsconfig.lib.json"
+        "tsConfigPath": "apps/client-app/tsconfig.app.json"
       }
     }
   }
