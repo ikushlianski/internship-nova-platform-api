@@ -17,10 +17,12 @@ import { ClientAppService } from './client-app.service';
       provide: SERVICE_NAMES.USERS_SERVICE,
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
+        console.log('IIIIIIIIII', configService.get('USER_SERVICE_PORT'));
+
         return ClientProxyFactory.create({
           transport: Transport.TCP,
           options: {
-            host: configService.get('USER_SERVICE_HOST'),
+            host: 'users', // name of microservice in docker-compose.yml
             port: configService.get('USER_SERVICE_PORT'),
           },
         });
