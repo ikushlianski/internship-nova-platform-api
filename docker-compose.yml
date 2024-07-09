@@ -16,22 +16,8 @@ services:
     command: nest start client-app --watch
     networks:
       - local
-  auth:
-    env_file:
-      - .env
-    build:
-      context: .
-      dockerfile: apps/auth/Dockerfile
-      args:
-        - AUTH_SERVICE_PORT=${AUTH_SERVICE_PORT}
-        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    ports:
-      - "${AUTH_SERVICE_PORT}:${AUTH_SERVICE_PORT}"
-    volumes:
-      - .:/usr/src/server
-    command: nest start auth --watch
-    networks:
-      - local
+    depends_on:
+      - database
   users:
     env_file:
       - .env
@@ -48,6 +34,8 @@ services:
     command: nest start users --watch
     networks:
       - local
+    depends_on:
+      - database
   database:
     restart: always
     image: postgres:16.3-alpine

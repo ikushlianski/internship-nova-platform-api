@@ -10,6 +10,7 @@ import { GoogleOauthGuard } from './guards/google-oauth.guard';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
+import { Public } from './public.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -18,13 +19,12 @@ export class AuthController {
     private configService: ConfigService,
   ) {}
 
+  @Public()
   @Get('google/callback')
   @UseGuards(GoogleOauthGuard)
   async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
     try {
       const token = await this.authService.oAuthLogin(req.user);
-
-      console.log('token in auth/google/callback', token);
 
       const frontendUrl = this.configService.get<string>('FRONTEND_URL');
 

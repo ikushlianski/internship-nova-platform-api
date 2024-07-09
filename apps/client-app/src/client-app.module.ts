@@ -1,17 +1,25 @@
 import { Module } from '@nestjs/common';
-import { UsersRoutesController } from './users/users-routes.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 import { SERVICE_NAMES } from './service-names';
+import { AuthModule } from './auth/auth.module';
+import { UsersRoutesController } from './gateway/users-routes.controller';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtGuard } from './auth/guards/jwt-auth.guard';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: ['.env.development.local', '.env.development', '.env'],
     }),
+    AuthModule,
   ],
   controllers: [UsersRoutesController],
   providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtGuard,
+    },
     {
       provide: SERVICE_NAMES.USERS_SERVICE,
       inject: [ConfigService],
