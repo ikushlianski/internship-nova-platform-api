@@ -9,6 +9,6 @@ ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
 RUN npm install -g @nestjs/cli
 COPY package*.json ./
-RUN npm i
+RUN npm ci
 COPY . .
 EXPOSE ${USER_SERVICE_PORT}

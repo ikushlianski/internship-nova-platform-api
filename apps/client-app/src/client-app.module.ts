@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ClientAppController } from './client-app.controller';
+import { UsersRoutesController } from './users/users-routes.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 import { SERVICE_NAMES } from './service-names';
-import { ClientAppService } from './client-app.service';
 
 @Module({
   imports: [
@@ -11,7 +10,7 @@ import { ClientAppService } from './client-app.service';
       envFilePath: ['.env.development.local', '.env.development', '.env'],
     }),
   ],
-  controllers: [ClientAppController],
+  controllers: [UsersRoutesController],
   providers: [
     {
       provide: SERVICE_NAMES.USERS_SERVICE,
@@ -28,7 +27,6 @@ import { ClientAppService } from './client-app.service';
         });
       },
     },
-    ClientAppService,
   ],
 })
 export class ClientAppModule {}

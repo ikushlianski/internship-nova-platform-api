@@ -1,9 +1,9 @@
 import { Controller, Get, Inject, Param } from '@nestjs/common';
-import { SERVICE_NAMES } from './service-names';
+import { SERVICE_NAMES } from '../service-names';
 import { ClientProxy } from '@nestjs/microservices';
 
 @Controller('users')
-export class ClientAppController {
+export class UsersRoutesController {
   constructor(
     @Inject(SERVICE_NAMES.USERS_SERVICE) private client: ClientProxy,
   ) {}
