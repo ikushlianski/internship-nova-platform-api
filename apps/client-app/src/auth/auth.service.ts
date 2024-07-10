@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ParsedUserData } from './auth.types';
 
 @Injectable()
 export class AuthService {
   constructor(private jwtService: JwtService) {}
 
-  async oAuthLogin(user) {
+  async generateJwtToken(user: ParsedUserData) {
     if (!user) {
-      throw new Error('User not found!!!');
+      throw new Error('User not found');
     }
 
     //    .... your business logic
@@ -18,7 +19,9 @@ export class AuthService {
       name: user.name,
     };
 
-    const jwt = this.jwtService.sign(payload);
+    const jwt = this.jwtService.sign(payload, {
+      expiresIn: '30d',
+    });
 
     return { jwt };
   }

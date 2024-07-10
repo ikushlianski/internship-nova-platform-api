@@ -3,12 +3,16 @@ WORKDIR /usr/src/server
 
 ARG CLIENT_APP_PORT
 ARG POSTGRES_PASSWORD
+ARG ENV_FILE
 
-# Set environment variables from ARGs
 ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
-RUN npm install -g @nestjs/cli
 COPY package*.json ./
+COPY ${ENV_FILE} ./
+COPY ./apps ./
+COPY ./prisma ./
+COPY nest-cli.json ./
+COPY tsconfig*.json ./
+
 RUN npm ci
-COPY . .
 EXPOSE ${CLIENT_APP_PORT}
