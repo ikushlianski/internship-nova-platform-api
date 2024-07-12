@@ -1,7 +1,6 @@
 import { Controller, Get, Inject, Param } from '@nestjs/common';
 import { SERVICE_NAMES } from '../service-names';
 import { ClientProxy } from '@nestjs/microservices';
-import { Public } from '../auth/public.decorator';
 
 @Controller('users')
 export class UsersRoutesController {
@@ -9,7 +8,6 @@ export class UsersRoutesController {
     @Inject(SERVICE_NAMES.USERS_SERVICE) private client: ClientProxy,
   ) {}
 
-  // @Public()
   @Get(':id')
   getUserByID(@Param('id') id) {
     return this.client.send({ cmd: 'get_user' }, id);

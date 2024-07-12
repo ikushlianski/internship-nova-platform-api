@@ -8,7 +8,8 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
-    "dev": "./setenv.sh .env.development.local",
+    "dev": "./start-docker.sh .env.development.local",
+    "dev:cleanup": "./cleanup.sh .env.development.local",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",

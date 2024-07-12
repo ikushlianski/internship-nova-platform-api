@@ -3,9 +3,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 import { SERVICE_NAMES } from './service-names';
 import { AuthModule } from './auth/auth.module';
-import { UsersRoutesController } from './gateway/users-routes.controller';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/guards/jwt-auth.guard';
+import { UsersRoutesController } from './routes/users-routes.controller';
 
 @Module({
   imports: [
@@ -37,4 +37,4 @@ import { JwtGuard } from './auth/guards/jwt-auth.guard';
     },
   ],
 })
-export class ClientAppModule {}
+export class GatewayModule {}

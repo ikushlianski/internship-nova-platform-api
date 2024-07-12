@@ -1,7 +1,7 @@
 FROM node:22-alpine
 WORKDIR /usr/src/server
 
-ARG CLIENT_APP_PORT
+ARG GATEWAY_PORT
 ARG POSTGRES_PASSWORD
 ARG ENV_FILE
 
@@ -15,4 +15,4 @@ COPY nest-cli.json ./
 COPY tsconfig*.json ./
 
 RUN npm ci
-EXPOSE ${CLIENT_APP_PORT}
+EXPOSE ${GATEWAY_PORT}

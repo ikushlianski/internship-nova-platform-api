@@ -19,13 +19,13 @@
         "tsConfigPath": "apps/users/tsconfig.app.json"
       }
     },
-    "client-app": {
+    "gateway": {
       "type": "application",
-      "root": "apps/client-app",
+      "root": "apps/gateway",
       "entryFile": "main",
-      "sourceRoot": "apps/client-app/src",
+      "sourceRoot": "apps/gateway/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/client-app/tsconfig.app.json"
+        "tsConfigPath": "apps/gateway/tsconfig.app.json"
       }
     },
     "auth": {
