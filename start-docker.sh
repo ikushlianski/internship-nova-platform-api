@@ -16,4 +16,4 @@ fi
 export ENV_FILE
 
 # Run docker-compose with the specified .env file
-docker-compose --env-file "$ENV_FILE" up
+docker-compose --env-file "$ENV_FILE" up --build --remove-orphans
