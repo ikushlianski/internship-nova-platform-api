@@ -52,8 +52,8 @@ services:
       - "${DATABASE_PORT}:${DATABASE_PORT}"
     networks:
       - local
-#    volumes:
-#      - ./documentation/db-schema/ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
+    volumes:
+      - ./documentation/db-schema/ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
 volumes:
   database:
     driver: local
