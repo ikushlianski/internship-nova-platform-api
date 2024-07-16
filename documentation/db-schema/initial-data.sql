@@ -92,3 +92,46 @@ VALUES('12', 'Matching');
 INSERT INTO public.task_types
 (task_type_id, task_type_name)
 VALUES('13', 'True or false');
+INSERT INTO public.task_types
+(task_type_id, task_type_name)
+VALUES('14', 'Rephrase like native speaker');
+
+-- Super broad subjects, top level categories
+INSERT INTO public.subjects
+(subject_id, subject_code, subject_name)
+VALUES('1', 'english', 'English Language');
+INSERT INTO public.subjects
+(subject_id, subject_code, subject_name)
+VALUES('2', 'programming', 'Programming');
+
+INSERT INTO aspect_id (aspect_name, subject_id, aspect_description)
+VALUES
+  ('Parts of Speech', '1', 'Introduces building blocks of sentences (nouns, verbs, etc.)'),
+  ('Sentence Structure', '1', 'Focuses on how sentences are formed (subject-verb agreement, types)'),
+  ('Tenses', '1', 'Covers verb tenses used to express time (present, past, future)'),
+  ('Articles', '1', 'Explains definite and indefinite articles ("the", "a", "an")'),
+  ('Nouns', '1', 'Deeper dive into nouns (countable/uncountable, singular/plural, possessives)'),
+  ('Verb Conjugations', '1', 'Explains how verbs change form based on person, number, and tense'),
+  ('Modal Verbs', '1', 'Covers modal verbs (can, could, should, etc.) and their uses'),
+  ('Phrasal Verbs', '1', 'Explores two- or three-word verbs with special meaning'),
+  ('Gerunds & Infinitives', '1', 'Explains verb forms used as nouns or modifiers'),
+  ('Pronouns', '1', 'Covers different pronoun types (subject, object, possessive)'),
+  ('Adjectives', '1', 'Explains how adjectives modify nouns and pronouns'),
+  ('Adverbs', '1', 'Explains how adverbs modify verbs, adjectives, and other adverbs'),
+  ('Punctuation', '1', 'Proper use of punctuation marks for clarity and structure'),
+  ('Capitalization', '1', 'Rules of using capital letters for proper nouns, beginnings of sentences, etc.'),
+  ('Subject-Verb Agreement', '1', 'Ensuring subject and verb forms match in number (singular/plural)'),
+  ('Parallelism', '1', 'Using similar grammatical structures for balanced sentences'),
+  ('Clauses', '1', 'Explains independent and dependent clauses for forming complex sentences'),
+  ('Phrases', '1', 'Covers different types of phrases (prepositional, verb, noun, etc.)'),
+  ('Conditionals', '1', 'Expressing different hypothetical situations (if, then)'),
+  ('Reported Speech', '1', 'How to report what someone else said'),
+  ('Subject-Verb Inversion', '1', 'Reversing subject and verb order in certain situations'),
+  ('Voice', '1', 'Using active and passive voice appropriately'),
+  ('Collocations', '1', 'Common word pairings and phrases used by native speakers'),
+  ('Conjunctions', '1', 'Connecting words and clauses (and, but, or, etc.)'),
+  ('Prepositions', '1', 'Words that indicate relationships in time, place, etc. (in, on, at, etc.)'),
+  ('Comparatives & Superlatives', '1', 'Forming and using comparative and superlative adjectives'),
+  ('Direct & Indirect Questions', '1', 'Forming and using different types of questions'),
+  ('Relative Clauses', '1', 'Clauses that provide additional information about a noun')
+;
