@@ -32,19 +32,21 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(GoogleOauthGuard)
   async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
+    let token: { jwt: string };
+
     try {
-      const token = await this.authService.generateJwtToken(
+      token = await this.authService.generateJwtToken(
         req.user as ParsedUserData,
       );
-
-      const frontendUrl = this.configService.get<string>('FRONTEND_URL');
-
-      res.redirect(`${frontendUrl}/oauth?token=${token.jwt}`);
     } catch (err) {
       res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .send({ success: false, message: err.message });
     }
+
+    const frontendUrl = this.configService.get<string>('FRONTEND_URL');
+
+    res.redirect(`${frontendUrl}/oauth?token=${token.jwt}`);
   }
 
   @ApiOperation({ summary: 'Generate token' })

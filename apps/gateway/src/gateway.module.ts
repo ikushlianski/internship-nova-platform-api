@@ -24,8 +24,6 @@ import { UsersRoutesController } from './routes/users-routes.controller';
       provide: SERVICE_NAMES.USERS_SERVICE,
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        console.log('IIIIIIIIII', configService.get('USER_SERVICE_PORT'));
-
         return ClientProxyFactory.create({
           transport: Transport.TCP,
           options: {
