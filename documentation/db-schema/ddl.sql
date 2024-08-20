@@ -388,6 +388,62 @@ CREATE TABLE public.raffles (
 );
 
 
+-- public.subjects_aspects definition
+
+-- Drop table
+
+-- DROP TABLE public.subjects_aspects;
+
+CREATE TABLE public.subjects_aspects (
+	aspect_id varchar NOT NULL,
+	aspect_name varchar NOT NULL,
+	subject_id varchar NOT NULL,
+	aspect_description varchar NULL,
+	CONSTRAINT subjects_aspects_pk PRIMARY KEY (aspect_id),
+	CONSTRAINT subjects_aspects_subjects_fk FOREIGN KEY (subject_id) REFERENCES public.subjects(subject_id)
+);
+COMMENT ON TABLE public.subjects_aspects IS 'This table describes subject aspects, like e.g. in English grammar you would have to learn pronouns, tenses, articles, verbs etc. Each of these is an aspect';
+
+
+-- public.tasks definition
+
+-- Drop table
+
+-- DROP TABLE public.tasks;
+
+CREATE TABLE public.tasks (
+	task_id varchar NOT NULL,
+	task_description varchar NOT NULL,
+	task_name varchar NOT NULL,
+	task_type_id varchar NOT NULL,
+	task_image_url varchar NULL,
+	subject_id varchar NULL,
+	subject_aspect_id varchar NULL,
+	CONSTRAINT tasks_pk PRIMARY KEY (task_id),
+	CONSTRAINT tasks_subjects_aspects_fk FOREIGN KEY (subject_aspect_id) REFERENCES public.subjects_aspects(aspect_id),
+	CONSTRAINT tasks_subjects_fk FOREIGN KEY (subject_id) REFERENCES public.subjects(subject_id),
+	CONSTRAINT tasks_task_types_fk FOREIGN KEY (task_type_id) REFERENCES public.task_types(task_type_id)
+);
+COMMENT ON TABLE public.tasks IS 'Template tasks (not actual class tasks)';
+
+
+-- public.tasks_options definition
+
+-- Drop table
+
+-- DROP TABLE public.tasks_options;
+
+CREATE TABLE public.tasks_options (
+	task_id varchar NULL,
+	option_id varchar NOT NULL,
+	option_text varchar NOT NULL,
+	option_index int2 NOT NULL,
+	is_correct bool NULL,
+	CONSTRAINT tasks_options_pk PRIMARY KEY (option_id),
+	CONSTRAINT tasks_options_tasks_fk FOREIGN KEY (task_id) REFERENCES public.tasks(task_id)
+);
+
+
 -- public.user_roles definition
 
 -- Drop table
@@ -415,23 +471,6 @@ CREATE TABLE public.users_projects (
 	CONSTRAINT users_projects_users_fk FOREIGN KEY (user_id) REFERENCES public.users(user_id)
 );
 CREATE UNIQUE INDEX users_projects_user_id_idx ON public.users_projects USING btree (user_id, project_id);
-
-
--- public.subjects_aspects definition
-
--- Drop table
-
--- DROP TABLE public.subjects_aspects;
-
-CREATE TABLE public.subjects_aspects (
-	aspect_id varchar NOT NULL,
-	aspect_name varchar NOT NULL,
-	subject_id varchar NOT NULL,
-	aspect_description varchar NULL,
-	CONSTRAINT subjects_aspects_pk PRIMARY KEY (aspect_id),
-	CONSTRAINT subjects_aspects_subjects_fk FOREIGN KEY (subject_id) REFERENCES public.subjects(subject_id)
-);
-COMMENT ON TABLE public.subjects_aspects IS 'This table describes subject aspects, like e.g. in English grammar you would have to learn pronouns, tenses, articles, verbs etc. Each of these is an aspect';
 
 
 -- public.classes definition
@@ -527,66 +566,6 @@ CREATE TABLE public.student_questions (
 );
 
 
--- public.tasks definition
-
--- Drop table
-
--- DROP TABLE public.tasks;
-
-CREATE TABLE public.tasks (
-	task_id varchar NOT NULL,
-	task_description varchar NOT NULL,
-	task_name varchar NOT NULL,
-	task_type_id varchar NOT NULL,
-	task_image_url varchar NULL,
-	subject_id varchar NULL,
-	subject_aspect_id varchar NULL,
-	CONSTRAINT tasks_pk PRIMARY KEY (task_id),
-	CONSTRAINT tasks_subjects_aspects_fk FOREIGN KEY (subject_aspect_id) REFERENCES public.subjects_aspects(aspect_id),
-	CONSTRAINT tasks_subjects_fk FOREIGN KEY (subject_id) REFERENCES public.subjects(subject_id),
-	CONSTRAINT tasks_task_types_fk FOREIGN KEY (task_type_id) REFERENCES public.task_types(task_type_id)
-);
-COMMENT ON TABLE public.tasks IS 'Template tasks (not actual class tasks)';
-
-
--- public.tasks_options definition
-
--- Drop table
-
--- DROP TABLE public.tasks_options;
-
-CREATE TABLE public.tasks_options (
-	task_id varchar NULL,
-	option_id varchar NOT NULL,
-	option_text varchar NOT NULL,
-	option_index int2 NOT NULL,
-	is_correct bool NULL,
-	CONSTRAINT tasks_options_pk PRIMARY KEY (option_id),
-	CONSTRAINT tasks_options_tasks_fk FOREIGN KEY (task_id) REFERENCES public.tasks(task_id)
-);
-
-
--- public.class_calls definition
-
--- Drop table
-
--- DROP TABLE public.class_calls;
-
-CREATE TABLE public.class_calls (
-	class_call_id varchar NOT NULL,
-	class_id varchar NOT NULL,
-	class_call_date varchar NOT NULL,
-	class_call_time varchar NOT NULL,
-	mentor_id varchar NOT NULL,
-	recording_url varchar NULL,
-	meeting_kind_id varchar NOT NULL,
-	CONSTRAINT class_calls_pk PRIMARY KEY (class_call_id),
-	CONSTRAINT class_calls_classes_fk FOREIGN KEY (class_id) REFERENCES public.classes(class_id),
-	CONSTRAINT class_calls_meeting_kinds_fk FOREIGN KEY (meeting_kind_id) REFERENCES public.meeting_kinds(meeting_kind_id),
-	CONSTRAINT class_calls_mentors_fk FOREIGN KEY (mentor_id) REFERENCES public.mentors(mentor_id)
-);
-
-
 -- public.students_tasks definition
 
 -- Drop table
@@ -609,3 +588,24 @@ CREATE TABLE public.students_tasks (
 -- Column comments
 
 COMMENT ON COLUMN public.students_tasks.answer IS 'Array of correct answers or a free-form answer';
+
+
+-- public.class_calls definition
+
+-- Drop table
+
+-- DROP TABLE public.class_calls;
+
+CREATE TABLE public.class_calls (
+	class_call_id varchar NOT NULL,
+	class_id varchar NOT NULL,
+	class_call_date varchar NOT NULL,
+	class_call_time varchar NOT NULL,
+	mentor_id varchar NOT NULL,
+	recording_url varchar NULL,
+	meeting_kind_id varchar NOT NULL,
+	CONSTRAINT class_calls_pk PRIMARY KEY (class_call_id),
+	CONSTRAINT class_calls_classes_fk FOREIGN KEY (class_id) REFERENCES public.classes(class_id),
+	CONSTRAINT class_calls_meeting_kinds_fk FOREIGN KEY (meeting_kind_id) REFERENCES public.meeting_kinds(meeting_kind_id),
+	CONSTRAINT class_calls_mentors_fk FOREIGN KEY (mentor_id) REFERENCES public.mentors(mentor_id)
+);
