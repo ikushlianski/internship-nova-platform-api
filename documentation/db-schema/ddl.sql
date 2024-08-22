@@ -1,20 +1,3 @@
--- public.clients definition
-
--- Drop table
-
--- DROP TABLE public.clients;
-
-CREATE TABLE public.clients (
-	client_id varchar NOT NULL, -- Company that bought our services
-	client_name varchar NOT NULL,
-	CONSTRAINT clients_pk PRIMARY KEY (client_id)
-);
-
--- Column comments
-
-COMMENT ON COLUMN public.clients.client_id IS 'Company that bought our services';
-
-
 -- public.companies definition
 
 -- Drop table
@@ -27,6 +10,36 @@ CREATE TABLE public.companies (
 	company_location varchar NOT NULL,
 	CONSTRAINT companies_pk PRIMARY KEY (company_id)
 );
+
+
+-- public.courses_levels definition
+
+-- Drop table
+
+-- DROP TABLE public.courses_levels;
+
+CREATE TABLE public.courses_levels (
+	courses_level_id varchar NOT NULL,
+	courses_level_name varchar NOT NULL, -- E.g. for English studies this can be "B1", "C1" etc.
+	CONSTRAINT paths_levels_pk PRIMARY KEY (courses_level_id)
+);
+
+-- Column comments
+
+COMMENT ON COLUMN public.courses_levels.courses_level_name IS 'E.g. for English studies this can be "B1", "C1" etc.';
+
+
+-- public.courses_mentors definition
+
+-- Drop table
+
+-- DROP TABLE public.courses_mentors;
+
+CREATE TABLE public.courses_mentors (
+	course_id varchar NOT NULL,
+	mentor_id varchar NOT NULL
+);
+COMMENT ON TABLE public.courses_mentors IS 'Default mentors for paths, may be changed once a class is created from path';
 
 
 -- public.lessons definition
@@ -87,36 +100,6 @@ CREATE TABLE public.modules (
 );
 
 
--- public.paths_levels definition
-
--- Drop table
-
--- DROP TABLE public.paths_levels;
-
-CREATE TABLE public.paths_levels (
-	path_level_id varchar NOT NULL,
-	path_level_name varchar NOT NULL, -- E.g. for English studies this can be "B1", "C1" etc.
-	CONSTRAINT paths_levels_pk PRIMARY KEY (path_level_id)
-);
-
--- Column comments
-
-COMMENT ON COLUMN public.paths_levels.path_level_name IS 'E.g. for English studies this can be "B1", "C1" etc.';
-
-
--- public.paths_mentors definition
-
--- Drop table
-
--- DROP TABLE public.paths_mentors;
-
-CREATE TABLE public.paths_mentors (
-	path_id varchar NOT NULL,
-	mentor_id varchar NOT NULL
-);
-COMMENT ON TABLE public.paths_mentors IS 'Default mentors for paths, may be changed once a class is created from path';
-
-
 -- public.positions definition
 
 -- Drop table
@@ -167,6 +150,8 @@ CREATE TABLE public.sections (
 	section_name varchar NOT NULL,
 	CONSTRAINT sections_pk PRIMARY KEY (section_id)
 );
+COMMENT ON TABLE public.sections IS 'Section is a partition of learning material. The full hierarchy is: course → module -> section -> lesson -> task
+Section is optional and may not be present if there are just a few lessons in the module.';
 
 
 -- public.student_class_ranking definition
@@ -284,6 +269,39 @@ CREATE TABLE public.users (
 );
 
 
+-- public.memo_study_options definition
+
+-- Drop table
+
+-- DROP TABLE public.memo_study_options;
+
+CREATE TABLE public.memo_study_options (
+	user_id varchar NULL,
+	option_id varchar NULL,
+	deck_id varchar NULL
+);
+COMMENT ON TABLE public.memo_study_options IS 'TBD';
+
+
+-- public.clients definition
+
+-- Drop table
+
+-- DROP TABLE public.clients;
+
+CREATE TABLE public.clients (
+	client_id varchar NOT NULL, -- Company that bought our services
+	client_name varchar NOT NULL,
+	company_id varchar NOT NULL,
+	CONSTRAINT clients_pk PRIMARY KEY (client_id),
+	CONSTRAINT clients_companies_fk FOREIGN KEY (company_id) REFERENCES public.companies(company_id)
+);
+
+-- Column comments
+
+COMMENT ON COLUMN public.clients.client_id IS 'Company that bought our services';
+
+
 -- public.companies_users definition
 
 -- Drop table
@@ -300,62 +318,43 @@ CREATE TABLE public.companies_users (
 );
 
 
--- public.paths definition
+-- public.courses definition
 
 -- Drop table
 
--- DROP TABLE public.paths;
+-- DROP TABLE public.courses;
 
-CREATE TABLE public.paths (
+CREATE TABLE public.courses (
 	subject_id varchar NULL,
-	path_id varchar NOT NULL,
-	path_name varchar NULL,
+	course_id varchar NOT NULL,
+	course_name varchar NULL,
 	path_level_id varchar NOT NULL,
-	path_code varchar NOT NULL, -- Code of the path user internally for automation. E.g. fe-angular-b, meaning frontend angular beginners
+	path_code varchar NOT NULL, -- Code of the path used internally for automation. E.g. fe-angular-b, meaning frontend angular beginners
 	active_since varchar NULL,
-	CONSTRAINT path_pk PRIMARY KEY (path_id),
-	CONSTRAINT path_paths_levels_fk FOREIGN KEY (path_level_id) REFERENCES public.paths_levels(path_level_id)
+	CONSTRAINT path_pk PRIMARY KEY (course_id),
+	CONSTRAINT path_paths_levels_fk FOREIGN KEY (path_level_id) REFERENCES public.courses_levels(courses_level_id)
 );
 
 -- Column comments
 
-COMMENT ON COLUMN public.paths.path_code IS 'Code of the path user internally for automation. E.g. fe-angular-b, meaning frontend angular beginners';
+COMMENT ON COLUMN public.courses.path_code IS 'Code of the path used internally for automation. E.g. fe-angular-b, meaning frontend angular beginners';
 
 
--- public.paths_plans definition
-
--- Drop table
-
--- DROP TABLE public.paths_plans;
-
-CREATE TABLE public.paths_plans (
-	plan_id varchar NOT NULL,
-	plan_name varchar NOT NULL,
-	path_id varchar NOT NULL,
-	active_since varchar NULL,
-	archived_date varchar NULL,
-	CONSTRAINT paths_plans_pk PRIMARY KEY (plan_id),
-	CONSTRAINT paths_plans_paths_fk FOREIGN KEY (path_id) REFERENCES public.paths(path_id)
-);
-
-
--- public.paths_structures definition
+-- public.courses_structures definition
 
 -- Drop table
 
--- DROP TABLE public.paths_structures;
+-- DROP TABLE public.courses_structures;
 
-CREATE TABLE public.paths_structures (
-	path_id varchar NOT NULL,
+CREATE TABLE public.courses_structures (
+	course_id varchar NOT NULL,
 	module_id varchar NOT NULL,
-	section_id varchar NULL,
 	lesson_id varchar NULL,
 	CONSTRAINT paths_structures_lessons_fk FOREIGN KEY (lesson_id) REFERENCES public.lessons(lesson_id),
 	CONSTRAINT paths_structures_modules_fk FOREIGN KEY (module_id) REFERENCES public.modules(module_id),
-	CONSTRAINT paths_structures_path_fk FOREIGN KEY (path_id) REFERENCES public.paths(path_id),
-	CONSTRAINT paths_structures_sections_fk FOREIGN KEY (section_id) REFERENCES public.sections(section_id)
+	CONSTRAINT paths_structures_path_fk FOREIGN KEY (course_id) REFERENCES public.courses(course_id)
 );
-COMMENT ON TABLE public.paths_structures IS 'This is a template structure. This is NOT the structure of each particular class!';
+COMMENT ON TABLE public.courses_structures IS 'This is a template structure. This is NOT the structure of each particular class!';
 
 
 -- public.projects definition
@@ -386,6 +385,7 @@ CREATE TABLE public.raffles (
 	CONSTRAINT raffles_pk PRIMARY KEY (raffle_id),
 	CONSTRAINT raffles_prizes_fk FOREIGN KEY (prize_id) REFERENCES public.prizes(prize_id)
 );
+COMMENT ON TABLE public.raffles IS 'It''s prize winning contests for our online school students.';
 
 
 -- public.subjects_aspects definition
@@ -473,6 +473,48 @@ CREATE TABLE public.users_projects (
 CREATE UNIQUE INDEX users_projects_user_id_idx ON public.users_projects USING btree (user_id, project_id);
 
 
+-- public.memo_decks definition
+
+-- Drop table
+
+-- DROP TABLE public.memo_decks;
+
+CREATE TABLE public.memo_decks (
+	deck_id varchar NOT NULL,
+	user_id varchar NOT NULL,
+	deck_name varchar NOT NULL,
+	deck_description varchar NULL,
+	parent_id varchar NULL,
+	CONSTRAINT memo_decks_pk PRIMARY KEY (deck_id),
+	CONSTRAINT memo_decks_memo_decks_fk FOREIGN KEY (parent_id) REFERENCES public.memo_decks(deck_id),
+	CONSTRAINT memo_decks_users_fk FOREIGN KEY (user_id) REFERENCES public.users(user_id)
+);
+
+
+-- public.memo_cards definition
+
+-- Drop table
+
+-- DROP TABLE public.memo_cards;
+
+CREATE TABLE public.memo_cards (
+	card_id varchar NOT NULL,
+	deck_id varchar NOT NULL,
+	question varchar NOT NULL,
+	answer varchar NULL,
+	created_date varchar NULL,
+	updated_date varchar NULL,
+	due_date varchar NULL,
+	lapses varchar NULL, -- Number of times this card was given a Don't Know answer
+	CONSTRAINT memo_cards_pk PRIMARY KEY (card_id),
+	CONSTRAINT memo_cards_memo_decks_fk FOREIGN KEY (deck_id) REFERENCES public.memo_decks(deck_id)
+);
+
+-- Column comments
+
+COMMENT ON COLUMN public.memo_cards.lapses IS 'Number of times this card was given a Don''t Know answer';
+
+
 -- public.classes definition
 
 -- Drop table
@@ -487,7 +529,7 @@ CREATE TABLE public.classes (
 	end_date varchar NULL,
 	tuition_lang_id varchar NOT NULL,
 	CONSTRAINT classes_pk PRIMARY KEY (class_id),
-	CONSTRAINT classes_paths_fk FOREIGN KEY (path_id) REFERENCES public.paths(path_id),
+	CONSTRAINT classes_paths_fk FOREIGN KEY (path_id) REFERENCES public.courses(course_id),
 	CONSTRAINT classes_tuition_languages_fk FOREIGN KEY (tuition_lang_id) REFERENCES public.tuition_languages(tuition_lang_id)
 );
 
@@ -496,13 +538,34 @@ CREATE TABLE public.classes (
 COMMENT ON COLUMN public.classes.class_code IS 'Should be generated automatically based on the course (path) code plus date';
 
 
--- public.classes_lessons definition
+-- public.classes_calls definition
 
 -- Drop table
 
--- DROP TABLE public.classes_lessons;
+-- DROP TABLE public.classes_calls;
 
-CREATE TABLE public.classes_lessons (
+CREATE TABLE public.classes_calls (
+	class_call_id varchar NOT NULL,
+	class_id varchar NOT NULL,
+	class_call_date varchar NOT NULL,
+	class_call_time varchar NOT NULL,
+	mentor_id varchar NOT NULL,
+	recording_url varchar NULL,
+	meeting_kind_id varchar NOT NULL,
+	CONSTRAINT class_calls_pk PRIMARY KEY (class_call_id),
+	CONSTRAINT class_calls_classes_fk FOREIGN KEY (class_id) REFERENCES public.classes(class_id),
+	CONSTRAINT class_calls_meeting_kinds_fk FOREIGN KEY (meeting_kind_id) REFERENCES public.meeting_kinds(meeting_kind_id),
+	CONSTRAINT class_calls_mentors_fk FOREIGN KEY (mentor_id) REFERENCES public.mentors(mentor_id)
+);
+
+
+-- public.classes_homeworks definition
+
+-- Drop table
+
+-- DROP TABLE public.classes_homeworks;
+
+CREATE TABLE public.classes_homeworks (
 	path_id varchar NOT NULL,
 	module_id varchar NOT NULL,
 	section_id varchar NULL,
@@ -510,13 +573,13 @@ CREATE TABLE public.classes_lessons (
 	class_id varchar NOT NULL,
 	class_lesson_id varchar NOT NULL,
 	CONSTRAINT classes_lessons_pk PRIMARY KEY (class_lesson_id),
-	CONSTRAINT classes_lessons_paths_fk FOREIGN KEY (path_id) REFERENCES public.paths(path_id),
+	CONSTRAINT classes_lessons_courses_fk FOREIGN KEY (path_id) REFERENCES public.courses(course_id),
 	CONSTRAINT classes_structures_classes_fk FOREIGN KEY (class_id) REFERENCES public.classes(class_id),
 	CONSTRAINT classes_structures_lessons_fk FOREIGN KEY (lesson_id) REFERENCES public.lessons(lesson_id),
 	CONSTRAINT classes_structures_modules_fk FOREIGN KEY (module_id) REFERENCES public.modules(module_id),
 	CONSTRAINT classes_structures_sections_fk FOREIGN KEY (section_id) REFERENCES public.sections(section_id)
 );
-COMMENT ON TABLE public.classes_lessons IS 'This is the final and immutable curriculum for a class. The curriculum is based on the path structure that existing at the time of class creation';
+COMMENT ON TABLE public.classes_homeworks IS 'This is the final and immutable curriculum for a class. The curriculum is based on the path structure that existing at the time of class creation';
 
 
 -- public.classes_mentors definition
@@ -562,7 +625,7 @@ CREATE TABLE public.student_questions (
 	question_text varchar NOT NULL,
 	answer_text varchar NULL,
 	class_lesson_id varchar NULL,
-	CONSTRAINT student_questions_classes_lessons_fk FOREIGN KEY (class_lesson_id) REFERENCES public.classes_lessons(class_lesson_id)
+	CONSTRAINT student_questions_classes_lessons_fk FOREIGN KEY (class_lesson_id) REFERENCES public.classes_homeworks(class_lesson_id)
 );
 
 
@@ -588,24 +651,3 @@ CREATE TABLE public.students_tasks (
 -- Column comments
 
 COMMENT ON COLUMN public.students_tasks.answer IS 'Array of correct answers or a free-form answer';
-
-
--- public.class_calls definition
-
--- Drop table
-
--- DROP TABLE public.class_calls;
-
-CREATE TABLE public.class_calls (
-	class_call_id varchar NOT NULL,
-	class_id varchar NOT NULL,
-	class_call_date varchar NOT NULL,
-	class_call_time varchar NOT NULL,
-	mentor_id varchar NOT NULL,
-	recording_url varchar NULL,
-	meeting_kind_id varchar NOT NULL,
-	CONSTRAINT class_calls_pk PRIMARY KEY (class_call_id),
-	CONSTRAINT class_calls_classes_fk FOREIGN KEY (class_id) REFERENCES public.classes(class_id),
-	CONSTRAINT class_calls_meeting_kinds_fk FOREIGN KEY (meeting_kind_id) REFERENCES public.meeting_kinds(meeting_kind_id),
-	CONSTRAINT class_calls_mentors_fk FOREIGN KEY (mentor_id) REFERENCES public.mentors(mentor_id)
-);

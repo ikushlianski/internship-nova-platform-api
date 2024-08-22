@@ -1,3 +1,20 @@
+-- Courses levels
+INSERT INTO public.courses_levels
+(courses_level_id, courses_level_name)
+VALUES('1', 'Beginner');
+INSERT INTO public.courses_levels
+(courses_level_id, courses_level_name)
+VALUES('2', 'Pre-intermediate');
+INSERT INTO public.courses_levels
+(courses_level_id, courses_level_name)
+VALUES('3', 'Intermediate');
+INSERT INTO public.courses_levels
+(courses_level_id, courses_level_name)
+VALUES('4', 'Upper-intermediate');
+INSERT INTO public.courses_levels
+(courses_level_id, courses_level_name)
+VALUES('5', 'Advanced');
+
 -- Roles
 INSERT INTO public.roles
 (role_id, role_name)
@@ -7,16 +24,16 @@ INSERT INTO public.roles
 VALUES('01HY8M15TWEWB4WAKJF7Z2V34B', 'Manager');
 INSERT INTO public.roles
 (role_id, role_name)
-VALUES('01HY8M1E76BRQRQ6EK22DT1D7G', 'Mentor');
+VALUES('01HY8M1E76BRQRQ6EK22DT1D7G', 'Teacher');
 INSERT INTO public.roles
 (role_id, role_name)
 VALUES('01HY8M21YZZFP49SSMRWSB41XJ', 'Student');
 INSERT INTO public.roles
 (role_id, role_name)
-VALUES('01HY8M2NTKA6SZGADNV5G59B2B', 'External Developer');
+VALUES('SALESROLE01HY8M23NV5G59B2B', 'Sales');
 INSERT INTO public.roles
 (role_id, role_name)
-VALUES('01HY8M23NV5G59B2BSALESROLE', 'Sales');
+VALUES('01HY8M2QZFP49SSMRWSB41XJ', 'Spectator');
 
 -- Tuition languages
 INSERT INTO public.tuition_languages
@@ -50,7 +67,10 @@ INSERT INTO public.meeting_kinds
 VALUES('01HYH5280AYRZMB5V93VWMS0TD', 'Feedback meeting');
 INSERT INTO public.meeting_kinds
 (meeting_kind_id, meeting_kind_name)
-VALUES('01HYH5467E3R6314WVZR1YKS6T', 'English classes');
+VALUES('01HYH5467E3R6314WVZR1YKS6T', 'Classes');
+INSERT INTO public.meeting_kinds
+(meeting_kind_id, meeting_kind_name)
+VALUES('03IEGB67E3R6314WVZR1YKS3G', 'Special event');
 
 -- Task types
 INSERT INTO public.task_types
