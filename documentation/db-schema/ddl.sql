@@ -283,6 +283,22 @@ CREATE TABLE public.memo_study_options (
 COMMENT ON TABLE public.memo_study_options IS 'TBD';
 
 
+-- public.courses_advice definition
+
+-- Drop table
+
+-- DROP TABLE public.courses_advice;
+
+CREATE TABLE public.courses_advice (
+	advice_id varchar NOT NULL,
+	course_id varchar NOT NULL,
+	advice_text varchar NULL,
+	last_used_date varchar NULL,
+	created_date varchar NOT NULL,
+	CONSTRAINT courses_advice_pk PRIMARY KEY (advice_id)
+);
+
+
 -- public.clients definition
 
 -- Drop table
@@ -513,6 +529,45 @@ CREATE TABLE public.memo_cards (
 -- Column comments
 
 COMMENT ON COLUMN public.memo_cards.lapses IS 'Number of times this card was given a Don''t Know answer';
+
+
+-- public.booking_requests definition
+
+-- Drop table
+
+-- DROP TABLE public.booking_requests;
+
+CREATE TABLE public.booking_requests (
+	email varchar NOT NULL, -- I don't think it's right to call this field "user_id" because technically this person is not yet a user most likely
+	course_id varchar NULL,
+	"name" varchar NULL,
+	phone_number varchar NULL,
+	telegram_nickname varchar NULL,
+	created_date varchar NOT NULL,
+	we_replied bool NULL,
+	CONSTRAINT booking_requests_pk PRIMARY KEY (email),
+	CONSTRAINT booking_requests_courses_fk FOREIGN KEY (course_id) REFERENCES public.courses(course_id)
+);
+
+-- Column comments
+
+COMMENT ON COLUMN public.booking_requests.email IS 'I don''t think it''s right to call this field "user_id" because technically this person is not yet a user most likely';
+
+
+-- public.data_removal_requests definition
+
+-- Drop table
+
+-- DROP TABLE public.data_removal_requests;
+
+CREATE TABLE public.data_removal_requests (
+	user_id varchar NOT NULL,
+	created_date varchar NOT NULL,
+	fulfilled bool NULL,
+	request_id varchar NOT NULL,
+	CONSTRAINT data_removal_requests_pk PRIMARY KEY (request_id),
+	CONSTRAINT data_removal_requests_users_fk FOREIGN KEY (user_id) REFERENCES public.users(user_id)
+);
 
 
 -- public.classes definition
