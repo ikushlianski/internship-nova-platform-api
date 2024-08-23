@@ -15,9 +15,10 @@ jobs:
         with:
           node-version: '20'
 
-#      - name: Install dependencies
-      - run: npm install
-      - run: npm install -g vitest
+      - name: Install dependencies
+        run: npm install
+      - name: Install vitest
+        run: npm install -g vitest
 
       - name: Run tests
 #        run: npm run test
