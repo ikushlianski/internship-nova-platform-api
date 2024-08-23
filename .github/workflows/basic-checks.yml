@@ -20,12 +20,13 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-      - name: Install vitest
-        run: npm install -g vitest
 
       - name: Run tests
 #        run: npm run test
-        run: vitest --pass-with-no-tests
+        run: npm run test -- --passWithNoTests
+
+      - name: Compilation check
+        run: npx tsc --noEmit
 
       - name: Build the project
         run: npm run build
