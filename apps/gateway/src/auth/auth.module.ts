@@ -1,35 +1,29 @@
 import { Module } from '@nestjs/common';
+import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtGuardStrategy } from './guards/jwt-auth.strategy';
-import { JwtGuard } from './guards/jwt-auth.guard';
-import { GoogleStrategy } from './guards/google-oauth.strategy';
-import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { AuthController } from './auth.controller';
+import { GoogleStrategy } from './strategies/google.strategy';
+import { UsersModule } from '../../../users/src/users.module';
 import { ConfigModule } from '@nestjs/config';
-import { EnvironmentService } from '../environment/environment.service';
 
 @Module({
   imports: [
-    JwtModule.registerAsync({
-      useFactory: () => ({
-        secret: process.env.JWT_SECRET,
-        signOptions: {
-          expiresIn: '3d',
-        },
-        global: true,
-      }),
-    }),
     ConfigModule.forRoot({
-      envFilePath: ['.env.development.local', '.env.development', '.env'],
+      isGlobal: true,
     }),
+    PassportModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '60m' },
+    }),
+    UsersModule,
   ],
+  providers: [AuthService, GoogleStrategy],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    JwtGuardStrategy,
-    JwtGuard,
-    GoogleStrategy,
-    EnvironmentService,
-  ],
 })
 export class AuthModule {}
+
+
+
+

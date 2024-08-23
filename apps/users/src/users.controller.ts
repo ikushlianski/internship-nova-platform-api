@@ -1,20 +1,25 @@
-import { Controller } from '@nestjs/common';
+// src/users/users.controller.ts
+import { Controller, Patch, Body, Req, Get, Param } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { MessagePattern } from '@nestjs/microservices';
+import { User } from './users.entity';
 
-export interface UserDTO {
-  id: string;
-  title: string;
-  author: string;
-  release_date: Date;
-}
-
-@Controller()
+@Controller('users')
 export class UsersController {
-  constructor(private readonly appService: UsersService) {}
+  constructor(private readonly usersService: UsersService) {}
 
-  @MessagePattern({ cmd: 'get_user' })
-  getUserById(userId: string): UserDTO {
-    return this.appService.getUserByID(userId);
+  @Patch('accept-terms')
+  async acceptTerms(@Req() req, @Body('accepted') accepted: boolean) {
+    const userId = req.user.id;
+
+    if (!accepted) {
+      throw new Error('You must read and accept the Privacy Policy');
+    }
+
+    return this.usersService.updateTermsAcceptance(userId, accepted);
+  }
+
+  @Get(':id')
+  async getUser(@Param('id') id: number): Promise<User> {
+    return this.usersService.findUserById(id);
   }
 }
