@@ -124,6 +124,41 @@ INSERT INTO public.subjects
 (subject_id, subject_code, subject_name)
 VALUES('2', 'programming', 'Programming');
 
+-- Subject levels for courses
+INSERT INTO public.courses_levels
+(courses_level_id, courses_level_name, subject_id)
+VALUES('1', 'A1', '1');
+INSERT INTO public.courses_levels
+(courses_level_id, courses_level_name, subject_id)
+VALUES('2', 'A1+', '1');
+INSERT INTO public.courses_levels
+(courses_level_id, courses_level_name, subject_id)
+VALUES('3', 'A2', '1');
+INSERT INTO public.courses_levels
+(courses_level_id, courses_level_name, subject_id)
+VALUES('4', 'A2+', '1');
+INSERT INTO public.courses_levels
+(courses_level_id, courses_level_name, subject_id)
+VALUES('5', 'B1', '1');
+INSERT INTO public.courses_levels
+(courses_level_id, courses_level_name, subject_id)
+VALUES('6', 'B1+', '1');
+INSERT INTO public.courses_levels
+(courses_level_id, courses_level_name, subject_id)
+VALUES('7', 'B2', '1');
+INSERT INTO public.courses_levels
+(courses_level_id, courses_level_name, subject_id)
+VALUES('8', 'B2+', '1');
+INSERT INTO public.courses_levels
+(courses_level_id, courses_level_name, subject_id)
+VALUES('9', 'C1', '1');
+INSERT INTO public.courses_levels
+(courses_level_id, courses_level_name, subject_id)
+VALUES('10', 'C1+', '1');
+INSERT INTO public.courses_levels
+(courses_level_id, courses_level_name, subject_id)
+VALUES('11', 'C2', '1');
+
 INSERT INTO subjects_aspects (aspect_id, aspect_name, subject_id, aspect_description)
 VALUES
   ('1e4e34f6-1245-4e8a-a24c-cb5d3b6ec1a0', 'Parts of Speech', '1', 'Introduces building blocks of sentences (nouns, verbs, etc.)'),
