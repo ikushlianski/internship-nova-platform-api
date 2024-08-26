@@ -1,27 +1,84 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { User } from '../../../users/src/users.entity';
+import { Public } from './public.decorator';
+import { AuthResponse, ParsedUserData } from './auth.types';
+import { EnvironmentService } from '../environment/environment.service';
+import { ConfigService } from '@nestjs/config';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private configService: ConfigService,
+    private environmentService: EnvironmentService,
+  ) {}
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  async googleAuth(@Req() req) {}
+  async googleAuth(@Req() req: Request) {}
 
+  
+
+  @Public()
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
-  async googleAuthRedirect(@Req() req: Request, @Res() res: Response) {
-    const user = req.user as User; // Explicitly cast to User
-    const validatedUser = await this.authService.validateUser(user.email);
+  async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
+    let token: { jwt: string };
 
-    res.cookie('token', validatedUser.accessToken);
-    return res.redirect('http://your-frontend-url.com');
+    try {
+      token = await this.authService.generateJwtToken(req.user as ParsedUserData);
+    } catch (err) {
+      return res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .send({ success: false, message: err.message });
+    }
+
+    const frontendUrl = this.configService.get<string>('FRONTEND_URL');
+    return res.redirect(`${frontendUrl}/oauth?token=${token.jwt}`);
+  }
+
+  @ApiOperation({ summary: 'Generate token' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Token generated successfully.',
+  })
+  @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden.' })
+  @ApiBody({ type: ParsedUserData })
+  @Public()
+  @Post('token')
+  async getTestToken(
+    @Res() res: Response,
+    @Body() body: ParsedUserData,
+  ): Promise<Response<AuthResponse>> {
+    // Should not be available in production
+    if (this.environmentService.isDevelopment(this.configService.get('APP_ENV'))) {
+      try {
+        const token = await this.authService.generateJwtToken(body);
+
+        res.cookie('googleToken', token.jwt, {
+          httpOnly: true,
+          secure: false,
+          path: '/',
+          sameSite: 'none',
+        });
+
+        return res.send({ success: true, token: token.jwt });
+      } catch (err) {
+        return res
+          .status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .send({ success: false, message: err.message });
+      }
+    }
+
+    return res.status(HttpStatus.FORBIDDEN).send('Forbidden');
   }
 }
+
 
 
 
