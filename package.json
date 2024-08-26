@@ -12,6 +12,7 @@
     "build": "nest build",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "dev": "./start-docker.sh .env.development.local",
+    "dev:bash": "bash ./start-docker.sh .env.development.local",
     "dev:cleanup": "./cleanup-docker.sh .env.development.local",
     "start": "nest start",
     "start:dev": "nest start --watch",
