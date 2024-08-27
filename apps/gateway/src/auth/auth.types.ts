@@ -14,4 +14,9 @@ export class ParsedUserData {
 
   @ApiProperty()
   email: string;
+
+  @ApiProperty({ description: 'Indicates whether the user has accepted the terms and conditions.' })
+  hasAcceptedTerms: boolean;
+
+
 }
