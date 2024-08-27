@@ -12,20 +12,21 @@ CREATE TABLE public.companies (
 );
 
 
--- public.courses_advice definition
+-- public.courses_levels definition
 
 -- Drop table
 
--- DROP TABLE public.courses_advice;
+-- DROP TABLE public.courses_levels;
 
-CREATE TABLE public.courses_advice (
-	advice_id varchar NOT NULL,
-	course_id varchar NOT NULL,
-	advice_text varchar NULL,
-	last_used_date varchar NULL,
-	created_date varchar NOT NULL,
-	CONSTRAINT courses_advice_pk PRIMARY KEY (advice_id)
+CREATE TABLE public.courses_levels (
+	courses_level_id varchar NOT NULL,
+	courses_level_name varchar NOT NULL, -- E.g. for English studies this can be "B1", "C1" etc.
+	CONSTRAINT paths_levels_pk PRIMARY KEY (courses_level_id)
 );
+
+-- Column comments
+
+COMMENT ON COLUMN public.courses_levels.courses_level_name IS 'E.g. for English studies this can be "B1", "C1" etc.';
 
 
 -- public.courses_mentors definition
@@ -66,20 +67,6 @@ CREATE TABLE public.meeting_kinds (
 	meeting_kind_name varchar NOT NULL,
 	CONSTRAINT meeting_kinds_pk PRIMARY KEY (meeting_kind_id)
 );
-
-
--- public.memo_study_options definition
-
--- Drop table
-
--- DROP TABLE public.memo_study_options;
-
-CREATE TABLE public.memo_study_options (
-	user_id varchar NULL,
-	option_id varchar NULL,
-	deck_id varchar NULL
-);
-COMMENT ON TABLE public.memo_study_options IS 'TBD';
 
 
 -- public.mentors definition
@@ -254,19 +241,6 @@ CREATE TABLE public.tasks_statuses (
 );
 
 
--- public.time_of_day definition
-
--- Drop table
-
--- DROP TABLE public.time_of_day;
-
-CREATE TABLE public.time_of_day (
-	time_of_day_id varchar NOT NULL,
-	time_of_day_label varchar NOT NULL,
-	CONSTRAINT time_of_day_pk PRIMARY KEY (time_of_day_id)
-);
-
-
 -- public.tuition_languages definition
 
 -- Drop table
@@ -293,6 +267,20 @@ CREATE TABLE public.users (
 	updated_at varchar NULL,
 	CONSTRAINT users_pk PRIMARY KEY (user_id)
 );
+
+
+-- public.memo_study_options definition
+
+-- Drop table
+
+-- DROP TABLE public.memo_study_options;
+
+CREATE TABLE public.memo_study_options (
+	user_id varchar NULL,
+	option_id varchar NULL,
+	deck_id varchar NULL
+);
+COMMENT ON TABLE public.memo_study_options IS 'TBD';
 
 
 -- public.clients definition
@@ -330,57 +318,43 @@ CREATE TABLE public.companies_users (
 );
 
 
--- public.courses_levels definition
+-- public.courses definition
 
 -- Drop table
 
--- DROP TABLE public.courses_levels;
+-- DROP TABLE public.courses;
 
-CREATE TABLE public.courses_levels (
-	courses_level_id varchar NOT NULL,
-	courses_level_name varchar NOT NULL, -- E.g. for English studies this can be "B1", "C1" etc.
+CREATE TABLE public.courses (
 	subject_id varchar NULL,
-	CONSTRAINT paths_levels_pk PRIMARY KEY (courses_level_id),
-	CONSTRAINT courses_levels_subjects_fk FOREIGN KEY (subject_id) REFERENCES public.subjects(subject_id)
+	course_id varchar NOT NULL,
+	course_name varchar NULL,
+	path_level_id varchar NOT NULL,
+	path_code varchar NOT NULL, -- Code of the path used internally for automation. E.g. fe-angular-b, meaning frontend angular beginners
+	active_since varchar NULL,
+	CONSTRAINT path_pk PRIMARY KEY (course_id),
+	CONSTRAINT path_paths_levels_fk FOREIGN KEY (path_level_id) REFERENCES public.courses_levels(courses_level_id)
 );
 
 -- Column comments
 
-COMMENT ON COLUMN public.courses_levels.courses_level_name IS 'E.g. for English studies this can be "B1", "C1" etc.';
+COMMENT ON COLUMN public.courses.path_code IS 'Code of the path used internally for automation. E.g. fe-angular-b, meaning frontend angular beginners';
 
 
--- public.data_removal_requests definition
-
--- Drop table
-
--- DROP TABLE public.data_removal_requests;
-
-CREATE TABLE public.data_removal_requests (
-	user_id varchar NOT NULL,
-	created_date varchar NOT NULL,
-	fulfilled bool NULL,
-	request_id varchar NOT NULL,
-	CONSTRAINT data_removal_requests_pk PRIMARY KEY (request_id),
-	CONSTRAINT data_removal_requests_users_fk FOREIGN KEY (user_id) REFERENCES public.users(user_id)
-);
-
-
--- public.memo_decks definition
+-- public.courses_structures definition
 
 -- Drop table
 
--- DROP TABLE public.memo_decks;
+-- DROP TABLE public.courses_structures;
 
-CREATE TABLE public.memo_decks (
-	deck_id varchar NOT NULL,
-	user_id varchar NOT NULL,
-	deck_name varchar NOT NULL,
-	deck_description varchar NULL,
-	parent_id varchar NULL,
-	CONSTRAINT memo_decks_pk PRIMARY KEY (deck_id),
-	CONSTRAINT memo_decks_memo_decks_fk FOREIGN KEY (parent_id) REFERENCES public.memo_decks(deck_id),
-	CONSTRAINT memo_decks_users_fk FOREIGN KEY (user_id) REFERENCES public.users(user_id)
+CREATE TABLE public.courses_structures (
+	course_id varchar NOT NULL,
+	module_id varchar NOT NULL,
+	lesson_id varchar NULL,
+	CONSTRAINT paths_structures_lessons_fk FOREIGN KEY (lesson_id) REFERENCES public.lessons(lesson_id),
+	CONSTRAINT paths_structures_modules_fk FOREIGN KEY (module_id) REFERENCES public.modules(module_id),
+	CONSTRAINT paths_structures_path_fk FOREIGN KEY (course_id) REFERENCES public.courses(course_id)
 );
+COMMENT ON TABLE public.courses_structures IS 'This is a template structure. This is NOT the structure of each particular class!';
 
 
 -- public.projects definition
@@ -499,43 +473,22 @@ CREATE TABLE public.users_projects (
 CREATE UNIQUE INDEX users_projects_user_id_idx ON public.users_projects USING btree (user_id, project_id);
 
 
--- public.courses definition
+-- public.memo_decks definition
 
 -- Drop table
 
--- DROP TABLE public.courses;
+-- DROP TABLE public.memo_decks;
 
-CREATE TABLE public.courses (
-	subject_id varchar NULL,
-	course_id varchar NOT NULL,
-	course_name varchar NULL,
-	path_level_id varchar NOT NULL,
-	path_code varchar NOT NULL, -- Code of the path used internally for automation. E.g. fe-angular-b, meaning frontend angular beginners
-	active_since varchar NULL,
-	CONSTRAINT path_pk PRIMARY KEY (course_id),
-	CONSTRAINT path_paths_levels_fk FOREIGN KEY (path_level_id) REFERENCES public.courses_levels(courses_level_id)
+CREATE TABLE public.memo_decks (
+	deck_id varchar NOT NULL,
+	user_id varchar NOT NULL,
+	deck_name varchar NOT NULL,
+	deck_description varchar NULL,
+	parent_id varchar NULL,
+	CONSTRAINT memo_decks_pk PRIMARY KEY (deck_id),
+	CONSTRAINT memo_decks_memo_decks_fk FOREIGN KEY (parent_id) REFERENCES public.memo_decks(deck_id),
+	CONSTRAINT memo_decks_users_fk FOREIGN KEY (user_id) REFERENCES public.users(user_id)
 );
-
--- Column comments
-
-COMMENT ON COLUMN public.courses.path_code IS 'Code of the path used internally for automation. E.g. fe-angular-b, meaning frontend angular beginners';
-
-
--- public.courses_structures definition
-
--- Drop table
-
--- DROP TABLE public.courses_structures;
-
-CREATE TABLE public.courses_structures (
-	course_id varchar NOT NULL,
-	module_id varchar NOT NULL,
-	lesson_id varchar NULL,
-	CONSTRAINT paths_structures_lessons_fk FOREIGN KEY (lesson_id) REFERENCES public.lessons(lesson_id),
-	CONSTRAINT paths_structures_modules_fk FOREIGN KEY (module_id) REFERENCES public.modules(module_id),
-	CONSTRAINT paths_structures_path_fk FOREIGN KEY (course_id) REFERENCES public.courses(course_id)
-);
-COMMENT ON TABLE public.courses_structures IS 'This is a template structure. This is NOT the structure of each particular class!';
 
 
 -- public.memo_cards definition
@@ -562,53 +515,6 @@ CREATE TABLE public.memo_cards (
 COMMENT ON COLUMN public.memo_cards.lapses IS 'Number of times this card was given a Don''t Know answer';
 
 
--- public.students_tasks definition
-
--- Drop table
-
--- DROP TABLE public.students_tasks;
-
-CREATE TABLE public.students_tasks (
-	student_id varchar NOT NULL,
-	task_id varchar NOT NULL,
-	answer varchar NULL, -- Array of correct answers or a free-form answer
-	answer_date varchar NULL,
-	task_status_id varchar NOT NULL,
-	correct_answer varchar NULL,
-	CONSTRAINT students_tasks_pk PRIMARY KEY (student_id, task_id),
-	CONSTRAINT students_tasks_students_fk FOREIGN KEY (student_id) REFERENCES public.students(student_id),
-	CONSTRAINT students_tasks_tasks_fk FOREIGN KEY (task_id) REFERENCES public.tasks(task_id),
-	CONSTRAINT students_tasks_tasks_statuses_fk FOREIGN KEY (task_status_id) REFERENCES public.tasks_statuses(task_status_id)
-);
-
--- Column comments
-
-COMMENT ON COLUMN public.students_tasks.answer IS 'Array of correct answers or a free-form answer';
-
-
--- public.booking_requests definition
-
--- Drop table
-
--- DROP TABLE public.booking_requests;
-
-CREATE TABLE public.booking_requests (
-	email varchar NOT NULL, -- I don't think it's right to call this field "user_id" because technically this person is not yet a user most likely
-	course_id varchar NULL,
-	"name" varchar NULL,
-	phone_number varchar NULL,
-	telegram_nickname varchar NULL,
-	created_date varchar NOT NULL,
-	we_replied bool NULL,
-	CONSTRAINT booking_requests_pk PRIMARY KEY (email),
-	CONSTRAINT booking_requests_courses_fk FOREIGN KEY (course_id) REFERENCES public.courses(course_id)
-);
-
--- Column comments
-
-COMMENT ON COLUMN public.booking_requests.email IS 'I don''t think it''s right to call this field "user_id" because technically this person is not yet a user most likely';
-
-
 -- public.classes definition
 
 -- Drop table
@@ -622,18 +528,14 @@ CREATE TABLE public.classes (
 	start_date varchar NOT NULL,
 	end_date varchar NULL,
 	tuition_lang_id varchar NOT NULL,
-	max_capacity int2 NOT NULL,
-	time_of_day_id varchar NOT NULL, -- Should be something like evening, day, morning
 	CONSTRAINT classes_pk PRIMARY KEY (class_id),
 	CONSTRAINT classes_paths_fk FOREIGN KEY (path_id) REFERENCES public.courses(course_id),
-	CONSTRAINT classes_time_of_day_fk FOREIGN KEY (time_of_day_id) REFERENCES public.time_of_day(time_of_day_id),
 	CONSTRAINT classes_tuition_languages_fk FOREIGN KEY (tuition_lang_id) REFERENCES public.tuition_languages(tuition_lang_id)
 );
 
 -- Column comments
 
 COMMENT ON COLUMN public.classes.class_code IS 'Should be generated automatically based on the course (path) code plus date';
-COMMENT ON COLUMN public.classes.time_of_day_id IS 'Should be something like evening, day, morning';
 
 
 -- public.classes_calls definition
@@ -725,3 +627,28 @@ CREATE TABLE public.student_questions (
 	class_lesson_id varchar NULL,
 	CONSTRAINT student_questions_classes_lessons_fk FOREIGN KEY (class_lesson_id) REFERENCES public.classes_homeworks(class_lesson_id)
 );
+
+
+-- public.students_tasks definition
+
+-- Drop table
+
+-- DROP TABLE public.students_tasks;
+
+CREATE TABLE public.students_tasks (
+	student_id varchar NOT NULL,
+	task_id varchar NOT NULL,
+	answer varchar NULL, -- Array of correct answers or a free-form answer
+	answer_date varchar NULL,
+	task_status_id varchar NOT NULL,
+	correct_answer varchar NULL,
+	CONSTRAINT students_tasks_pk PRIMARY KEY (student_id, task_id),
+	CONSTRAINT students_tasks_students_fk FOREIGN KEY (student_id) REFERENCES public.students(student_id),
+	CONSTRAINT students_tasks_tasks_fk FOREIGN KEY (task_id) REFERENCES public.tasks(task_id),
+	CONSTRAINT students_tasks_tasks_statuses_fk FOREIGN KEY (task_status_id) REFERENCES public.tasks_statuses(task_status_id)
+);
+
+-- Column comments
+
+COMMENT ON COLUMN public.students_tasks.answer IS 'Array of correct answers or a free-form answer';
+

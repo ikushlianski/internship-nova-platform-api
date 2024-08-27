@@ -124,41 +124,6 @@ INSERT INTO public.subjects
 (subject_id, subject_code, subject_name)
 VALUES('2', 'programming', 'Programming');
 
--- Subject levels for courses
-INSERT INTO public.courses_levels
-(courses_level_id, courses_level_name, subject_id)
-VALUES('1', 'A1', '1');
-INSERT INTO public.courses_levels
-(courses_level_id, courses_level_name, subject_id)
-VALUES('2', 'A1+', '1');
-INSERT INTO public.courses_levels
-(courses_level_id, courses_level_name, subject_id)
-VALUES('3', 'A2', '1');
-INSERT INTO public.courses_levels
-(courses_level_id, courses_level_name, subject_id)
-VALUES('4', 'A2+', '1');
-INSERT INTO public.courses_levels
-(courses_level_id, courses_level_name, subject_id)
-VALUES('5', 'B1', '1');
-INSERT INTO public.courses_levels
-(courses_level_id, courses_level_name, subject_id)
-VALUES('6', 'B1+', '1');
-INSERT INTO public.courses_levels
-(courses_level_id, courses_level_name, subject_id)
-VALUES('7', 'B2', '1');
-INSERT INTO public.courses_levels
-(courses_level_id, courses_level_name, subject_id)
-VALUES('8', 'B2+', '1');
-INSERT INTO public.courses_levels
-(courses_level_id, courses_level_name, subject_id)
-VALUES('9', 'C1', '1');
-INSERT INTO public.courses_levels
-(courses_level_id, courses_level_name, subject_id)
-VALUES('10', 'C1+', '1');
-INSERT INTO public.courses_levels
-(courses_level_id, courses_level_name, subject_id)
-VALUES('11', 'C2', '1');
-
 INSERT INTO subjects_aspects (aspect_id, aspect_name, subject_id, aspect_description)
 VALUES
   ('1e4e34f6-1245-4e8a-a24c-cb5d3b6ec1a0', 'Parts of Speech', '1', 'Introduces building blocks of sentences (nouns, verbs, etc.)'),
@@ -190,5 +155,6 @@ VALUES
   ('4d2c7b5a-9a8f-4e1b-9c6e-8d5b3a7f1c3e', 'Direct & Indirect Questions', '1', 'Forming and using different types of questions'),
   ('3e4a9b5d-2c7f-4a8b-9e6c-9d5b3a1f2e7f', 'Relative Clauses', '1', 'Clauses that provide additional information about a noun')
 ;
+
 
 

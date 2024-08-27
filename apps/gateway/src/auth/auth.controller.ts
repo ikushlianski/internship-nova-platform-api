@@ -1,45 +1,52 @@
-import { Body, Controller, Get, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
+import { GoogleOauthGuard } from './guards/google-oauth.guard';
 import { Request, Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
-import { User } from '../../../users/src/users.entity';
 import { Public } from './public.decorator';
 import { AuthResponse, ParsedUserData } from './auth.types';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { EnvironmentService } from '../environment/environment.service';
-import { ConfigService } from '@nestjs/config';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 
-@ApiTags('auth')
-@Controller('auth')
+const controllerName = 'auth';
+
+@ApiTags(controllerName)
+@Controller(controllerName)
 export class AuthController {
   constructor(
-    private readonly authService: AuthService,
+    private authService: AuthService,
     private configService: ConfigService,
     private environmentService: EnvironmentService,
   ) {}
 
-  @Get('google')
-  @UseGuards(AuthGuard('google'))
-  async googleAuth(@Req() req: Request) {}
-
-  
-
   @Public()
   @Get('google/callback')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(GoogleOauthGuard)
   async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
     let token: { jwt: string };
 
     try {
-      token = await this.authService.generateJwtToken(req.user as ParsedUserData);
+      token = await this.authService.generateJwtToken(
+        req.user as ParsedUserData,
+      );
     } catch (err) {
-      return res
+      res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .send({ success: false, message: err.message });
     }
 
     const frontendUrl = this.configService.get<string>('FRONTEND_URL');
-    return res.redirect(`${frontendUrl}/oauth?token=${token.jwt}`);
+
+    res.redirect(`${frontendUrl}/oauth?token=${token.jwt}`);
   }
 
   @ApiOperation({ summary: 'Generate token' })
@@ -56,7 +63,9 @@ export class AuthController {
     @Body() body: ParsedUserData,
   ): Promise<Response<AuthResponse>> {
     // Should not be available in production
-    if (this.environmentService.isDevelopment(this.configService.get('APP_ENV'))) {
+    if (
+      this.environmentService.isDevelopment(this.configService.get('APP_ENV'))
+    ) {
       try {
         const token = await this.authService.generateJwtToken(body);
 
@@ -69,7 +78,7 @@ export class AuthController {
 
         return res.send({ success: true, token: token.jwt });
       } catch (err) {
-        return res
+        res
           .status(HttpStatus.INTERNAL_SERVER_ERROR)
           .send({ success: false, message: err.message });
       }

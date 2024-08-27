@@ -1,44 +1,33 @@
-// src/users/users.module.ts
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
-import { User } from './users.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { UsersService } from './users.service';
+import { PrismaModule } from 'apps/gateway/src/prisma/prisma.module';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { UsersServiceListener } from './users.service.listener';
+
 
 @Module({
   imports: [
+    PrismaModule,
     ConfigModule.forRoot({
       envFilePath: ['.env.development.local', '.env.development', '.env'],
     }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => {
-        console.log(configService.get<number>('DATABASE_PORT')
-      )
-      console.log(configService.get<number>('POSTGRES_USER')
-      )
-      console.log(configService.get<number>('POSTGRES_PASSWORD')
-      )
-      console.log(configService.get<number>('POSTGRES_DB')
-      )
-      
-        return { type: 'postgres',
-          host: 'database',
-          port: configService.get<number>('DATABASE_PORT'),
-          username: configService.get<string>('POSTGRES_USER'),
-          password: configService.get<string>('POSTGRES_PASSWORD'),
-          database: configService.get<string>('POSTGRES_DB'),
-          entities: [User],
-          synchronize: true}        
+    ClientsModule.register([
+      {
+        name: 'USER_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RMQ_URL],  // RabbitMQ URL
+          queue: 'user_queue',
+          queueOptions: {
+            durable: false,
+          },
+        },
       },
-      inject: [ConfigService],
-    }),
-    TypeOrmModule.forFeature([User]), // Add this line
+    ]),
   ],
-  controllers: [UsersController],
-  providers: [UsersService],
-  exports: [UsersService], // Export UsersService if needed in other modules
+  providers: [UsersService, UsersServiceListener],  // Include listener
+  exports: [UsersService],
 })
 export class UsersModule {}
 
