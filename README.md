@@ -1,3 +1,4 @@
+=======
 # Nova Platform API Docs
 
 This is the official documentation for the Nova Platform API. The Nova Platform API is a RESTful API that allows you to interact with the Nova Platform powering various educational products. 
@@ -21,5 +22,5 @@ All diagrams: https://drive.google.com/file/d/1YB-J0ERmViDB19qaKqOs9ASoyylDpZxG/
 
 ## Authentication
 
->>>>>>> 108cf82 (MEMO-9: Check backend registration flow. Create user table using Prisma. Check that user can sign up using google)
+
 ![Authentication with Next.js and Nest.js](documentation/auth.png)
