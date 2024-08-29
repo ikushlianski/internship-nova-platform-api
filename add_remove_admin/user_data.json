@@ -1,0 +1,6 @@
+{
+    "firstName": "john_doe",
+    "lastName": "hashed_password_value",
+    "email": "john.doe@example.com",
+    "role": "admin"
+}
