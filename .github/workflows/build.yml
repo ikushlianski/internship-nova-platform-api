@@ -1,0 +1,39 @@
+name: Build project
+
+on: workflow_dispatch
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm run test -- --passWithNoTests
+
+      - name: Compilation check
+        run: npx tsc --noEmit
+
+      - name: Build the project
+        run: npm run build
+
+      - name: Archive production artifacts nova-platform-api
+        uses: actions/upload-artifact@v4
+        with:
+          name: nova-platform-api
+          path: |
+            apps
+            prisma
+            nest-cli.json
+            package*.json
+            tsconfig*.json
