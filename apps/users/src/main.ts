@@ -9,7 +9,7 @@ async function bootstrap() {
     {
       transport: Transport.TCP,
       options: {
-        host: 'users',
+        host: new ConfigService().get('USER_SERVICE_HOST'), // from env
         port: new ConfigService().get('USER_SERVICE_PORT'),
       },
     },
