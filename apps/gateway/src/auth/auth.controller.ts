@@ -50,43 +50,46 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: 'Generate token' })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Token generated successfully.',
-  })
-  @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden.' })
-  @ApiBody({ type: ParsedUserData })
-  @Public()
-  @Post('token')
-  async getTestToken(
-    @Res() res: Response,
-    @Body() body: ParsedUserData,
-  ): Promise<Response<AuthResponse>> {
-    // Should not be available in production
-    if (
-      this.environmentService.isDevelopment(this.configService.get('APP_ENV'))
-    ) {
-      try {
-        const token = await this.authService.generateJwtToken(body);
+@ApiResponse({
+  status: HttpStatus.OK,
+  description: 'Token generated successfully.',
+})
+@ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden.' })
+@ApiBody({ type: ParsedUserData })
+@Public()
+@Post('token')
+async getTestToken(
+  @Res() res: Response,
+  @Body() body: ParsedUserData,
+): Promise<Response<AuthResponse>> {
+  // Should not be available in production
+  if (
+    this.environmentService.isDevelopment(this.configService.get('APP_ENV'))
+  ) {
+    try {
+      const token = await this.authService.generateJwtToken(body);
 
-        res.cookie('googleToken', token.jwt, {
-          httpOnly: true,
-          secure: false,
-          path: '/',
-          sameSite: 'none',
-        });
+      res.cookie('googleToken', token.jwt, {
+        httpOnly: true,
+        secure: false,
+        path: '/',
+        sameSite: 'none',
+        domain: this.configService.get<string>('APP_DOMAIN'), // Added domain attribute
+      });
 
-        return res.send({ success: true, token: token.jwt });
-      } catch (err) {
-        res
-          .status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .send({ success: false, message: err.message });
-      }
+      return res.send({ success: true, token: token.jwt });
+    } catch (err) {
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .send({ success: false, message: err.message });
     }
-
-    return res.status(HttpStatus.FORBIDDEN).send('Forbidden');
   }
+
+  return res.status(HttpStatus.FORBIDDEN).send('Forbidden');
 }
+
+}
+
 
 
 

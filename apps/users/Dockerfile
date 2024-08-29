@@ -14,5 +14,7 @@ COPY ./prisma ./
 COPY nest-cli.json ./
 COPY tsconfig*.json ./
 
+RUN npm install -g prisma
+
 RUN npm ci
 EXPOSE ${USER_SERVICE_PORT}
