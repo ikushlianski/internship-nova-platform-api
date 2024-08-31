@@ -8,7 +8,7 @@ export class EnvironmentService {
     const hasDevEnvFile = fs.existsSync('.env.development.local');
 
     // Check for a custom APP_ENV variable
-    const isAppEnvDevelopment = appEnv === 'development';
+    const isAppEnvDevelopment = appEnv === 'dev';
 
     return hasDevEnvFile && isAppEnvDevelopment;
   }
