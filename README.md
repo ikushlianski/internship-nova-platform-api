@@ -36,7 +36,7 @@ Generates a new migration file without applying it to the database. This is usef
 
 ##### After that you can run migration locally:
 
-##### `npm run migrate`
+##### `npm run migrate:dev`
 Generates and applies a migration to the local development database, used during active development.
 
 ##### And apply all pending migrations to your production database (if needed):
