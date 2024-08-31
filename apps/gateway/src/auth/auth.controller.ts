@@ -74,7 +74,7 @@ export class AuthController {
           secure: false,
           path: '/',
           sameSite: 'none',
-          domain: this.configService.get<string>('APP_DOMAIN'), // Keep domain attribute
+          domain: this.configService.get<string>('.novaenglish.by'), // Keep domain attribute
         });
   
         return res.send({ success: true, token: token.jwt });
