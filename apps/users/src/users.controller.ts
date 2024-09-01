@@ -5,10 +5,11 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post('find-or-create')
+  @Post('/')
   @HttpCode(HttpStatus.OK)
   async findOrCreateUser(@Body('email') email: string) {
     const user = await this.usersService.findOrCreateUser(email);
     return user;
   }
 }
+
