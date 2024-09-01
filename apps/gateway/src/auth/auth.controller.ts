@@ -15,7 +15,7 @@ import { AuthService } from './auth.service';
 import { Public } from './public.decorator';
 import { AuthResponse, ParsedUserData } from './auth.types';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { EnvironmentService } from '../environment/environment.service';
+import { AppEnvironment } from '../environment/environment.types';
 
 const controllerName = 'auth';
 
@@ -25,7 +25,6 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private configService: ConfigService,
-    private environmentService: EnvironmentService,
   ) {}
 
   @Public()
@@ -39,14 +38,28 @@ export class AuthController {
         req.user as ParsedUserData,
       );
     } catch (err) {
-      res
+      return res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .send({ success: false, message: err.message });
     }
 
     const frontendUrl = this.configService.get<string>('FRONTEND_URL');
+    const appType = req.query.appType || 'next'; // Check the app type, default to 'next'
 
-    res.redirect(`${frontendUrl}/oauth?token=${token.jwt}`);
+    if (appType === 'react') {
+      // For React apps, set the cookie directly
+      res.cookie('googleToken', token.jwt, {
+        httpOnly: true,
+        secure: true, // Adjust as per environment
+        path: '/',
+        sameSite: 'lax',
+        domain: this.configService.get<string>('APP_DOMAIN'), // Use the environment variable
+      });
+      return res.status(HttpStatus.OK).send({ success: true });
+    } else {
+      // For Next.js apps, redirect with the token in the query parameter
+      return res.redirect(`${frontendUrl}/oauth?token=${token.jwt}`);
+    }
   }
 
   @ApiOperation({ summary: 'Generate token' })
@@ -62,10 +75,7 @@ export class AuthController {
     @Res() res: Response,
     @Body() body: ParsedUserData,
   ): Promise<Response<AuthResponse>> {
-    // Should not be available in production
-    if (
-      this.environmentService.isDevelopment(this.configService.get('APP_ENV'))
-    ) {
+    if (this.configService.get<string>('APP_ENV') === AppEnvironment.Prod)  {
       try {
         const token = await this.authService.generateJwtToken(body);
 
@@ -74,11 +84,12 @@ export class AuthController {
           secure: false,
           path: '/',
           sameSite: 'none',
+          domain: this.configService.get<string>('APP_DOMAIN'), 
         });
 
         return res.send({ success: true, token: token.jwt });
       } catch (err) {
-        res
+        return res
           .status(HttpStatus.INTERNAL_SERVER_ERROR)
           .send({ success: false, message: err.message });
       }
@@ -87,3 +98,4 @@ export class AuthController {
     return res.status(HttpStatus.FORBIDDEN).send('Forbidden');
   }
 }
+

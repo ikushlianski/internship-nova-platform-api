@@ -1,28 +1,30 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ClientProxy } from '@nestjs/microservices';
 import { ParsedUserData } from './auth.types';
 
 @Injectable()
 export class AuthService {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    @Inject('USER_SERVICE') private readonly client: ClientProxy,
+    private readonly jwtService: JwtService,
+  ) {}
+
+  async findOrCreateUser(userDto: ParsedUserData) {
+    const user = await this.client.send('find_or_create_user', userDto).toPromise();
+    return user;
+  }
 
   async generateJwtToken(user: ParsedUserData) {
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    //    .... your business logic
-
-    //   .... add whatever payload you want to have
-    const payload = {
-      email: user.email,
-      name: user.name,
-    };
-
-    const jwt = this.jwtService.sign(payload, {
-      expiresIn: '30d',
-    });
-
+    const payload = { email: user.email, name: user.name };
+    const jwt = this.jwtService.sign(payload, { expiresIn: '30d' });
     return { jwt };
   }
 }
+
+
+
+
+
+
+

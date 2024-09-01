@@ -14,5 +14,6 @@ COPY ./prisma ./
 COPY nest-cli.json ./
 COPY tsconfig*.json ./
 
+
 RUN npm ci
 EXPOSE ${USER_SERVICE_PORT}
