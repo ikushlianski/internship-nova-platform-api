@@ -23,7 +23,10 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./apps/users/test/jest-e2e.json"
+    "test:e2e": "jest --config ./apps/users/test/jest-e2e.json",
+    "migration:create": "dotenv -e .env.development.local -- prisma migrate dev --create-only",
+    "migrate:dev": "dotenv -e .env.development.local -- prisma migrate dev",
+    "migrate:prod": "dotenv -e .env -- prisma migrate deploy"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -34,8 +37,10 @@
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^7.4.0",
+    "@prisma/client": "^5.16.2",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.5",
+    "dotenv-cli": "^7.4.2",
     "express": "^4.19.2",
     "passport": "^0.7.0",
     "passport-google-oauth2": "^0.2.0",
