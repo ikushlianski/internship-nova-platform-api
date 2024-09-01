@@ -1,5 +1,5 @@
-import { prisma } from "./prisma-client";
-import { courses_levels, subjects, tuition_languages } from "./sampleData";
+import { prisma } from './prisma-client';
+import { courses_levels, subjects, tuition_languages } from './sampleData';
 
 // write data:
 async function up() {

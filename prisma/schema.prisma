@@ -18,36 +18,36 @@ datasource db {
 // TODO: implement class_code generation -->
 // Prisma does not directly support complex SQL expressions for default values. You should handle the generation of class_code in your application code.
 model Class {
-  class_id        Int        @id @default(autoincrement())
-  class_code      String?    @db.VarChar // Should be generated automatically based on the course (path) code plus date
-  path_id         Int?
-  start_date      DateTime   @db.Date
-  end_date        DateTime?  @db.Date
-  tuition_lang_id String
-  max_capacity    Int        @db.SmallInt   
-  time_of_day_id  String     // Should be something like evening, day, morning
+  class_id          Int        @id @default(autoincrement())
+  class_code        String?    @db.VarChar // Should be generated automatically based on the "course" code plus date
+  course_id         Int?
+  start_date        DateTime   @db.Date 
+  end_date          DateTime?  @db.Date
+  tuition_lang_code String     @db.VarChar
+  max_capacity      Int        @db.SmallInt   
+  time_of_day_id    String     // Should be something like evening, day, morning
 
   // Relations
-  Course         Course?   @relation(fields: [path_id], references: [course_id], name: "classes_paths_fk")
+  Course         Course?   @relation(fields: [course_id], references: [course_id], name: "classes_courses_fk")
   TimeOfDay      TimeOfDay @relation(fields: [time_of_day_id], references: [time_of_day_id], name: "classes_time_of_day_fk")
-  TuitionLanguage TuitionLanguage @relation(fields: [tuition_lang_id], references: [tuition_lang_id], name: "classes_tuition_languages_fk")
+  TuitionLanguage TuitionLanguage @relation(fields: [tuition_lang_code], references: [tuition_lang_code], name: "classes_tuition_languages_fk")
 
   @@schema("public")
 }
 
 model Course {
-  course_id     Int     @id @default(autoincrement())
-  subject_id    String? @db.VarChar
-  course_name   String? @db.VarChar
-  path_level_id Int   
-  path_code     String  @db.VarChar
-  active_since  String? @db.VarChar
+  course_id       Int     @id @default(autoincrement())
+  subject_id      String? @db.VarChar
+  course_name     String? @db.VarChar
+  course_level_id Int   
+  course_code     String  @db.VarChar
+  active_since    String? @db.VarChar
 
   // Relations
-  PathLevel     CoursesLevel @relation(fields: [path_level_id], references: [courses_level_id], name: "path_paths_levels_fk")
-  Class Class[] @relation(name: "classes_paths_fk")
+  CourseLevel     CoursesLevel @relation(fields: [course_level_id], references: [courses_level_id], name: "course_courses_levels_fk")
+  Class Class[] @relation(name: "classes_courses_fk")
 
-  CoursesMentors CoursesMentors[] @relation(name: "path_mentors_fk")
+  CoursesMentors CoursesMentors[] @relation(name: "course_mentors_fk")
 
   CoursesStructures CoursesStructures[]
 
@@ -55,20 +55,20 @@ model Course {
 }
 
 model CoursesLevel {
-  courses_level_id   Int    @id @default(autoincrement())
-  courses_level_name String @db.VarChar
-  subject_id         Int?  
+  courses_level_id   Int     @id @default(autoincrement())
+  courses_level_name String  @db.VarChar
+  subject_code       String? @db.VarChar
 
   // Relations
-  Subject   Subject?  @relation(fields: [subject_id], references: [subject_id]) // Foreign key relation with Subject
-  Course Course[] @relation(name: "path_paths_levels_fk")
+  Subject   Subject?  @relation(fields: [subject_code], references: [subject_code]) // Foreign key relation with Subject
+  Course Course[] @relation(name: "course_courses_levels_fk")
 
   @@schema("public")
 }
 
 model Subject {
   subject_id   Int    @id @default(autoincrement())
-  subject_code String @db.VarChar
+  subject_code String @db.VarChar @unique
   subject_name String @db.VarChar
 
   // Relations
@@ -88,9 +88,8 @@ model TimeOfDay {
 }
 
 model TuitionLanguage {
-  tuition_lang_id   String @id @db.VarChar
+  tuition_lang_code String @db.VarChar @unique
   tuition_lang_name String @db.VarChar
-  tuition_lang_code String @db.VarChar
 
   // Relations
   Class Class[] @relation(name: "classes_tuition_languages_fk")
@@ -98,7 +97,6 @@ model TuitionLanguage {
   @@schema("public")
 }
 
-// Default mentors for paths, may be changed once a class is created from path
 model CoursesMentors {
   course_id Int
   mentor_id Int
@@ -106,8 +104,8 @@ model CoursesMentors {
   @@id([course_id, mentor_id]) // Composite primary key
 
   // Relations
-  Course Course @relation(fields: [course_id], references: [course_id], name: "path_mentors_fk")
-  Mentor Mentor @relation(fields: [mentor_id], references: [mentor_id], name: "path_mentors_fk")
+  Course Course @relation(fields: [course_id], references: [course_id], name: "course_mentors_fk")
+  Mentor Mentor @relation(fields: [mentor_id], references: [mentor_id], name: "course_mentors_fk")
 
   @@schema("public")
 }
@@ -115,21 +113,20 @@ model CoursesMentors {
 model Mentor {
   mentor_id            Int      @id 
   user_id              Int   
-  mentor_full_name_ru  String   @db.VarChar
   mentor_full_name_en  String   @db.VarChar
-  mentor_description_ru String? @db.VarChar
   mentor_description_en String? @db.VarChar
 
-  CoursesMentors CoursesMentors[] @relation(name: "path_mentors_fk")
+  CoursesMentors CoursesMentors[] @relation(name: "course_mentors_fk")
 
   @@schema("public")
 }
 
 /// This is a template structure. This is NOT the structure of each particular class!
 model CoursesStructures {
-  course_id Int // Foreign key to Course
-  module_id Int // Foreign key to Module
-  lesson_id Int? // Nullable foreign key to Lesson
+  course_id  Int // Foreign key to Course
+  module_id  Int // Foreign key to Module
+  section_id Int?
+  lesson_id  Int? // Nullable foreign key to Lesson
 
   // Relations
   Course  Course  @relation(fields: [course_id], references: [course_id])

@@ -1,6 +1,6 @@
 # Nova Platform API Docs
 
-This is the official documentation for the Nova Platform API. The Nova Platform API is a RESTful API that allows you to interact with the Nova Platform powering various educational products. 
+This is the official documentation for the Nova Platform API. The Nova Platform API is a RESTful API that allows you to interact with the Nova Platform powering various educational products.
 
 All diagrams: https://drive.google.com/file/d/1YB-J0ERmViDB19qaKqOs9ASoyylDpZxG/view?usp=drive_link
 
@@ -22,3 +22,18 @@ All diagrams: https://drive.google.com/file/d/1YB-J0ERmViDB19qaKqOs9ASoyylDpZxG/
 ## Authentication
 
 ![Authentication with Next.js and Nest.js](documentation/auth.png)
+
+## Prisma and database
+
+1. Migration :
+
+(development) migration based on .env.development.local:
+npm run migrate:dev
+
+(production) migration based on .env:
+npm run migrate:prod
+
+2. Seed database (default data you can find in sampleData.ts):
+
+(development)
+npm run db:seed-dev
