@@ -20,10 +20,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./apps/users/test/jest-e2e.json",
-    "migrate:dev:push": "dotenv -e .env.development.local -- prisma db push",
-    "migrate:dev:pull": "dotenv -e .env.development.local -- prisma db pull",
-    "migrate:dev:seed": "dotenv -e .env.development.local -- prisma db seed",
-    "migrate:dev": "dotenv -e .env.development.local -- prisma migrate dev --name init"
+    "migration:create": "dotenv -e .env.development.local -- prisma migrate dev --create-only",
+    "migrate:dev": "dotenv -e .env.development.local -- prisma migrate dev --name init",
+    "migrate:prod": "dotenv -e .env -- prisma migrate deploy"
   },
   "prisma": {
     "seed": "ts-node ./prisma/seed.ts"

@@ -594,14 +594,14 @@ COMMENT ON COLUMN public.students_tasks.answer IS 'Array of correct answers or a
 
 CREATE TABLE public.booking_requests (
 	email varchar NOT NULL, -- I don't think it's right to call this field "user_id" because technically this person is not yet a user most likely
-	course_id varchar NULL,
+	class_id varchar NULL,
 	"name" varchar NULL,
 	phone_number varchar NULL,
 	telegram_nickname varchar NULL,
 	created_date varchar NOT NULL,
 	we_replied bool NULL,
 	CONSTRAINT booking_requests_pk PRIMARY KEY (email),
-	CONSTRAINT booking_requests_courses_fk FOREIGN KEY (course_id) REFERENCES public.courses(course_id)
+	CONSTRAINT booking_requests_courses_fk FOREIGN KEY (class_id) REFERENCES public.classes(class_id)
 );
 
 -- Column comments
@@ -618,14 +618,14 @@ COMMENT ON COLUMN public.booking_requests.email IS 'I don''t think it''s right t
 CREATE TABLE public.classes (
 	class_id varchar NOT NULL,
 	class_code varchar NULL, -- Should be generated automatically based on the course (path) code plus date
-	path_id varchar NULL,
+	course_id varchar NULL,
 	start_date varchar NOT NULL,
 	end_date varchar NULL,
 	tuition_lang_id varchar NOT NULL,
 	max_capacity int2 NOT NULL,
 	time_of_day_id varchar NOT NULL, -- Should be something like evening, day, morning
 	CONSTRAINT classes_pk PRIMARY KEY (class_id),
-	CONSTRAINT classes_paths_fk FOREIGN KEY (path_id) REFERENCES public.courses(course_id),
+	CONSTRAINT classes_paths_fk FOREIGN KEY (course_id) REFERENCES public.courses(course_id),
 	CONSTRAINT classes_time_of_day_fk FOREIGN KEY (time_of_day_id) REFERENCES public.time_of_day(time_of_day_id),
 	CONSTRAINT classes_tuition_languages_fk FOREIGN KEY (tuition_lang_id) REFERENCES public.tuition_languages(tuition_lang_id)
 );
@@ -724,4 +724,5 @@ CREATE TABLE public.student_questions (
 	answer_text varchar NULL,
 	class_lesson_id varchar NULL,
 	CONSTRAINT student_questions_classes_lessons_fk FOREIGN KEY (class_lesson_id) REFERENCES public.classes_homeworks(class_lesson_id)
+
 );
