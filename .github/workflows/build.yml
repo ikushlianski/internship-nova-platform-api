@@ -43,7 +43,8 @@ jobs:
           name: nova-platform-api
           path: nova-platform-api
       - name: zip all the files
-        run: (cd nova-platform-api;cd nova-platform-api; zip -r ../nova-platform-api.zip * zip -r ../nonova-platform-api.zip *)
+        working-directory: ./nova-platform-api
+        run: zip -r ../nova-platform-api.zip *
       - name: Display structure of downloaded files
         run: ls -al
         
