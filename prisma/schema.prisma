@@ -15,7 +15,6 @@ datasource db {
   schemas  = ["public", "intl"]
 }
 
-<<<<<<< HEAD
 enum UserRole {
   Spectator
   Student
@@ -34,8 +33,6 @@ model Role {
   @@schema("public")
 }
 
-=======
->>>>>>> dc0f227f8e2083ddea9cba628ff84365eb1ab9f5
 // TODO: implement class_code generation -->
 // Prisma does not directly support complex SQL expressions for default values. You should handle the generation of class_code in your application code.
 model Class {
@@ -177,21 +174,4 @@ model Module {
   CoursesStructures CoursesStructures[]
 
   @@schema("public")
-<<<<<<< HEAD
-=======
-}
-
-enum UserRole {
-  Spectator
-  Student
-  Teacher
-  Sales
-  Manager
-  Admin
-}
-
-model Role {
-  id   Int      @id @default(autoincrement())
-  name UserRole
->>>>>>> dc0f227f8e2083ddea9cba628ff84365eb1ab9f5
 }
