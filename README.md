@@ -50,3 +50,7 @@ Applies all pending migrations to the production or staging database, used durin
 #### Be aware
 
 You want to avoid using auto synchronization (e.g. "sync: true") because it may lead to problems and forgetting to generate migrations.
+<<<<<<< HEAD
+=======
+
+>>>>>>> dc0f227f8e2083ddea9cba628ff84365eb1ab9f5
