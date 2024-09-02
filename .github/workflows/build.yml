@@ -37,8 +37,8 @@ jobs:
             nest-cli.json
             package*.json
             tsconfig*.json
-      - name: ls -al
-        run: ls -al
+      - name: test
+        run: find / -name nova-platform-api.zip
         
       - name: copy file via ssh 
         uses: appleboy/scp-action@v0.1.7
