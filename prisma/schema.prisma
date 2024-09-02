@@ -157,3 +157,17 @@ model Module {
 
   @@schema("public")
 }
+
+enum UserRole {
+  Spectator
+  Student
+  Teacher
+  Sales
+  Manager
+  Admin
+}
+
+model Role {
+  id   Int      @id @default(autoincrement())
+  name UserRole
+}
