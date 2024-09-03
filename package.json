@@ -24,9 +24,6 @@
     "migrate:dev": "dotenv -e .env.development.local -- prisma migrate dev --name init",
     "migrate:prod": "dotenv -e .env -- prisma migrate deploy"
   },
-  "prisma": {
-    "seed": "ts-node ./prisma/seed.ts"
-  },
   "dependencies": {
     "@nestjs/common": "^10.4.1",
     "@nestjs/config": "^3.2.3",

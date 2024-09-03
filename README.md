@@ -46,4 +46,4 @@ Applies all pending migrations to the production or staging database, used durin
 
 #### Be aware
 You want to avoid using auto synchronization (e.g. "sync: true") because it may lead to problems and forgetting to generate migrations.
->>>>>>> origin/main
+
