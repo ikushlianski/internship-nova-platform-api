@@ -724,4 +724,5 @@ CREATE TABLE public.student_questions (
 	answer_text varchar NULL,
 	class_lesson_id varchar NULL,
 	CONSTRAINT student_questions_classes_lessons_fk FOREIGN KEY (class_lesson_id) REFERENCES public.classes_homeworks(class_lesson_id)
+
 );

@@ -7,6 +7,8 @@ import {
   Req,
   Res,
   UseGuards,
+  HttpException,
+  Headers,
 } from '@nestjs/common';
 import { GoogleOauthGuard } from './guards/google-oauth.guard';
 import { Request, Response } from 'express';
@@ -30,7 +32,11 @@ export class AuthController {
   @Public()
   @Get('google/callback')
   @UseGuards(GoogleOauthGuard)
-  async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
+  async googleAuthCallback(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Headers('X-SSR') ssrHeader: string,
+  ) {
     let token: { jwt: string };
 
     try {
@@ -44,10 +50,22 @@ export class AuthController {
     }
 
     const frontendUrl = this.configService.get<string>('FRONTEND_URL');
-    const appType = req.query.appType || 'next'; // Check the app type, default to 'next'
+    const appType = req.query.appType;
 
-    if (appType === 'react') {
-      // For React apps, set the cookie directly
+    if (!appType) {
+      throw new HttpException(
+        'appType query parameter is required',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const isSSR = ssrHeader === 'true';
+
+    if (isSSR) {
+      // For SSR apps, redirect with the token in the query parameter
+      return res.redirect(`${frontendUrl}/oauth?token=${token.jwt}`);
+    } else {
+      // For non-SSR apps, set the cookie directly
       res.cookie('googleToken', token.jwt, {
         httpOnly: true,
         secure: true, // Adjust as per environment
@@ -56,9 +74,6 @@ export class AuthController {
         domain: this.configService.get<string>('APP_DOMAIN'), // Use the environment variable
       });
       return res.status(HttpStatus.OK).send({ success: true });
-    } else {
-      // For Next.js apps, redirect with the token in the query parameter
-      return res.redirect(`${frontendUrl}/oauth?token=${token.jwt}`);
     }
   }
 
@@ -98,4 +113,5 @@ export class AuthController {
     return res.status(HttpStatus.FORBIDDEN).send('Forbidden');
   }
 }
+
 

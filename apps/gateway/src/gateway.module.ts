@@ -27,7 +27,7 @@ import { UsersRoutesController } from './routes/users-routes.controller';
         return ClientProxyFactory.create({
           transport: Transport.TCP,
           options: {
-            host: 'USER_SERVICE_HOST', 
+            host: configService.get('USER_SERVICE_HOST'), 
             port: configService.get('USER_SERVICE_PORT'),
           },
         });
