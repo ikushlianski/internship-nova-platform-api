@@ -47,7 +47,17 @@ jobs:
         run: zip -r ../nova-platform-api.zip *
       # - name: Display structure of downloaded files
       #   run: ls -al
-        
+      - name: Update build hash in values.yaml    
+        uses: fjogeleit/yaml-update-action@main
+        with:
+          valueFile: 'helm/values.yaml'
+          propertyPath: 'build_hash'
+          value: ${{ github.sha }}
+          commitChange: true
+          branch: ${{ github.head_ref || github.ref_name }} 
+          message: "Update build number"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
       - name: copy file via ssh 
         uses: appleboy/scp-action@v0.1.7
         with:
