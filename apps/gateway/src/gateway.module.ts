@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/guards/jwt-auth.guard';
 import { UsersRoutesController } from './routes/users-routes.controller';
+import { CardsModule } from './cards/cards.module'; 
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { UsersRoutesController } from './routes/users-routes.controller';
       envFilePath: ['.env.development.local', '.env.development', '.env'],
     }),
     AuthModule,
+    CardsModule, // Add CardsModule here
   ],
   controllers: [UsersRoutesController],
   providers: [
@@ -36,3 +38,4 @@ import { UsersRoutesController } from './routes/users-routes.controller';
   ],
 })
 export class GatewayModule {}
+
