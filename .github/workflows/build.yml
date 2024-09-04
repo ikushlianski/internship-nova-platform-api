@@ -45,8 +45,8 @@ jobs:
       - name: zip all the files
         working-directory: ./nova-platform-api
         run: zip -r ../nova-platform-api.zip *
-      - name: Display structure of downloaded files
-        run: ls -al
+      # - name: Display structure of downloaded files
+      #   run: ls -al
         
       - name: copy file via ssh 
         uses: appleboy/scp-action@v0.1.7
@@ -56,4 +56,4 @@ jobs:
           port: ${{ secrets.PORT_FOR_UPLOAD }}
           key: ${{ secrets.KEY_SSH_FOR_UPLOAD }}
           source: "nova-platform-api.zip"
-          target: /usr/share/nginx/html/qa1/
+          target: /usr/share/nginx/html/nova-qa1/
