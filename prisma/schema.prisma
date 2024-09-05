@@ -8,41 +8,45 @@ datasource db {
 }
 
 model User {
-  email            String     @id
+  user_id          String     @id @default(cuid()) 
+  email            String     @unique
   hasAcceptedTerms Boolean    @default(false)
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
 
-  memoDecks        MemoDeck[] // Связь с MemoDeck
+  memoDecks        MemoDeck[] // Relation with MemoDeck
 }
 
 model MemoDeck {
-  deck_id     String     @id
-  user_id     String
-  deck_name   String
+  deck_id          String     @id @default(cuid())
+  user_id          String
+  deck_name        String
   deck_description String?
 
-  parent_id   String?
-  parent      MemoDeck?  @relation("ParentChildDecks", fields: [parent_id], references: [deck_id])
-  children    MemoDeck[] @relation("ParentChildDecks")
+  // Self-referencing relation for parent-child hierarchy
+  parent_id        String?
+  parent           MemoDeck?  @relation("ParentChildDecks", fields: [parent_id], references: [deck_id])
+  children         MemoDeck[] @relation("ParentChildDecks")
 
-  MemoCard    MemoCard[] @relation("DeckToCards")
+  MemoCard         MemoCard[] @relation("DeckToCards")
 
-  // Relation with the User model
-  user        User       @relation(fields: [user_id], references: [email])
+  // Relation with User model
+  user             User       @relation(fields: [user_id], references: [user_id])
 }
 
 model MemoCard {
-  card_id     String    @id
-  deck_id     String
-  question    String
-  answer      String?
+  card_id      String     @id @default(cuid())
+  deck_id      String
+  question     String
+  answer       String?
   created_date String?
   updated_date String?
-  due_date    String?
-  lapses      String?
+  due_date     String?
+  lapses       String?
 
-  deck        MemoDeck  @relation("DeckToCards", fields: [deck_id], references: [deck_id])
+  // Relation with MemoDeck model
+  deck         MemoDeck   @relation("DeckToCards", fields: [deck_id], references: [deck_id])
 }
+
 
 
