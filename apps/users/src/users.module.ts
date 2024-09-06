@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersService } from './users.service';
-import { PrismaModule } from 'apps/gateway/src/prisma/prisma.module';
+import { PrismaModule } from 'apps/users/src/prisma/prisma.module';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UsersServiceListener } from './users.service.listener';
 
