@@ -1,4 +1,4 @@
-name: Build project
+name: Build project and deploy to qa1
 
 on: workflow_dispatch
 
@@ -16,7 +16,7 @@ jobs:
           node-version: '22'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Run tests
         run: npm run test -- --passWithNoTests
