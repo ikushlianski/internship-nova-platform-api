@@ -22,7 +22,10 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
 
   app.enableCors({
-    origin: /^(http:\/\/localhost|http:\/\/127\.0\.0\.1)(:\d+)?$/,
+    origin: [
+      /^(http:\/\/localhost|http:\/\/127\.0\.0\.1)(:\d+)?$/,
+      'https://accounts.google.com',
+    ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
