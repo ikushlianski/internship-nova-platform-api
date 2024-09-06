@@ -8,11 +8,10 @@ import { JwtGuardStrategy } from './guards/jwt-auth.strategy';
 import { JwtGuard } from './guards/jwt-auth.guard';
 import { EnvironmentService } from '../environment/environment.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { PrismaModule } from '../prisma/prisma.module';
+
 
 @Module({
   imports: [
-    PrismaModule,
     JwtModule.registerAsync({
       useFactory: () => ({
         secret: process.env.JWT_SECRET,
