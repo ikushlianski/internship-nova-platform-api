@@ -49,7 +49,7 @@ services:
       timeout: 5s
       retries: 5
     ports:
-      - "${DATABASE_PORT}:${DATABASE_PORT}"
+      - "${LOCAL_DATABASE_PORT}:${DATABASE_PORT}"
     networks:
       - local
     volumes:
