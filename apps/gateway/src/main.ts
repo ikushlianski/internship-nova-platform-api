@@ -10,7 +10,7 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api/v1');
   app.use(cookieParser());
-  console.log('DATABASE_URL:', process.env.DATABASE_URL); // Keep this line for debugging
+  
 
   const config = new DocumentBuilder()
     .setTitle('Nova Platform API')
