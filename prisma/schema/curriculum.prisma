@@ -1,0 +1,108 @@
+model Lesson {
+  lesson_id          String    @id @default(ulid())
+  lesson_name        String    @unique
+  lesson_description String?
+  lesson_order       Int
+  created_date       DateTime?
+  updated_date       DateTime?
+  deleted            Boolean   @default(false)
+  section_id         String
+
+  section Section @relation(fields: [section_id], references: [section_id])
+  tasks   Task[]
+
+  @@map("lesson")
+}
+
+model Mentor {
+  mentor_id             String    @id
+  user_id               String
+  mentor_description_en String?
+  created_date          DateTime?
+  updated_date          DateTime?
+  deleted               Boolean   @default(false)
+  user                  User      @relation(fields: [user_id], references: [user_email])
+
+  mentor_classes MentorsClasses[]
+
+  @@map("mentor")
+}
+
+model MentorsClasses {
+  mentor_id    String
+  class_id     String
+  created_date DateTime?
+  updated_date DateTime?
+  deleted      Boolean   @default(false)
+
+  mentor Mentor @relation(fields: [mentor_id], references: [mentor_id])
+  class  Class  @relation(fields: [class_id], references: [class_id])
+
+  @@id([mentor_id, class_id])
+  @@map("mentors_classes")
+}
+
+model MentorPayModel {
+  mentor_id         String    @id
+  class_size_id     String
+  start_date        DateTime?
+  /// in USD
+  pay_rate_per_hour Float
+  created_date      DateTime?
+  end_date          DateTime?
+  deleted           Boolean   @default(false)
+
+  mentor     Mentor    @relation(fields: [mentor_id], references: [mentor_id])
+  class_size ClassSize @relation(fields: [class_size_id], references: [class_size_id])
+
+  @@id([mentor_id, class_size_id, start_date])
+  @@map("mentor_pay_model")
+}
+
+model Module {
+  module_id          String    @id @default(cuid())
+  module_name        String    @unique
+  module_description String?
+  module_order       Int
+  created_date       DateTime?
+  updated_date       DateTime?
+  deleted            Boolean   @default(false)
+  course_id          String
+
+  course   Course    @relation(fields: [course_id], references: [course_code])
+  sections Section[]
+  lessons  Lesson[]
+
+  @@map("module")
+}
+
+model Section {
+  section_id          String    @id @default(cuid())
+  section_name        String    @unique
+  section_description String?
+  section_order       Int
+  created_date        DateTime?
+  updated_date        DateTime?
+  deleted             Boolean   @default(false)
+  module_id           String
+
+  module Module @relation(fields: [module_id], references: [module_id])
+}
+
+model TimeOfDay {
+  time_of_day_id   String @id @default(cuid())
+  time_of_day_name String @unique
+
+  classes Class[]
+
+  @@map("time_of_day")
+}
+
+model TuitionLang {
+  tuition_lang_id   String @id @default(cuid())
+  tuition_lang_name String @unique
+
+  classes Class[]
+
+  @@map("tuition_language")
+}

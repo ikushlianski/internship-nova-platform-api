@@ -1,0 +1,23 @@
+model Deck {
+}
+
+model DeckCard {
+}
+
+model Vocabulary {
+  vocabulary_id String @id
+  user_id       String
+
+  @@map("vocabulary")
+}
+
+model VocabularyInbox {
+  user_id  String
+  question String
+  answer   String
+
+  user User @relation(fields: [user_id], references: [user_email])
+
+  @@id([user_id, question])
+  @@map("vocabulary_inbox")
+}

@@ -585,7 +585,6 @@ CREATE TABLE public.students_tasks (
 
 COMMENT ON COLUMN public.students_tasks.answer IS 'Array of correct answers or a free-form answer';
 
-
 -- public.booking_requests definition
 
 -- Drop table
