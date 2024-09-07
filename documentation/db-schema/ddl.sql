@@ -586,29 +586,6 @@ CREATE TABLE public.students_tasks (
 COMMENT ON COLUMN public.students_tasks.answer IS 'Array of correct answers or a free-form answer';
 
 
--- public.booking_requests definition
-
--- Drop table
-
--- DROP TABLE public.booking_requests;
-
-CREATE TABLE public.booking_requests (
-	email varchar NOT NULL, -- I don't think it's right to call this field "user_id" because technically this person is not yet a user most likely
-	class_id varchar NULL,
-	"name" varchar NULL,
-	phone_number varchar NULL,
-	telegram_nickname varchar NULL,
-	created_date varchar NOT NULL,
-	we_replied bool NULL,
-	CONSTRAINT booking_requests_pk PRIMARY KEY (email),
-	CONSTRAINT booking_requests_courses_fk FOREIGN KEY (class_id) REFERENCES public.classes(class_id)
-);
-
--- Column comments
-
-COMMENT ON COLUMN public.booking_requests.email IS 'I don''t think it''s right to call this field "user_id" because technically this person is not yet a user most likely';
-
-
 -- public.classes definition
 
 -- Drop table
@@ -635,6 +612,27 @@ CREATE TABLE public.classes (
 COMMENT ON COLUMN public.classes.class_code IS 'Should be generated automatically based on the course (path) code plus date';
 COMMENT ON COLUMN public.classes.time_of_day_id IS 'Should be something like evening, day, morning';
 
+-- public.booking_requests definition
+
+-- Drop table
+
+-- DROP TABLE public.booking_requests;
+
+CREATE TABLE public.booking_requests (
+	email varchar NOT NULL, -- I don't think it's right to call this field "user_id" because technically this person is not yet a user most likely
+	class_id varchar NULL,
+	"name" varchar NULL,
+	phone_number varchar NULL,
+	telegram_nickname varchar NULL,
+	created_date varchar NOT NULL,
+	we_replied bool NULL,
+	CONSTRAINT booking_requests_pk PRIMARY KEY (email),
+	CONSTRAINT booking_requests_courses_fk FOREIGN KEY (class_id) REFERENCES public.classes(class_id)
+);
+
+-- Column comments
+
+COMMENT ON COLUMN public.booking_requests.email IS 'I don''t think it''s right to call this field "user_id" because technically this person is not yet a user most likely';
 
 -- public.classes_calls definition
 
