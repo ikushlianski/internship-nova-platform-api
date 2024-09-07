@@ -62,6 +62,8 @@ services:
       - "${PGADMIN_LISTEN_PORT}:${PGADMIN_LISTEN_PORT}"
     networks:
       - local
+    depends_on:
+      - database
 volumes:
   database:
     driver: local
