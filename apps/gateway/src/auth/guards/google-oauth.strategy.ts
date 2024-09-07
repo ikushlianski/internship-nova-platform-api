@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { configDotenv } from 'dotenv';
 import { Strategy, VerifyCallback } from 'passport-google-oauth2';
-import { AuthService } from '../auth.service'; 
+import { AuthService } from '../auth.service';
 
 configDotenv();
 
@@ -12,7 +12,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: `${process.env.API_URL}/auth/google/callback`,
+      callbackURL: process.env.GOOGLE_CALLBACK_URL,
       scope: ['profile', 'email'],
     });
   }
@@ -23,17 +23,16 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     profile: any,
     done: VerifyCallback,
   ): Promise<any> {
-    const { name,  emails,  } = profile;
-  
+    const { name, emails } = profile;
+
     // Find or create the user
     const user = await this.authService.findOrCreateUser({
       email: emails[0].value,
       name: `${name.givenName} ${name.familyName}`,
-      hasAcceptedTerms: false, // Set a default value for hasAcceptedTerms
+      hasAcceptedTerms: true, // User can't make it here without accepting terms on the frontend
+      // todo pass readyPrivacyPolicy flag from FE to this Strategy and validate right here instead of relying on FE
     });
-  
-    done(null, user);
-  }
-  
-}
 
+    return done(null, user);
+  }
+}

@@ -9,6 +9,7 @@ import {
   UseGuards,
   HttpException,
   Headers,
+  Inject,
 } from '@nestjs/common';
 import { GoogleOauthGuard } from './guards/google-oauth.guard';
 import { Request, Response } from 'express';
@@ -18,6 +19,8 @@ import { Public } from './public.decorator';
 import { AuthResponse, ParsedUserData } from './auth.types';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AppEnvironment } from '../environment/environment.types';
+import { SERVICE_NAMES } from '../service-names';
+import { ClientProxy } from '@nestjs/microservices';
 
 const controllerName = 'auth';
 
@@ -50,14 +53,6 @@ export class AuthController {
     }
 
     const frontendUrl = this.configService.get<string>('FRONTEND_URL');
-    const appType = req.query.appType;
-
-    if (!appType) {
-      throw new HttpException(
-        'appType query parameter is required',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
 
     const isSSR = ssrHeader === 'true';
 
@@ -71,9 +66,12 @@ export class AuthController {
         secure: true, // Adjust as per environment
         path: '/',
         sameSite: 'lax',
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30), // 30 days
         domain: this.configService.get<string>('APP_DOMAIN'), // Use the environment variable
       });
-      return res.status(HttpStatus.OK).send({ success: true });
+
+      // todo for now redirects to frontend main page, but in the future consider maintaining the state of where the user originally wanted to navigate before being required to log in
+      return res.redirect(frontendUrl);
     }
   }
 
@@ -90,7 +88,7 @@ export class AuthController {
     @Res() res: Response,
     @Body() body: ParsedUserData,
   ): Promise<Response<AuthResponse>> {
-    if (this.configService.get<string>('APP_ENV') === AppEnvironment.Prod)  {
+    if (this.configService.get<string>('APP_ENV') === AppEnvironment.Prod) {
       try {
         const token = await this.authService.generateJwtToken(body);
 
@@ -99,7 +97,7 @@ export class AuthController {
           secure: false,
           path: '/',
           sameSite: 'none',
-          domain: this.configService.get<string>('APP_DOMAIN'), 
+          domain: this.configService.get<string>('APP_DOMAIN'),
         });
 
         return res.send({ success: true, token: token.jwt });
@@ -113,5 +111,3 @@ export class AuthController {
     return res.status(HttpStatus.FORBIDDEN).send('Forbidden');
   }
 }
-
-

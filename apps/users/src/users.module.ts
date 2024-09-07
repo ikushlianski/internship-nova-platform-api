@@ -16,11 +16,11 @@ const USER_QUEUE = 'user_queue';
     }),
     ClientsModule.register([
       {
-        name: 'USER_SERVICE',
+        name: 'USERS_SERVICE',
         transport: Transport.RMQ,
         options: {
-          urls: [process.env.RMQ_URL],  // RabbitMQ URL
-          queue: USER_QUEUE,  
+          urls: [process.env.RMQ_URL], // RabbitMQ URL
+          queue: USER_QUEUE,
           queueOptions: {
             durable: false,
           },
@@ -28,10 +28,8 @@ const USER_QUEUE = 'user_queue';
       },
     ]),
   ],
-  providers: [UsersService, UsersServiceListener],  
+  controllers: [UsersServiceListener],
+  providers: [UsersService],
   exports: [UsersService],
 })
 export class UsersModule {}
-
-
-

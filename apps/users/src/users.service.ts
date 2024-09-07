@@ -1,26 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'apps/users/src/prisma/prisma.service';
+import { ParsedUserData } from '../../gateway/src/auth/auth.types';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findOrCreateUser(email: string) {
+  async createUser(userDto: ParsedUserData) {
+    return await this.findOrCreateUser(userDto);
+  }
+
+  async findOrCreateUser(userDto: ParsedUserData) {
     let user = await this.prismaService.user.findUnique({
-      where: { email },
+      where: { email: userDto.email },
     });
 
     if (!user) {
       user = await this.prismaService.user.create({
-        data: { email },
+        data: userDto,
       });
     }
 
     return user;
   }
 }
-
-
-
-
-
