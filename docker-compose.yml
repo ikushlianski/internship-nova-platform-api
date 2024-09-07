@@ -53,6 +53,15 @@ services:
       - local
     volumes:
       - ./documentation/db-schema/ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
+  pgadmin:
+    restart: always
+    image: dpage/pgadmin4:8.11.0
+    env_file:
+      - ${ENV_FILE}
+    ports:
+      - "${PGADMIN_LISTEN_PORT}:${PGADMIN_LISTEN_PORT}"
+    networks:
+      - local
 volumes:
   database:
     driver: local
