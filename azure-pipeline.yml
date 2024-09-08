@@ -18,6 +18,10 @@ steps:
     npm run build
   displayName: 'npm build'
 
-- pwsh: |
-    docker build --no-cache --build-arg SERVICE_NAME=users -t users:1.0 . 
-  displayName: 'Create Docker Image'
+- task: Docker@2
+  inputs:
+    containerRegistry: 'novaenglishby'
+    repository: 'users'
+    command: 'buildAndPush'
+    Dockerfile: '**/Dockerfile'
+    tags: 'users:$(Build.BuildId)'
