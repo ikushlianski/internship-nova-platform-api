@@ -19,5 +19,5 @@ steps:
   displayName: 'npm build'
 
 - pwsh: |
-    docker build -f .\Dockerfile --no-cache --build-arg SERVICE_NAME=users -t users:1.0 . 
+    docker build --no-cache --build-arg SERVICE_NAME=users -t users:1.0 . 
   displayName: 'Create Docker Image'
