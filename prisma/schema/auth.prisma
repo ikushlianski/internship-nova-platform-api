@@ -18,9 +18,10 @@ model User {
 }
 
 model Role {
-  role_id    String     @id
-  role_name  String?
-  user_roles UserRole[]
+  role_id          String     @id
+  role_name        String?
+  role_description String?
+  user_roles       UserRole[]
 
   @@map("role")
 }

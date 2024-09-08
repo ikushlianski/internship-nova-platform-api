@@ -234,37 +234,37 @@ const taskOptions = [
   {
     task_option_id: 1,
     task_id: 3,
-    task_option_text: 'A. Belgrade',
+    task_option_text: 'Belgrade',
     is_correct: false,
   },
   {
     task_option_id: 2,
     task_id: 3,
-    task_option_text: 'B. Paris',
+    task_option_text: 'Paris',
     is_correct: true,
   },
   {
     task_option_id: 3,
     task_id: 3,
-    task_option_text: 'C. Vienna',
+    task_option_text: 'Vienna',
     is_correct: false,
   },
   {
     task_option_id: 4,
     task_id: 5,
-    task_option_text: 'A. Warsaw',
+    task_option_text: 'Warsaw',
     is_correct: true,
   },
   {
     task_option_id: 5,
     task_id: 5,
-    task_option_text: 'B. Berlin',
+    task_option_text: 'Berlin',
     is_correct: false,
   },
   {
     task_option_id: 6,
     task_id: 5,
-    task_option_text: 'C. Prague',
+    task_option_text: 'Prague',
     is_correct: false,
   },
 ];

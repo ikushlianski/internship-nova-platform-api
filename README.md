@@ -18,8 +18,9 @@ All diagrams: https://drive.google.com/file/d/1YB-J0ERmViDB19qaKqOs9ASoyylDpZxG/
 3. Ensure you have Docker up and running.
 4. Ensure you don't have Postgres running on your local machine on port `5432`. If you do, stop it or remove it entirely. Otherwise, you will have port conflicts with docker. We need only what will run inside Docker.
 5. Run `npm run dev` (for Windows `npm run dev:bash`) to start the development server. This should start Docker Compose, run migrations in the docker DB and run the API Gateway on `http://localhost:3000` and microservices on other `localhost` ports.
-6. If you're a frontend developer, you can now start your frontend app and log in via Google to get a token.
-7. If you're a backend dev:
+6. See database seeding instructions below to seed the database with initial data.
+7. If you're a frontend developer, you can now start your frontend app and log in via Google to get a token.
+8. If you're a backend dev:
    1. run `npm run prisma:generate` to generate Prisma client. For Webstorm, you will have to restart Typescript service to get the generated types reflected in your code.
    2. to get the token for API-only development without frontend, you can issue a POST request with a payload of `name` and `email` to `http://localhost:3000/api/v1/auth/token` and get back a dev token that has access to all private endpoints. **This token will work only in development environment and is good for API development**.
 
@@ -29,31 +30,30 @@ All diagrams: https://drive.google.com/file/d/1YB-J0ERmViDB19qaKqOs9ASoyylDpZxG/
 
 ## Prisma Migration
 
-This section describes the Prisma migration commands used in our project.
+### Migrations in dev
+
+Migrations are created and run automatically as you change your Prisma schema and restart docker-compose.
 
 > You want to avoid using auto synchronization provided by your ORM (e.g. "push: true" or "sync") because it may lead to problems and forgetting to generate migrations that must be part of the codebase.
 
-### First you need to create migration:
+If the migrations did not run automatically, you can run them manually with the following command:
 
-```
-npm run migrations:generate
-```
-
-Generates a new migration file without applying it to the database. This is useful for creating migration files when you want to review them or apply them manually later.
-
-You need to execute this command every time you change the schema in `prisma/schema.prisma` file. **This is a manual step that you need to remember to do.**
-
-### After that you can run migration locally:
-
-```
-npm run migrate:dev
+```bash
+npm run migrate:local
 ```
 
-Generates and applies a migration to the local development database, used during active development.
+This will run the migrations as well as seeds in the dev environment for your dockerized database.
 
-> You don't usually need to run this command manually, as it is run automatically when you start the development server.
-
-### Production migrations
+### Migrations in production
 
 All pending migrations are applied to the production or staging database automatically as part of CI job when deploying a new version of the application.
 
+## Seeding the database
+
+To seed the database with initial data, ensure your docker compose is running and use the following command:
+
+```bash
+npm run seed:dev
+```
+
+This will seed the database with initial data provided in `prisma/sampleData.ts`. The seeding script itself is in `prisma/seed.ts`. `npm run seed:dev` will run the seeding script in the development environment and ensure all required env vars are applied locally.
