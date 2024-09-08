@@ -24,4 +24,4 @@ steps:
     repository: 'users'
     command: 'buildAndPush'
     Dockerfile: '**/Dockerfile'
-    tags: 'users:$(Build.BuildId)'
+    tags: '$(Build.BuildId)'
