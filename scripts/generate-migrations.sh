@@ -1,4 +1,4 @@
-# write me a check if database is running on port 5432
+#!/bin/bash
 
 # check if .env.development.local exists
 if [ ! -f .env.development.local ]; then
