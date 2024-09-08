@@ -6,11 +6,11 @@ import { GatewayModule } from './gateway.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(GatewayModule);
-  const gatewayPort = app.get(ConfigService).get('GATEWAY_PORT');
+  const configService = app.get(ConfigService);
+  const gatewayPort = configService.get('GATEWAY_PORT');
 
   app.setGlobalPrefix('api/v1');
   app.use(cookieParser());
-  console.log('DATABASE_URL:', process.env.DATABASE_URL); // Keep this line for debugging
 
   const config = new DocumentBuilder()
     .setTitle('Nova Platform API')
@@ -26,4 +26,5 @@ async function bootstrap() {
 }
 
 bootstrap();
+
 

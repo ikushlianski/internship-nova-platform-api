@@ -1,6 +1,6 @@
 import { Controller, Get, Inject, Param } from '@nestjs/common';
-import { SERVICE_NAMES } from '../service-names';
 import { ClientProxy } from '@nestjs/microservices';
+import { SERVICE_NAMES } from '../service-names';
 
 @Controller('users')
 export class UsersRoutesController {
@@ -9,7 +9,8 @@ export class UsersRoutesController {
   ) {}
 
   @Get(':id')
-  getUserByID(@Param('id') id) {
+  getUserByID(@Param('id') id: string) {
+    console.log(`Sending request to get user with ID: ${id}`);
     return this.client.send({ cmd: 'get_user' }, id);
   }
 }

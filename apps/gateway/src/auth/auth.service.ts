@@ -16,11 +16,12 @@ export class AuthService {
   }
 
   async generateJwtToken(user: ParsedUserData) {
-    const payload = { email: user.email, name: user.name };
+    const payload = { email: user.email };
     const jwt = this.jwtService.sign(payload, { expiresIn: '30d' });
     return { jwt };
   }
 }
+
 
 
 

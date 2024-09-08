@@ -13,4 +13,12 @@ export class UsersServiceListener {
     const user = await this.usersService.findOrCreateUser(userDto.email);
     return user;
   }
+
+  @MessagePattern('get_user')
+  async handleGetUser(@Payload() user_id: string) {
+    console.log(`Received user_id: ${user_id}`);
+    const user = await this.usersService.findUserById(user_id);
+    return user;
+  }
 }
+

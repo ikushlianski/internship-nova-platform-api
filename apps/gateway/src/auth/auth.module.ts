@@ -3,12 +3,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { GoogleStrategy } from '../auth/guards/google-oauth.strategy';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtGuardStrategy } from './guards/jwt-auth.strategy';
 import { JwtGuard } from './guards/jwt-auth.guard';
 import { EnvironmentService } from '../environment/environment.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-
 
 @Module({
   imports: [
@@ -27,13 +26,10 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     ClientsModule.register([
       {
         name: 'USER_SERVICE',
-        transport: Transport.RMQ,
+        transport: Transport.TCP,
         options: {
-          urls: [process.env.RMQ_URL],  // RabbitMQ URL
-          queue: 'user_queue',
-          queueOptions: {
-            durable: false,
-          },
+          host: new ConfigService().get('USER_SERVICE_HOST'),
+          port: new ConfigService().get('USER_SERVICE_PORT'),
         },
       },
     ]),
@@ -48,8 +44,3 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
   ],
 })
 export class AuthModule {}
-
-
-
-
-

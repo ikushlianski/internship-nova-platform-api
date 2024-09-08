@@ -90,7 +90,7 @@ export class AuthController {
     @Res() res: Response,
     @Body() body: ParsedUserData,
   ): Promise<Response<AuthResponse>> {
-    if (this.configService.get<string>('APP_ENV') === AppEnvironment.Prod)  {
+    if (this.configService.get<string>('APP_ENV') === AppEnvironment.Prod) {
       try {
         const token = await this.authService.generateJwtToken(body);
 
@@ -99,7 +99,7 @@ export class AuthController {
           secure: false,
           path: '/',
           sameSite: 'none',
-          domain: this.configService.get<string>('APP_DOMAIN'), 
+          domain: this.configService.get<string>('APP_DOMAIN'),
         });
 
         return res.send({ success: true, token: token.jwt });
@@ -113,5 +113,3 @@ export class AuthController {
     return res.status(HttpStatus.FORBIDDEN).send('Forbidden');
   }
 }
-
-

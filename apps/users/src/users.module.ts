@@ -5,9 +5,6 @@ import { PrismaModule } from 'apps/users/src/prisma/prisma.module';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UsersServiceListener } from './users.service.listener';
 
-// Define constants
-const USER_QUEUE = 'user_queue';
-
 @Module({
   imports: [
     PrismaModule,
@@ -17,21 +14,19 @@ const USER_QUEUE = 'user_queue';
     ClientsModule.register([
       {
         name: 'USER_SERVICE',
-        transport: Transport.RMQ,
+        transport: Transport.TCP,
         options: {
-          urls: [process.env.RMQ_URL],  // RabbitMQ URL
-          queue: USER_QUEUE,  
-          queueOptions: {
-            durable: false,
-          },
+          host: new ConfigService().get('USER_SERVICE_HOST'),
+          port: new ConfigService().get('USER_SERVICE_PORT'),
         },
       },
     ]),
   ],
-  providers: [UsersService, UsersServiceListener],  
+  providers: [UsersService, UsersServiceListener],
   exports: [UsersService],
 })
 export class UsersModule {}
+
 
 
 
