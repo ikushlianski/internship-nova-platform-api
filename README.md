@@ -19,7 +19,9 @@ All diagrams: https://drive.google.com/file/d/1YB-J0ERmViDB19qaKqOs9ASoyylDpZxG/
 4. Ensure you don't have Postgres running on your local machine on port `5432`. If you do, stop it or remove it entirely. Otherwise, you will have port conflicts with docker. We need only what will run inside Docker.
 5. Run `npm run dev` (for Windows `npm run dev:bash`) to start the development server. This should start Docker Compose, run migrations in the docker DB and run the API Gateway on `http://localhost:3000` and microservices on other `localhost` ports.
 6. If you're a frontend developer, you can now start your frontend app and log in via Google to get a token.
-7. If you're a backend dev, then to get the token for API-only development without frontend, you can issue a POST request with a payload of `name` and `email` to `http://localhost:3000/api/v1/auth/token` and get back a dev token that has access to all private endpoints. **This token will work only in development environment and is good for API development**.
+7. If you're a backend dev:
+   1. run `npm run prisma:generate` to generate Prisma client. For Webstorm, you will have to restart Typescript service to get the generated types reflected in your code.
+   2. to get the token for API-only development without frontend, you can issue a POST request with a payload of `name` and `email` to `http://localhost:3000/api/v1/auth/token` and get back a dev token that has access to all private endpoints. **This token will work only in development environment and is good for API development**.
 
 ## Authentication
 

@@ -27,7 +27,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 
     // Find or create the user
     const user = await this.authService.findOrCreateUser({
-      email: emails[0].value,
+      user_email: emails[0].value,
       name: `${name.givenName} ${name.familyName}`,
       hasAcceptedTerms: true, // User can't make it here without accepting terms on the frontend
       // todo pass readyPrivacyPolicy flag from FE to this Strategy and validate right here instead of relying on FE

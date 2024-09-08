@@ -1,0 +1,50 @@
+model User {
+  user_email String     @id
+  created_at DateTime   @default(now())
+  updated_at DateTime
+  user_roles UserRole[]
+  /// This field is used to soft delete the user
+  deleted    Boolean    @default(false)
+
+  user_application_preferences UserApplicationPreferences[]
+  mentor                       Mentor[]
+  is_student_of                Student[]
+  DataRemovalRequest           DataRemovalRequest[]
+  Deck                         Deck[]
+  UserCard                     UserCard[]
+  VocabularyInbox              VocabularyInbox[]
+
+  @@map("user")
+}
+
+model Role {
+  role_id    String     @id
+  role_name  String?
+  user_roles UserRole[]
+
+  @@map("role")
+}
+
+model UserRole {
+  user_email String
+  role_id    String
+
+  user User @relation(fields: [user_email], references: [user_email])
+  role Role @relation(fields: [role_id], references: [role_id])
+
+  @@id([user_email, role_id])
+  @@map("user_role")
+}
+
+model UserApplicationPreferences {
+  user_email              String
+  application_id          String
+  accepted_privacy_policy Boolean
+  accepted_cookies_policy Boolean
+
+  user        User        @relation(fields: [user_email], references: [user_email])
+  application Application @relation(fields: [application_id], references: [application_id])
+
+  @@id([user_email, application_id])
+  @@map("user_application_preferences")
+}

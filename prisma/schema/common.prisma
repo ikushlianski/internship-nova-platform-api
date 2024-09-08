@@ -1,0 +1,34 @@
+model Application {
+  /// admin_portal, marketing_website, etc
+  application_id          String  @id
+  application_name        String
+  application_description String?
+  application_url         String?
+
+  user_application_preferences UserApplicationPreferences[]
+}
+
+enum DataRemovalStatusEnum {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+model DataRemovalRequest {
+  data_removal_request_id Int                   @id @default(autoincrement())
+  user_email              String
+  data_removal_request    String
+  data_removal_status     DataRemovalStatusEnum @default(PENDING)
+  data_removal_date       DateTime
+
+  user User @relation(fields: [user_email], references: [user_email])
+
+  @@map("data_removal_request")
+}
+
+model MeetingKind {
+  meeting_kind_id   String @id
+  meeting_kind_name String @unique
+
+  class_calls ClassCall[]
+}

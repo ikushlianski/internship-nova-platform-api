@@ -27,4 +27,4 @@ set +a
 export HOST=localhost
 export DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${HOST}:${DATABASE_PORT}/${POSTGRES_DB}?schema=public"
 
-prisma migrate dev --create-only
+tsx prisma/sampleData.ts

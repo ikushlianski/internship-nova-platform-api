@@ -12,12 +12,12 @@ export class UsersService {
 
   async findOrCreateUser(userDto: ParsedUserData) {
     let user = await this.prismaService.user.findUnique({
-      where: { email: userDto.email },
+      where: { user_email: userDto.user_email },
     });
 
     if (!user) {
       user = await this.prismaService.user.create({
-        data: userDto,
+        data: { ...userDto, created_at: new Date(), updated_at: null },
       });
     }
 
