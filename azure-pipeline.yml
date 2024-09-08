@@ -25,3 +25,9 @@ steps:
     command: 'buildAndPush'
     Dockerfile: '**/Dockerfile'
     tags: '$(Build.BuildId)'
+
+- pwsh: |
+    docker build --no-cache --build-arg SERVICE_NAME=users -t novaenglishby.azurecr.io/users:$(Build.BuildId) .
+    docker login --username novaenglishby --password mDaRSVHmrPWUOSwYBXvj4FSVsVIuzd4NStC2JiIsu4+ACRDqtU5s
+    docker push novaenglishby.azurecr.io/users:$(Build.BuildId)
+  displayName: 'Build&Push Docker Image'
