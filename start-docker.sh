@@ -1,3 +1,5 @@
+#!/bin/bash
+
 ENV=$1
 if [ -z "$ENV" ]; then
   echo "Please specify the environment."
