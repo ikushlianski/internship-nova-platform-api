@@ -6,11 +6,13 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  schemas = ["public", "intl"]
 }
 
 enum UserRole {
@@ -20,9 +22,33 @@ enum UserRole {
   Sales
   Manager
   Admin
+  @@schema("public")
 }
 
 model Role {
   id   Int      @id @default(autoincrement())
   name UserRole
+  @@schema("public")
+}
+
+model Class {
+  class_id          Int        @id @default(autoincrement())
+  class_code        String?    @db.VarChar // Should be generated automatically based on the "course" code plus date
+  course_id         Int?
+  start_date        DateTime   @db.Date 
+  end_date          DateTime?  @db.Date
+  tuition_lang_code String     @db.VarChar
+  max_capacity      Int        @db.SmallInt   
+  time_of_day_id    String     // Should be something like evening, day, morning
+  // Relations
+  TimeOfDay      TimeOfDay @relation(fields: [time_of_day_id], references: [time_of_day_id], name: "classes_time_of_day_fk")
+  @@schema("public")
+}
+
+model TimeOfDay {
+  time_of_day_id    String @id @db.VarChar // Should be something like evening, day, morning
+  time_of_day_label String @db.VarChar
+  // Relations
+  Class Class[] @relation(name: "classes_time_of_day_fk")
+  @@schema("public")
 }

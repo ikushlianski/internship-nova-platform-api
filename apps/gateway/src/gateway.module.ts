@@ -27,7 +27,7 @@ import { UsersRoutesController } from './routes/users-routes.controller';
         return ClientProxyFactory.create({
           transport: Transport.TCP,
           options: {
-            host: configService.get('USER_SERVICE_HOST'),  // name of microservice in docker-compose.yml
+            host: configService.get('USER_SERVICE_HOST'), // name of microservice in docker-compose.yml
             port: configService.get('USER_SERVICE_PORT'),
           },
         });
