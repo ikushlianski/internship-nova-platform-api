@@ -11,23 +11,25 @@ parameters:
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
-- task: UseNode@1
-  inputs:
-    version: '22.x'
-  displayName: 'Install Node.js'
+jobs:
+  - ${{ each service in parameters.listOfServices }}:
+    - job: build_${{ service }}
+      steps:
+      - task: UseNode@1
+        inputs:
+          version: '22.x'
+        displayName: 'Install Node.js'
 
-- pwsh: |
-    npm install
-  displayName: 'npm install'
+      - pwsh: |
+          npm install
+        displayName: 'npm install'
 
-- pwsh: |
-    npm run build
-  displayName: 'npm build'
+      - pwsh: |
+          npm run build
+        displayName: 'npm build'
 
-- ${{ each service in parameters.listOfServices }}:
-  - pwsh: |
-      docker build --no-cache --build-arg SERVICE_NAME=${{ service }} -t novaenglishby.azurecr.io/${{ service }}:$(Build.BuildId) .
-      docker login --username novaenglishby --password mDaRSVHmrPWUOSwYBXvj4FSVsVIuzd4NStC2JiIsu4+ACRDqtU5s novaenglishby.azurecr.io
-      docker push novaenglishby.azurecr.io/${{ service }}:$(Build.BuildId)
-    displayName: 'Build&Push Docker Image'
+      - pwsh: |
+          docker build --no-cache --build-arg SERVICE_NAME=${{ service }} -t novaenglishby.azurecr.io/${{ service }}:$(Build.BuildId) .
+          docker login --username novaenglishby --password mDaRSVHmrPWUOSwYBXvj4FSVsVIuzd4NStC2JiIsu4+ACRDqtU5s novaenglishby.azurecr.io
+          docker push novaenglishby.azurecr.io/${{ service }}:$(Build.BuildId)
+        displayName: 'Build&Push Docker Image'
