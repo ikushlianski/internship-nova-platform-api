@@ -18,16 +18,8 @@ steps:
     npm run build
   displayName: 'npm build'
 
-- task: Docker@2
-  inputs:
-    containerRegistry: 'novaenglishby'
-    repository: 'users'
-    command: 'buildAndPush'
-    Dockerfile: '**/Dockerfile'
-    tags: '$(Build.BuildId)'
-
 - pwsh: |
     docker build --no-cache --build-arg SERVICE_NAME=users -t novaenglishby.azurecr.io/users:$(Build.BuildId) .
-    docker login --username novaenglishby --password mDaRSVHmrPWUOSwYBXvj4FSVsVIuzd4NStC2JiIsu4+ACRDqtU5s
+    docker login --username novaenglishby --password mDaRSVHmrPWUOSwYBXvj4FSVsVIuzd4NStC2JiIsu4+ACRDqtU5s novaenglishby.azurecr.io
     docker push novaenglishby.azurecr.io/users:$(Build.BuildId)
   displayName: 'Build&Push Docker Image'
