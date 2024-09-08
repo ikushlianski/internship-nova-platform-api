@@ -5,8 +5,8 @@ parameters:
 - name: listOfServices
   type: object
   default:
-  - users
   - gateway
+  - users
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -29,7 +29,11 @@ jobs:
         displayName: 'npm build'
 
       - pwsh: |
+          ls -la dist/apps/
+        displayName: DEBUG
+
+      - pwsh: |
           docker build --no-cache --build-arg SERVICE_NAME=${{ service }} -t novaenglishby.azurecr.io/${{ service }}:$(Build.BuildId) .
           docker login --username novaenglishby --password mDaRSVHmrPWUOSwYBXvj4FSVsVIuzd4NStC2JiIsu4+ACRDqtU5s novaenglishby.azurecr.io
           docker push novaenglishby.azurecr.io/${{ service }}:$(Build.BuildId)
-        displayName: 'Build&Push Docker Image'
+        displayName: Build&Push Docker Image - ${{ service }} 
