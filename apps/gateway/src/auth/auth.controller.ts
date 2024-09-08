@@ -88,7 +88,11 @@ export class AuthController {
     @Res() res: Response,
     @Body() body: ParsedUserData,
   ): Promise<Response<AuthResponse>> {
-    if (this.configService.get<string>('APP_ENV') === AppEnvironment.Prod) {
+    console.log(
+      "this.configService.get<string>('APP_ENV')",
+      this.configService.get<string>('APP_ENV'),
+    );
+    if (this.configService.get<string>('APP_ENV') !== AppEnvironment.Prod) {
       try {
         const token = await this.authService.generateJwtToken(body);
 

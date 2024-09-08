@@ -130,6 +130,8 @@ model CourseTask {
   lesson    Lesson      @relation(fields: [lesson_id], references: [lesson_id])
   task      Task        @relation(fields: [task_id], references: [task_id])
   ClassTask ClassTask[]
+
+  @@map("course_task")
 }
 
 model CourseLevel {

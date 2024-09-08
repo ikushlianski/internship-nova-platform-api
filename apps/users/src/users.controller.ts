@@ -15,7 +15,7 @@ export class UsersController {
     return user;
   }
 
-  @MessagePattern('find_or_create_user')
+  @MessagePattern({ cmd: 'find_or_create_user' })
   async handleFindOrCreateUser(@Payload() userDto: ParsedUserData) {
     const user = await this.usersService.findOrCreateUser(userDto);
 

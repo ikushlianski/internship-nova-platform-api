@@ -17,7 +17,11 @@ export class UsersService {
 
     if (!user) {
       user = await this.prismaService.user.create({
-        data: { ...userDto, created_at: new Date(), updated_at: null },
+        data: {
+          ...userDto,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
       });
     }
 

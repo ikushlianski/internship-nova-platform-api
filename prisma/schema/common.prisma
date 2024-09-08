@@ -6,6 +6,8 @@ model Application {
   application_url         String?
 
   user_application_preferences UserApplicationPreferences[]
+
+  @@map("application")
 }
 
 enum DataRemovalStatusEnum {
@@ -31,4 +33,6 @@ model MeetingKind {
   meeting_kind_name String @unique
 
   class_calls ClassCall[]
+
+  @@map("meeting_kind")
 }

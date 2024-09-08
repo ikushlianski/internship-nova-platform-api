@@ -3,7 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersService } from './users.service';
 import { PrismaModule } from 'apps/users/src/prisma/prisma.module';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { UsersServiceListener } from './users.service.listener';
+import { UsersController } from './users.controller';
 
 // Define constants
 const USER_QUEUE = 'user_queue';
@@ -28,7 +28,7 @@ const USER_QUEUE = 'user_queue';
       },
     ]),
   ],
-  controllers: [UsersServiceListener],
+  controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService],
 })

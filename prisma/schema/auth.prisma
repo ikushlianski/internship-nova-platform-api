@@ -1,8 +1,11 @@
 model User {
   user_email String     @id
   created_at DateTime   @default(now())
-  updated_at DateTime
+  updated_at DateTime?
   user_roles UserRole[]
+  first_name String
+  last_name  String
+  nickname   String?
   /// This field is used to soft delete the user
   deleted    Boolean    @default(false)
 

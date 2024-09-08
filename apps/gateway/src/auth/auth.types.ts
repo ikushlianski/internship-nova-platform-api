@@ -10,14 +10,11 @@ export class AuthResponse {
 
 export class ParsedUserData {
   @ApiProperty()
-  name: string;
+  first_name: string;
+
+  @ApiProperty()
+  last_name: string;
 
   @ApiProperty()
   user_email: string;
-
-  @ApiProperty({
-    description:
-      'Indicates whether the user has accepted the terms and conditions.',
-  })
-  hasAcceptedTerms: boolean;
 }
