@@ -25,12 +25,8 @@ jobs:
         displayName: 'npm install'
 
       - pwsh: |
-          npm run build
+          npm run build ${{ service }}
         displayName: 'npm build'
-
-      - pwsh: |
-          ls -la dist/apps/
-        displayName: DEBUG
 
       - pwsh: |
           docker build --no-cache --build-arg SERVICE_NAME=${{ service }} -t novaenglishby.azurecr.io/${{ service }}:$(Build.BuildId) .
