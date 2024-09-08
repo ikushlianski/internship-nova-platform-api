@@ -1,6 +1,13 @@
 trigger:
 - main
 
+parameters:
+- name: listOfServices
+  type: object
+  default:
+  - users
+  - gateway
+
 pool:
   vmImage: 'ubuntu-latest'
 
@@ -18,8 +25,9 @@ steps:
     npm run build
   displayName: 'npm build'
 
-- pwsh: |
-    docker build --no-cache --build-arg SERVICE_NAME=users -t novaenglishby.azurecr.io/users:$(Build.BuildId) .
-    docker login --username novaenglishby --password mDaRSVHmrPWUOSwYBXvj4FSVsVIuzd4NStC2JiIsu4+ACRDqtU5s novaenglishby.azurecr.io
-    docker push novaenglishby.azurecr.io/users:$(Build.BuildId)
-  displayName: 'Build&Push Docker Image'
+- ${{ each service in parameters.listOfServices }}:
+  - pwsh: |
+      docker build --no-cache --build-arg SERVICE_NAME=${{ service }} -t novaenglishby.azurecr.io/${{ service }}:$(Build.BuildId) .
+      docker login --username novaenglishby --password mDaRSVHmrPWUOSwYBXvj4FSVsVIuzd4NStC2JiIsu4+ACRDqtU5s novaenglishby.azurecr.io
+      docker push novaenglishby.azurecr.io/${{ service }}:$(Build.BuildId)
+    displayName: 'Build&Push Docker Image'
