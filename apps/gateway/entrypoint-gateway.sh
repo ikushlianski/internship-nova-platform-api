@@ -1,2 +1,1 @@
-npm run migrate:dev
-npx nest start gateway --watch
+npm run migrate:dev && exec npx nest start gateway --watch

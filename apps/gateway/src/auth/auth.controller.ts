@@ -10,6 +10,7 @@ import {
   HttpException,
   Headers,
   Inject,
+  Query,
 } from '@nestjs/common';
 import { GoogleOauthGuard } from './guards/google-oauth.guard';
 import { Request, Response } from 'express';
@@ -19,8 +20,6 @@ import { Public } from './public.decorator';
 import { AuthResponse, ParsedUserData } from './auth.types';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AppEnvironment } from '../environment/environment.types';
-import { SERVICE_NAMES } from '../service-names';
-import { ClientProxy } from '@nestjs/microservices';
 
 const controllerName = 'auth';
 
@@ -38,8 +37,14 @@ export class AuthController {
   async googleAuthCallback(
     @Req() req: Request,
     @Res() res: Response,
-    @Headers('X-SSR') ssrHeader: string,
+    @Query('state') state: string,
   ) {
+    const stateFromLoginRequest = Object.fromEntries([
+      decodeURIComponent(state).split('='),
+    ]);
+
+    /* stateFromLoginRequest = { ssr: 'true' or 'false' } */
+
     let token: { jwt: string };
 
     try {
@@ -54,9 +59,7 @@ export class AuthController {
 
     const frontendUrl = this.configService.get<string>('FRONTEND_URL');
 
-    const isSSR = ssrHeader === 'true';
-
-    if (isSSR) {
+    if (stateFromLoginRequest.ssr === 'true') {
       // For SSR apps, redirect with the token in the query parameter
       return res.redirect(`${frontendUrl}/oauth?token=${token.jwt}`);
     } else {
