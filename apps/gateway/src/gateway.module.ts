@@ -5,7 +5,7 @@ import { SERVICE_NAMES } from './service-names';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/guards/jwt-auth.guard';
-import { UsersRoutesController } from './routes/users-routes.controller';
+import { UsersRoutesController } from './gateway-users.controller';
 
 @Module({
   imports: [
@@ -27,8 +27,8 @@ import { UsersRoutesController } from './routes/users-routes.controller';
         return ClientProxyFactory.create({
           transport: Transport.TCP,
           options: {
-            host: configService.get('USER_SERVICE_HOST'),  // name of microservice in docker-compose.yml
-            port: configService.get('USER_SERVICE_PORT'),
+            host: configService.get('USERS_SERVICE_HOST'),
+            port: configService.get('USERS_SERVICE_PORT'),
           },
         });
       },

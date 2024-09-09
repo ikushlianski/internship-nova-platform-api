@@ -1,5 +1,5 @@
 import { Controller, Get, Inject, Param } from '@nestjs/common';
-import { SERVICE_NAMES } from '../service-names';
+import { SERVICE_NAMES } from './service-names';
 import { ClientProxy } from '@nestjs/microservices';
 
 @Controller('users')

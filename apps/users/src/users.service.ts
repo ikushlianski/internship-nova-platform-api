@@ -1,18 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import { UserDTO } from './users.controller';
-
-const users: UserDTO[] = [
-  {
-    id: '1',
-    author: 'Charles',
-    title: 'Mark the master',
-    release_date: new Date('2000/11/14'),
-  },
-];
+import { PrismaService } from 'apps/users/src/prisma/prisma.service';
+import { ParsedUserData } from '../../gateway/src/auth/auth.types';
 
 @Injectable()
 export class UsersService {
-  getUserByID(userId: string) {
-    return users.find((b: UserDTO) => b.id == userId);
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async createUser(userDto: ParsedUserData) {
+    return await this.findOrCreateUser(userDto);
+  }
+
+  async findOrCreateUser(userDto: ParsedUserData) {
+    let user = await this.prismaService.user.findUnique({
+      where: { user_email: userDto.user_email },
+    });
+
+    if (!user) {
+      user = await this.prismaService.user.create({
+        data: {
+          ...userDto,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+      });
+    }
+
+    return user;
   }
 }

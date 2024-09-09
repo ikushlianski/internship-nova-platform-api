@@ -10,6 +10,7 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api/v1');
   app.use(cookieParser());
+  
 
   const config = new DocumentBuilder()
     .setTitle('Nova Platform API')
@@ -25,3 +26,4 @@ async function bootstrap() {
 }
 
 bootstrap();
+

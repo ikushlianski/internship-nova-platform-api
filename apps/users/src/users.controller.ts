@@ -1,20 +1,33 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { MessagePattern } from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
+import { ParsedUserData } from '../../gateway/src/auth/auth.types';
 
-export interface UserDTO {
-  id: string;
-  title: string;
-  author: string;
-  release_date: Date;
-}
-
-@Controller()
+@Controller('users')
 export class UsersController {
-  constructor(private readonly appService: UsersService) {}
+  constructor(private readonly usersService: UsersService) {}
+
+  @Post('/')
+  @HttpCode(HttpStatus.OK)
+  async createUser(@Body() userDto: ParsedUserData) {
+    const user = await this.usersService.createUser(userDto);
+
+    return user;
+  }
+
+  @MessagePattern({ cmd: 'find_or_create_user' })
+  async handleFindOrCreateUser(@Payload() userDto: ParsedUserData) {
+    const user = await this.usersService.findOrCreateUser(userDto);
+
+    return user;
+  }
 
   @MessagePattern({ cmd: 'get_user' })
-  getUserById(userId: string): UserDTO {
-    return this.appService.getUserByID(userId);
+  async handleGetUserByID(@Payload() id: string) {
+    return {
+      id,
+      email: 'abc@test-user.com',
+      name: 'Test User',
+    };
   }
 }
