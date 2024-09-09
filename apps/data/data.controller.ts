@@ -16,15 +16,16 @@ import { Public } from './../gateway/src/auth/public.decorator';
 export class DataController {
   constructor(private readonly dataService: DataService) {}
 
-  @Post()
-  createClass(@Body() createClassDto: CreateClassDto) {
-    return this.dataService.createClass(createClassDto);
-  }
-
   @Public()
   @Get()
   findAllClasses() {
     return this.dataService.findAllClasses();
+  }
+
+  @Public()
+  @Get()
+  findAllCourses() {
+    return this.dataService.findAllCourses();
   }
 
   // @Get(':id')

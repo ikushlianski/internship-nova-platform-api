@@ -16,4 +16,4 @@ import { PublicGuard } from 'apps/guards/public.guard';
   ],
   imports: [PrismaModule],
 })
-export class ClassesModule {}
+export class DataModule {}

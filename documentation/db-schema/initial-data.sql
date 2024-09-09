@@ -190,5 +190,3 @@ VALUES
   ('4d2c7b5a-9a8f-4e1b-9c6e-8d5b3a7f1c3e', 'Direct & Indirect Questions', '1', 'Forming and using different types of questions'),
   ('3e4a9b5d-2c7f-4a8b-9e6c-9d5b3a1f2e7f', 'Relative Clauses', '1', 'Clauses that provide additional information about a noun')
 ;
-
-

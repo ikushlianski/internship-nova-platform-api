@@ -1,0 +1,58 @@
+model Deck {
+  deck_id          String  @id
+  user_id          String
+  deck_description String?
+
+  user User         @relation(fields: [user_id], references: [user_email])
+  Card LessonCard[]
+
+  @@map("deck")
+}
+
+model LessonCard {
+  card_id     String  @id
+  deck_id     String
+  question    String
+  answer      String
+  example     String?
+  course_code String
+  lesson_id   Int
+
+  deck   Deck   @relation(fields: [deck_id], references: [deck_id])
+  course Course @relation(fields: [course_code], references: [course_code])
+  lesson Lesson @relation(fields: [lesson_id], references: [lesson_id])
+
+  @@map("card")
+}
+
+model UserCard {
+  user_card_id String  @id
+  user_id      String
+  question     String
+  answer       String
+  example      String?
+  lesson_id    Int?
+
+  user   User    @relation(fields: [user_id], references: [user_email])
+  lesson Lesson? @relation(fields: [lesson_id], references: [lesson_id])
+
+  @@map("user_card")
+}
+
+model Vocabulary {
+  vocabulary_id String @id
+  user_id       String
+
+  @@map("vocabulary")
+}
+
+model VocabularyInbox {
+  user_id  String
+  question String
+  answer   String
+
+  user User @relation(fields: [user_id], references: [user_email])
+
+  @@id([user_id, question])
+  @@map("vocabulary_inbox")
+}

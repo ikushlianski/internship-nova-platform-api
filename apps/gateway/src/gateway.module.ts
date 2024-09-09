@@ -5,7 +5,7 @@ import { SERVICE_NAMES } from './service-names';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/guards/jwt-auth.guard';
-import { UsersRoutesController } from './routes/users-routes.controller';
+import { UsersRoutesController } from './gateway-users.controller';
 
 @Module({
   imports: [

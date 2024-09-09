@@ -6,15 +6,14 @@ import { PrismaService } from '../prisma/prisma.service';
 @Injectable()
 export class DataService {
   constructor(private prisma: PrismaService) {}
-  async createClass(createClassDto: CreateClassDto) {
-    await this.prisma.class.create({ data: createClassDto });
-    return createClassDto;
-  }
 
   async findAllClasses() {
     return await this.prisma.class.findMany();
   }
 
+  async findAllCourses() {
+    return await this.prisma.course.findMany();
+  }
   // findOne(id: number) {
   //   return `This action returns a #${id} class`;
   // }

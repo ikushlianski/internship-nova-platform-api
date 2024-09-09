@@ -1,0 +1,166 @@
+model CourseStructure {
+  course_id  String
+  module_id  Int
+  section_id Int
+  lesson_id  Int
+
+  course  Course  @relation(fields: [course_id], references: [course_code])
+  module  Module  @relation(fields: [module_id], references: [module_id])
+  section Section @relation(fields: [section_id], references: [section_id])
+  lesson  Lesson  @relation(fields: [lesson_id], references: [lesson_id])
+
+  @@id([course_id, module_id, section_id, lesson_id])
+  @@map("course_structure")
+}
+
+enum MeetingKindEnum {
+  LESSON
+  WORKSHOP
+  EXAM
+  INTRO_CALL
+  OUTRO_CALL
+  SPEAKING_CLUB_LESSON
+  OTHER
+}
+
+enum ClassSizesEnum {
+  INDIVIDUAL
+  GROUP_2_4
+  GROUP_5_8
+  GROUP_9_12
+}
+
+/// Instance of a course
+model Class {
+  class_id          String    @id
+  class_code        String?
+  course_id         String
+  start_date        DateTime
+  end_date          DateTime?
+  tuition_lang_code String
+  time_of_day_id    String
+  start_time_gmt3   String
+  class_size_id     ClassSize @relation(fields: [classSizeClass_size_id], references: [class_size_id])
+  created_date      DateTime?
+  updated_date      DateTime?
+  deleted           Boolean   @default(false)
+
+  is_instance_of_course  Course           @relation(fields: [course_id], references: [course_code])
+  time_of_day            TimeOfDay        @relation(fields: [time_of_day_id], references: [time_of_day_id])
+  tuition_lang           TuitionLang      @relation(fields: [tuition_lang_code], references: [tuition_lang_code])
+  mentor_classes         MentorsClasses[]
+  students               Student[]
+  booking_requests       BookingRequest[]
+  class_calls            ClassCall[]
+  classSizeClass_size_id String
+  ClassTask              ClassTask[]
+
+  @@map("class")
+}
+
+model ClassCall {
+  class_call_id   String    @id
+  class_id        String
+  call_date       DateTime
+  created_date    DateTime?
+  updated_date    DateTime?
+  deleted         Boolean   @default(false)
+  meeting_kind_id String
+
+  class        Class       @relation(fields: [class_id], references: [class_id])
+  meeting_kind MeetingKind @relation(fields: [meeting_kind_id], references: [meeting_kind_id])
+
+  @@map("class_call")
+}
+
+model ClassSize {
+  class_size_id   String         @id
+  class_size_name ClassSizesEnum @unique
+
+  classes        Class[]
+  MentorPayModel MentorPayModel[]
+
+  @@map("class_size")
+}
+
+model Course {
+  course_code     String    @id
+  course_name     String?
+  course_level_id String
+  created_date    DateTime?
+  subject_code    String
+
+  course_level    CourseLevel       @relation(fields: [course_level_id], references: [course_level_id])
+  course_advice   CourseAdvice[]
+  classes         Class[]
+  subject         Subject?          @relation(fields: [subject_code], references: [subject_code])
+  CourseStructure CourseStructure[]
+  CourseTask      CourseTask[]
+  Module          Module[]
+  LessonCard      LessonCard[]
+
+  @@map("course")
+}
+
+model CourseAdvice {
+  advice_id      String  @id
+  course_code    String
+  advice_text    String?
+  last_used_date String?
+  created_date   String
+
+  course Course @relation(fields: [course_code], references: [course_code])
+
+  @@map("course_advice")
+}
+
+// template homework tasks for course that will be copied to each class homework
+model CourseTask {
+  course_task_id String @id
+  course_id      String
+  module_id      Int
+  section_id     Int
+  lesson_id      Int
+  task_id        Int
+  question       String
+
+  course    Course      @relation(fields: [course_id], references: [course_code])
+  module    Module      @relation(fields: [module_id], references: [module_id])
+  section   Section     @relation(fields: [section_id], references: [section_id])
+  lesson    Lesson      @relation(fields: [lesson_id], references: [lesson_id])
+  task      Task        @relation(fields: [task_id], references: [task_id])
+  ClassTask ClassTask[]
+
+  @@map("course_task")
+}
+
+model CourseLevel {
+  course_level_id   String @id
+  course_level_name String
+
+  course                 Course[]
+  CourseLevelsPerSubject CourseLevelsPerSubject[]
+
+  @@map("course_level")
+}
+
+model Subject {
+  subject_code String @id
+  subject_name String
+
+  Course                 Course[]
+  CourseLevelsPerSubject CourseLevelsPerSubject[]
+
+  @@map("subject")
+}
+
+model CourseLevelsPerSubject {
+  course_level_id String
+  subject_code    String
+
+  course_level CourseLevel @relation(fields: [course_level_id], references: [course_level_id])
+  subject      Subject     @relation(fields: [subject_code], references: [subject_code])
+
+  @@id([course_level_id, subject_code])
+  @@map("course_levels_per_subject")
+}

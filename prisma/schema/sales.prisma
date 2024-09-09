@@ -1,0 +1,23 @@
+model BookingRequest {
+  booking_request_id            String               @id
+  class_id                      String
+  booking_date                  DateTime
+  booking_request_status        BookingRequestStatus @default(PENDING)
+  user_stated_name              String?
+  user_stated_phone             String?
+  user_stated_email             String?
+  user_stated_telegram_nickname String?
+
+  class Class @relation(fields: [class_id], references: [class_id])
+
+  @@map("booking_request")
+}
+
+enum BookingRequestStatus {
+  PENDING
+  NEGOITIATING
+  /// Student assigned to a class
+  ASSIGNED
+  REJECTED
+  LOST
+}
