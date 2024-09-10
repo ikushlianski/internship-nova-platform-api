@@ -2,9 +2,9 @@ name: Test and Build on Pull Request
 
 on:
   pull_request:
+  push:
     branches:
       - main
-  push:
 
 jobs:
   test-and-build:
@@ -20,7 +20,10 @@ jobs:
           node-version: '22'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+
+      - name: Generate a Prisma client
+        run: npm run prisma:generate
 
       - name: Run tests
         run: npm run test -- --passWithNoTests
