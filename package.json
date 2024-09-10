@@ -8,7 +8,7 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
-    "dev": "sh scripts/start-docker.sh .env.development.local && sleep 1000 && npm run migrate:dev",
+    "dev": "sh scripts/start-docker.sh .env.development.local",
     "dev:cleanup": "scripts/cleanup-docker.sh .env.development.local",
     "start": "nest start",
     "start:dev": "nest start --watch",
