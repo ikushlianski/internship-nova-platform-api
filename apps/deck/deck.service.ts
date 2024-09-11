@@ -6,7 +6,7 @@ import { Deck } from '@prisma/client';
 export class DeckService {
   constructor(private prisma: PrismaService) {}
 
-  // Fetch all decks for a user by user email
+  // Get all decks for a user by user email
   async getUserDecks(userEmail: string): Promise<Deck[]> {
     const user = await this.prisma.user.findUnique({
       where: { email: userEmail },
