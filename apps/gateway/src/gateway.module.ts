@@ -6,13 +6,14 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/guards/jwt-auth.guard';
 import { UsersRoutesController } from './gateway-users.controller';
+import { DataModule } from 'apps/data/data.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: ['.env.development.local', '.env.development', '.env'],
     }),
-    AuthModule,
+    AuthModule, DataModule
   ],
   controllers: [UsersRoutesController],
   providers: [
@@ -29,6 +30,19 @@ import { UsersRoutesController } from './gateway-users.controller';
           options: {
             host: configService.get('USER_SERVICE_HOST'), // name of microservice in docker-compose.yml
             port: configService.get('USER_SERVICE_PORT'),
+          },
+        });
+      },
+    },
+    {
+      provide: SERVICE_NAMES.DATA_SERVICE,
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        return ClientProxyFactory.create({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get('DATA_SERVICE_HOST'), // name of microservice in docker-compose.yml
+            port: configService.get('DATA_SERVICE_PORT'),
           },
         });
       },
