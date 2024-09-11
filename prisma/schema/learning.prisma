@@ -1,6 +1,6 @@
 model Deck {
   deck_id          String  @id
-  user_id          String
+  user_id          String 
   deck_description String?
 
   user User         @relation(fields: [user_id], references: [user_email])
