@@ -1,7 +1,7 @@
-FROM node:22-alpine
+FROM node:22-alpine as development
 WORKDIR /usr/src/server
 
-ARG USER_SERVICE_PORT
+ARG USERS_SERVICE_PORT
 ARG POSTGRES_PASSWORD
 ARG ENV_FILE
 
@@ -10,9 +10,24 @@ ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 COPY package*.json ./
 COPY ${ENV_FILE} ./
 COPY ./apps ./
-COPY ./prisma ./
 COPY nest-cli.json ./
 COPY tsconfig*.json ./
 
 RUN npm ci
-EXPOSE ${USER_SERVICE_PORT}
+
+EXPOSE ${USERS_SERVICE_PORT}
+
+# command at this stage will come from docker compose
+
+
+FROM base as production
+
+COPY --from=base /usr/src/server/node_modules ./node_modules
+COPY --from=base /usr/src/server/package*.json ./
+COPY --from=base /usr/src/server/dist ./dist
+
+RUN npm run build
+
+EXPOSE ${GATEWAY_PORT}
+
+CMD ["npm", "run", "start:prod" ]

@@ -7,6 +7,10 @@ import {
   Req,
   Res,
   UseGuards,
+  HttpException,
+  Headers,
+  Inject,
+  Query,
 } from '@nestjs/common';
 import { GoogleOauthGuard } from './guards/google-oauth.guard';
 import { Request, Response } from 'express';
@@ -15,7 +19,7 @@ import { AuthService } from './auth.service';
 import { Public } from './public.decorator';
 import { AuthResponse, ParsedUserData } from './auth.types';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { EnvironmentService } from '../environment/environment.service';
+import { AppEnvironment } from '../environment/environment.types';
 
 const controllerName = 'auth';
 
@@ -25,13 +29,22 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private configService: ConfigService,
-    private environmentService: EnvironmentService,
   ) {}
 
   @Public()
   @Get('google/callback')
   @UseGuards(GoogleOauthGuard)
-  async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
+  async googleAuthCallback(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Query('state') state: string,
+  ) {
+    const stateFromLoginRequest = Object.fromEntries([
+      decodeURIComponent(state).split('='),
+    ]);
+
+    /* stateFromLoginRequest = { ssr: 'true' or 'false' } */
+
     let token: { jwt: string };
 
     try {
@@ -39,14 +52,30 @@ export class AuthController {
         req.user as ParsedUserData,
       );
     } catch (err) {
-      res
+      return res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .send({ success: false, message: err.message });
     }
 
     const frontendUrl = this.configService.get<string>('FRONTEND_URL');
 
-    res.redirect(`${frontendUrl}/oauth?token=${token.jwt}`);
+    if (stateFromLoginRequest.ssr === 'true') {
+      // For SSR apps, redirect with the token in the query parameter
+      return res.redirect(`${frontendUrl}/oauth?token=${token.jwt}`);
+    } else {
+      // For non-SSR apps, set the cookie directly
+      res.cookie('googleToken', token.jwt, {
+        httpOnly: true,
+        secure: true, // Adjust as per environment
+        path: '/',
+        sameSite: 'lax',
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30), // 30 days
+        domain: this.configService.get<string>('APP_DOMAIN'), // Use the environment variable
+      });
+
+      // todo for now redirects to frontend main page, but in the future consider maintaining the state of where the user originally wanted to navigate before being required to log in
+      return res.redirect(frontendUrl);
+    }
   }
 
   @ApiOperation({ summary: 'Generate token' })
@@ -62,10 +91,11 @@ export class AuthController {
     @Res() res: Response,
     @Body() body: ParsedUserData,
   ): Promise<Response<AuthResponse>> {
-    // Should not be available in production
-    if (
-      this.environmentService.isDevelopment(this.configService.get('APP_ENV'))
-    ) {
+    console.log(
+      "this.configService.get<string>('APP_ENV')",
+      this.configService.get<string>('APP_ENV'),
+    );
+    if (this.configService.get<string>('APP_ENV') !== AppEnvironment.Prod) {
       try {
         const token = await this.authService.generateJwtToken(body);
 
@@ -74,11 +104,12 @@ export class AuthController {
           secure: false,
           path: '/',
           sameSite: 'none',
+          domain: this.configService.get<string>('APP_DOMAIN'),
         });
 
         return res.send({ success: true, token: token.jwt });
       } catch (err) {
-        res
+        return res
           .status(HttpStatus.INTERNAL_SERVER_ERROR)
           .send({ success: false, message: err.message });
       }

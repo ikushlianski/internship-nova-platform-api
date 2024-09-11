@@ -1,6 +1,8 @@
 services:
   gateway:
+    container_name: gateway
     build:
+      target: ${NODE_ENV}
       context: .
       dockerfile: apps/gateway/Dockerfile
       args:
@@ -19,17 +21,19 @@ services:
     depends_on:
       - database
   users:
+    container_name: users
     env_file:
       - ${ENV_FILE}
     build:
+      target: ${NODE_ENV}
       context: .
       dockerfile: apps/users/Dockerfile
       args:
-        - USER_SERVICE_PORT=${USER_SERVICE_PORT}
+        - USERS_SERVICE_PORT=${USERS_SERVICE_PORT}
         - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
         - ENV_FILE=${ENV_FILE}
     ports:
-      - "${USER_SERVICE_PORT}:${USER_SERVICE_PORT}"
+      - "${USERS_SERVICE_PORT}:${USERS_SERVICE_PORT}"
     volumes:
       - .:/usr/src/server
     command: npx nest start users --watch
@@ -38,6 +42,7 @@ services:
     depends_on:
       - database
   database:
+    container_name: database
     restart: always
     image: postgres:16.3-alpine
     env_file:
@@ -51,19 +56,6 @@ services:
       - "${DATABASE_PORT}:${DATABASE_PORT}"
     networks:
       - local
-    volumes:
-      - ./documentation/db-schema/ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
-  pgadmin:
-    restart: always
-    image: dpage/pgadmin4:8.11.0
-    env_file:
-      - ${ENV_FILE}
-    ports:
-      - "${PGADMIN_LISTEN_PORT}:${PGADMIN_LISTEN_PORT}"
-    networks:
-      - local
-    depends_on:
-      - database
 volumes:
   database:
     driver: local

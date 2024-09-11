@@ -10,8 +10,11 @@ export class AuthResponse {
 
 export class ParsedUserData {
   @ApiProperty()
-  name: string;
+  first_name: string;
 
   @ApiProperty()
-  email: string;
+  last_name: string;
+
+  @ApiProperty()
+  user_email: string;
 }
