@@ -16,7 +16,7 @@ services:
       - .:/usr/src/server
     ports:
       - "${GATEWAY_PORT}:${GATEWAY_PORT}"
-#    command: npx nest start gateway --watch
+    command: npx nest start gateway --watch
     networks:
       - local
     depends_on:
