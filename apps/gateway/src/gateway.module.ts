@@ -33,6 +33,19 @@ import { UsersRoutesController } from './gateway-users.controller';
         });
       },
     },
+    {
+      provide: SERVICE_NAMES.LEARNING_SERVICE,
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        return ClientProxyFactory.create({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get('LEARNING_SERVICE_HOST'),
+            port: configService.get('LEARNING_SERVICE_PORT'),
+          },
+        });
+      },
+    },
   ],
 })
-export class GatewayModule {}
+export class GatewayModule { }
