@@ -1,0 +1,53 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["prismaSchemaFolder"]
+  binaryTargets   = ["native", "linux-musl-arm64-openssl-3.0.x", "linux-musl-arm64-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
+  output          = "../prisma-client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model from auth.prisma
+model Users {
+  user_email String    @id @map("user_email")
+  created_at DateTime  @default(now())
+  updated_at DateTime?
+  first_name String
+  last_name  String
+  nickname   String?
+  deleted    Boolean   @default(false)
+
+  DeckTest     DeckTest[]
+  UserCardTest UserCardTest[]
+
+  @@map("users")
+}
+
+// Models from learning.prisma
+model DeckTest {
+  deck_id          String  @id @map("deck_id")
+  user_id          String
+  deck_description String?
+
+  user         Users          @relation(fields: [user_id], references: [user_email])
+  UserCardTest UserCardTest[]
+
+  @@map("deck_tests")
+}
+
+model UserCardTest {
+  user_card_id String  @id @map("user_card_id")
+  user_id      String
+  deck_id      String
+  question     String
+  answer       String
+  example      String?
+
+  user Users    @relation(fields: [user_id], references: [user_email])
+  deck DeckTest @relation(fields: [deck_id], references: [deck_id])
+
+  @@map("user_card_tests")
+}
