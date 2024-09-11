@@ -42,6 +42,27 @@ services:
       - local
     depends_on:
       - database
+  learning:
+    container_name: learning
+    env_file:
+      - ${ENV_FILE}
+    build:
+      target: ${NODE_ENV}
+      context: .
+      dockerfile: apps/learning/Dockerfile
+      args:
+        - LEARNING_SERVICE_PORT=${LEARNING_SERVICE_PORT}
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        - ENV_FILE=${ENV_FILE}
+    ports:
+      - "${LEARNING_SERVICE_PORT}:${LEARNING_SERVICE_PORT}"
+    volumes:
+      - .:/usr/src/server
+    command: npx nest start learning --watch
+    networks:
+      - local
+    depends_on:
+      - database
   database:
     container_name: database
     restart: always
