@@ -25,4 +25,10 @@ jobs:
         run: npm run build ${{ matrix.service }}
 
       - name: Build Docker Image
-        run: docker build --no-cache --build-arg SERVICE_NAME=${{ matrix.service }} -t novaenglishby.azurecr.io/${{ matrix.service }}:${{ github.sha }} .
+        run: |
+          docker build --no-cache --build-arg SERVICE_NAME=${{ matrix.service }} -t ${{ secrets.REGISTRY_URL }}/${{ matrix.service }}:${{ github.sha }} .
+
+      - name: Push Docker images
+        run: |
+          echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login ${{ secrets.REGISTRY_URL }} --username ${{ secrets.REGISTRY_USERNAME }} --password-stdin
+          docker push ${{ secrets.REGISTRY_URL }}/${{ matrix.service }}:${{ github.sha }}
