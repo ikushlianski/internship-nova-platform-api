@@ -498,7 +498,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/mnt/e/Nova English platform/nova-platform-api/prisma/prisma-client",
+      "value": "E:\\Nova English platform\\nova-platform-api\\prisma\\prisma-client",
       "fromEnvVar": null
     },
     "config": {
@@ -507,7 +507,7 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "debian-openssl-3.0.x",
+        "value": "windows",
         "native": true
       },
       {
@@ -526,7 +526,7 @@ const config = {
     "previewFeatures": [
       "prismaSchemaFolder"
     ],
-    "sourceFilePath": "/mnt/e/Nova English platform/nova-platform-api/prisma/schema/schema.prisma",
+    "sourceFilePath": "E:\\Nova English platform\\nova-platform-api\\prisma\\schema\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -539,6 +539,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": true,
   "inlineDatasources": {
     "db": {
       "url": {

@@ -6,6 +6,9 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/guards/jwt-auth.guard';
 import { UsersRoutesController } from './gateway-users.controller';
+import { CardsController } from 'apps/learning/src/cards.controller';
+import { PrismaModule } from 'apps/learning/src/prisma/prisma.module';
+import { CardsService } from 'apps/learning/src/cards.service';
 
 @Module({
   imports: [
@@ -13,9 +16,11 @@ import { UsersRoutesController } from './gateway-users.controller';
       envFilePath: ['.env.development.local', '.env.development', '.env'],
     }),
     AuthModule,
+    PrismaModule, // Add PrismaModule here
   ],
-  controllers: [UsersRoutesController],
+  controllers: [UsersRoutesController, CardsController],
   providers: [
+    CardsService,
     {
       provide: APP_GUARD,
       useClass: JwtGuard,
@@ -48,4 +53,4 @@ import { UsersRoutesController } from './gateway-users.controller';
     },
   ],
 })
-export class GatewayModule { }
+export class GatewayModule {}
