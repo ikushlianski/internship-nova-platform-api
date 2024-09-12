@@ -22,12 +22,9 @@ export class UsersController {
     return user;
   }
 
-  @MessagePattern({ cmd: 'get_user' })
-  async handleGetUserByID(@Payload() id: string) {
-    return {
-      id,
-      email: 'abc@test-user.com',
-      name: 'Test User',
-    };
+  @MessagePattern('main_queue')
+  handleMessage(message: any) {
+    console.log('Received message:', message);
+    return { success: true };
   }
 }
