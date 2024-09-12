@@ -363,31 +363,6 @@ exports.Prisma.BookingRequestScalarFieldEnum = {
   user_stated_telegram_nickname: 'user_stated_telegram_nickname'
 };
 
-exports.Prisma.UsersScalarFieldEnum = {
-  user_email: 'user_email',
-  created_at: 'created_at',
-  updated_at: 'updated_at',
-  first_name: 'first_name',
-  last_name: 'last_name',
-  nickname: 'nickname',
-  deleted: 'deleted'
-};
-
-exports.Prisma.DeckTestScalarFieldEnum = {
-  deck_id: 'deck_id',
-  user_id: 'user_id',
-  deck_description: 'deck_description'
-};
-
-exports.Prisma.UserCardTestScalarFieldEnum = {
-  user_card_id: 'user_card_id',
-  user_id: 'user_id',
-  deck_id: 'deck_id',
-  question: 'question',
-  answer: 'answer',
-  example: 'example'
-};
-
 exports.Prisma.ClassTaskScalarFieldEnum = {
   class_task_id: 'class_task_id',
   course_task_id: 'course_task_id',
@@ -534,9 +509,6 @@ exports.Prisma.ModelName = {
   Vocabulary: 'Vocabulary',
   VocabularyInbox: 'VocabularyInbox',
   BookingRequest: 'BookingRequest',
-  Users: 'Users',
-  DeckTest: 'DeckTest',
-  UserCardTest: 'UserCardTest',
   ClassTask: 'ClassTask',
   Student: 'Student',
   StudentAnswer: 'StudentAnswer',

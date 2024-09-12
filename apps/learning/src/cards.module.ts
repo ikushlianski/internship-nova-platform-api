@@ -1,16 +1,13 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { CardsController } from './cards.controller';
+import { CardsService } from './cards.service';
+import { PrismaModule } from './prisma/prisma.module';
 
 
 @Module({
-  imports: [
-    // PrismaModule,
-    ConfigModule.forRoot({
-      envFilePath: ['.env.development.local', '.env.development', '.env'],
-    }),
-  ],
-//   controllers: [LearningController],
-//   providers: [LearningService],
-//   exports: [LearningService],
+  imports: [PrismaModule],
+  controllers: [CardsController],
+  providers: [CardsService],
 })
 export class LearningModule {}
+
