@@ -24,11 +24,15 @@ jobs:
       - name: Build the project
         run: npm run build ${{ matrix.service }}
 
+      - name: Extract branch name
+        id: get_branch
+        run: echo "branch=$(echo ${GITHUB_REF#refs/heads/} | tr '/' '-')" >> $GITHUB_ENV
+
       - name: Build Docker Image
         run: |
-          docker build --no-cache --build-arg SERVICE_NAME=${{ matrix.service }} -t ${{ secrets.REGISTRY_URL }}/${{ matrix.service }}:${{ github.sha }} .
+          docker build --no-cache --build-arg SERVICE_NAME=${{ matrix.service }} -t ${{ secrets.REGISTRY_URL }}/${{ matrix.service }}:${{ env.branch }}-${GITHUB_SHA::7} .
 
       - name: Push Docker images
         run: |
           echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login ${{ secrets.REGISTRY_URL }} --username ${{ secrets.REGISTRY_USERNAME }} --password-stdin
-          docker push ${{ secrets.REGISTRY_URL }}/${{ matrix.service }}:${{ github.sha }}
+          docker push ${{ secrets.REGISTRY_URL }}/${{ matrix.service }}:${{ env.branch }}-${GITHUB_SHA::7}
