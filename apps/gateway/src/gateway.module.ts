@@ -16,7 +16,7 @@ import { CardsService } from 'apps/learning/src/cards.service';
       envFilePath: ['.env.development.local', '.env.development', '.env'],
     }),
     AuthModule,
-    PrismaModule, // Add PrismaModule here
+    PrismaModule, 
   ],
   controllers: [UsersRoutesController, CardsController],
   providers: [
