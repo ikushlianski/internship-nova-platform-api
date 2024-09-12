@@ -7,8 +7,10 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
+    "build:users": "nest build users",
+    "build:gateway": "nest build gateway",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
-    "dev": " sh scripts/start-docker.sh .env.development.local",
+    "dev": "sh scripts/start-docker.sh .env.development.local",
     "dev:cleanup": "scripts/cleanup-docker.sh .env.development.local",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -119,3 +121,4 @@
     "seed": "tsx prisma/seed.ts"
   }
 }
+
