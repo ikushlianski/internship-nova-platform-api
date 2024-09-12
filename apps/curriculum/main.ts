@@ -1,16 +1,16 @@
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
-import { DataModule } from './data.module';
+import { CurriculumModule} from './curriculum.module';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    DataModule,
+    CurriculumModule,
     {
       transport: Transport.TCP,
       options: {
-        host: 'data',
-        port: new ConfigService().get('DATA_SERVICE_PORT'),
+        host: 'curriculum',
+        port: new ConfigService().get('CURRICULUM_SERVICE_PORT'),
       },
     },
   );

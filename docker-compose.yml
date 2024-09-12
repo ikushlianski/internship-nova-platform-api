@@ -42,20 +42,20 @@ services:
       - local
     depends_on:
       - database
-  data:
-    container_name: data
+  curriculum:
+    container_name: curriculum
     env_file:
       - ${ENV_FILE}
     build:
       target: ${NODE_ENV}
       context: .
-      dockerfile: apps/data/Dockerfile
+      dockerfile: apps/curriculum/Dockerfile
       args:
-        - DATA_SERVICE_PORT=${DATA_SERVICE_PORT}
+        - CURRICULUM_SERVICE_PORT=${CURRICULUM_SERVICE_PORT}
         - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
         - ENV_FILE=${ENV_FILE}
     ports:
-      - '${DATA_SERVICE_PORT}:${DATA_SERVICE_PORT}'
+      - '${CURRICULUM_SERVICE_PORT}:${CURRICULUM_SERVICE_PORT}'
     volumes:
       - .:/usr/src/server
     command: npx nest start data --watch

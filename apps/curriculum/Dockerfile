@@ -1,7 +1,7 @@
 FROM node:22-alpine as development
 WORKDIR /usr/src/server
 
-ARG DATA_SERVICE_PORT
+ARG CURRICULUM_SERVICE_PORT
 ARG POSTGRES_PASSWORD
 ARG ENV_FILE
 
@@ -15,7 +15,7 @@ COPY tsconfig*.json ./
 
 RUN npm ci
 
-EXPOSE ${DATA_SERVICE_PORT}
+EXPOSE ${CURRICULUM_SERVICE_PORT}
 
 # command at this stage will come from docker compose
 

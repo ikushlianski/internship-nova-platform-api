@@ -4,7 +4,7 @@ import { UpdateClassDto } from './dto/update-class.dto';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
-export class DataService {
+export class CurriculumService {
   constructor(private prisma: PrismaService) {}
 
   async findAllClasses() {

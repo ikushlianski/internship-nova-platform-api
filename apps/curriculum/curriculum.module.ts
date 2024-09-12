@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
-import { DataService } from './data.service';
-import { DataController } from './data.controller';
+import { CurriculumService} from './curriculum.service';
+import { CurriculumController} from './curriculum.controller';
 import { PrismaModule } from 'apps/prisma/prisma.module';
 import { APP_GUARD } from '@nestjs/core';
 import { PublicGuard } from 'apps/guards/public.guard';
 
 @Module({
-  controllers: [DataController],
+  controllers: [CurriculumController],
   providers: [
-    DataService,
+    CurriculumService,
     {
       provide: APP_GUARD,
       useClass: PublicGuard,
@@ -16,4 +16,4 @@ import { PublicGuard } from 'apps/guards/public.guard';
   ],
   imports: [PrismaModule],
 })
-export class DataModule {}
+export class CurriculumModule {}

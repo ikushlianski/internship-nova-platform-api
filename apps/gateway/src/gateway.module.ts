@@ -6,14 +6,15 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/guards/jwt-auth.guard';
 import { UsersRoutesController } from './gateway-users.controller';
-import { DataModule } from 'apps/data/data.module';
+import { CurriculumModule } from 'apps/curriculum/curriculum.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: ['.env.development.local', '.env.development', '.env'],
     }),
-    AuthModule, DataModule
+    AuthModule,
+    CurriculumModule,
   ],
   controllers: [UsersRoutesController],
   providers: [
@@ -35,14 +36,14 @@ import { DataModule } from 'apps/data/data.module';
       },
     },
     {
-      provide: SERVICE_NAMES.DATA_SERVICE,
+      provide: SERVICE_NAMES.CURRICULUM_SERVICE,
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
         return ClientProxyFactory.create({
           transport: Transport.TCP,
           options: {
-            host: configService.get('DATA_SERVICE_HOST'), // name of microservice in docker-compose.yml
-            port: configService.get('DATA_SERVICE_PORT'),
+            host: configService.get('CURRICULUM_SERVICE_HOST'), // name of microservice in docker-compose.yml
+            port: configService.get('CURRICULUM_SERVICE_PORT'),
           },
         });
       },

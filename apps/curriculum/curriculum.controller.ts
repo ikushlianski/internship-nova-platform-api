@@ -7,14 +7,14 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { DataService } from './data.service';
+import { CurriculumService} from './curriculum.service';
 import { CreateClassDto } from './dto/create-class.dto';
 import { UpdateClassDto } from './dto/update-class.dto';
-import { Public } from './../gateway/src/auth/public.decorator';
+import { Public } from '../gateway/src/auth/public.decorator';
 
 @Controller('data')
-export class DataController {
-  constructor(private readonly dataService: DataService) {}
+export class CurriculumController {
+  constructor(private readonly dataService: CurriculumService) {}
 
   @Public()
   @Get()
