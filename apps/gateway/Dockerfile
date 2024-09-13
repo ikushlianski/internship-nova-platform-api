@@ -20,7 +20,7 @@ RUN npm ci
 EXPOSE ${GATEWAY_PORT}
 
 # `gateway` microservice not only starts but also runs migrations, because it's kind of "main" microservice
-CMD ["./apps/gateway/entrypoint-gateway.sh"]
+#CMD ["./apps/gateway/entrypoint-gateway.sh"]
 
 FROM development as production
 
