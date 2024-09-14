@@ -19,9 +19,9 @@ export class AuthService {
 
   generateJwtToken(user: ParsedUserData) {
     const payload = {
-      email: user.user_email,
       first_name: user.first_name,
       last_name: user.last_name,
+      email: user.user_email,
     };
     const jwt = this.jwtService.sign(payload, { expiresIn: '30d' });
     return { jwt };
