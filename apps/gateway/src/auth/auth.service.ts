@@ -12,14 +12,12 @@ export class AuthService {
   ) {}
 
   async findOrCreateUser(userDto: ParsedUserData) {
-    const user = await this.client
-      .send({ cmd: 'find_or_create_user' }, userDto)
-      .toPromise();
+    const user = await this.client.send({ cmd: 'find_or_create_user' }, userDto).toPromise();
 
     return user;
   }
 
-  async generateJwtToken(user: ParsedUserData) {
+  generateJwtToken(user: ParsedUserData) {
     const payload = {
       email: user.user_email,
       first_name: user.first_name,
@@ -27,5 +25,13 @@ export class AuthService {
     };
     const jwt = this.jwtService.sign(payload, { expiresIn: '30d' });
     return { jwt };
+  }
+
+  parseLoginRequestState(state: string) {
+    return Object.fromEntries(
+      decodeURIComponent(state)
+        .split('&')
+        .map((pair) => pair.split('=')),
+    );
   }
 }
