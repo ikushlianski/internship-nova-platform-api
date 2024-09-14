@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ClientProxy } from '@nestjs/microservices';
 import { ParsedUserData } from './auth.types';
+import { ClientProxy } from '@nestjs/microservices';
 import { SERVICE_NAMES } from '../service-names';
 
 @Injectable()
