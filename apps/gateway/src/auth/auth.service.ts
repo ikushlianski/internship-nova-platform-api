@@ -1,8 +1,8 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
-import { ParsedUserData } from './auth.types';
 import { SERVICE_NAMES } from '../service-names';
+import { ParsedUserData } from './auth.types';
 
 @Injectable()
 export class AuthService {
