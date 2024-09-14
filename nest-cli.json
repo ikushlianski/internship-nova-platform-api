@@ -36,6 +36,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/auth/tsconfig.app.json"
       }
+    },
+    "curriculum": {
+      "type": "application",
+      "root": "apps/curriculum",
+      "entryFile": "main",
+      "sourceRoot": "apps/curriculum",
+      "compilerOptions": {
+        "tsConfigPath": "apps/curriculum/tsconfig.app.json"
+      }
     }
   }
 }

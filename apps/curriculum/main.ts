@@ -9,7 +9,7 @@ async function bootstrap() {
     {
       transport: Transport.TCP,
       options: {
-        host: 'curriculum',
+        host: '0.0.0.0',
         port: new ConfigService().get('CURRICULUM_SERVICE_PORT'),
       },
     },

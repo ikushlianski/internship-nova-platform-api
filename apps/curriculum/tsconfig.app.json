@@ -2,7 +2,7 @@
     "extends": "../../tsconfig.json",
     "compilerOptions": {
       "declaration": false,
-      "outDir": "../../dist/apps/data"
+      "outDir": "../../dist/apps/curriculum"
     },
     "include": ["src/**/*"],
     "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]

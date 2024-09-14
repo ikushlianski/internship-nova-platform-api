@@ -3,28 +3,97 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
+  HttpStatus,
+  HttpCode,
+  Put,
 } from '@nestjs/common';
-import { CurriculumService} from './curriculum.service';
-import { CreateClassDto } from './dto/create-class.dto';
-import { UpdateClassDto } from './dto/update-class.dto';
+import { CurriculumService } from './curriculum.service';
 import { Public } from '../gateway/src/auth/public.decorator';
+import { ClassSchema, CourseSchema, IDClassParametr, IDCourseParametr } from './dto/curriculum.dto';
 
-@Controller('data')
+@Controller('curriculum')
 export class CurriculumController {
-  constructor(private readonly dataService: CurriculumService) {}
+  constructor(private curriculumService: CurriculumService) {}
 
   @Public()
   @Get()
-  findAllClasses() {
-    return this.dataService.findAllClasses();
+  getAllClasses() {
+    return this.curriculumService.getAllClasses();
+  }
+
+  @Get(':class_id')
+  @HttpCode(HttpStatus.OK)
+  getClassByID(@Param() ClassToGet: IDClassParametr) {
+    return this.curriculumService.getClassByID(ClassToGet.class_id);
+  }
+
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  async createClass(@Body() newClass: ClassSchema) {
+    const createdClass = await this.curriculumService.createClass(newClass);
+    return createdClass;
+  }
+
+  @Delete(':class_id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  deleteClass(@Param() ClassToDelete:  IDClassParametr) {
+    const classID = this.curriculumService.deleteClass(ClassToDelete.class_id);
+    return classID;
+  }
+
+
+  @Put(':class_id')
+  async updateClassInfo(
+    @Param() classToUpdate: IDClassParametr,
+    @Body() updatedClassData: ClassSchema,
+  ) {
+    const updatedClass = await this.curriculumService.updateClass(
+      classToUpdate.class_id,
+     updatedClassData,
+    );
+    return updatedClass;
   }
 
   @Public()
   @Get()
-  findAllCourses() {
-    return this.dataService.findAllCourses();
+  getAllCourses() {
+    return this.getAllCourses();
   }
+
+
+  @Get(':course_code')
+  @HttpCode(HttpStatus.OK)
+  getCourseByID(@Param() CourseToGet: IDCourseParametr) {
+    return this.curriculumService.getCourseByID(CourseToGet.course_code);
+  }
+
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  async createCourse(@Body() newCourse: CourseSchema) {
+    const createdCourse = await this.curriculumService.createCourse(newCourse);
+    return createdCourse;
+  }
+
+  @Delete(':course_code')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  deleteCourse(@Param() CourseToDelete:  IDCourseParametr) {
+    const courseCode = this.curriculumService.deleteCourse(CourseToDelete.course_code);
+    return  courseCode;
+  }
+
+
+  @Put(':course_code')
+  async updateCourseInfo(
+    @Param() courseToUpdate:  IDCourseParametr,
+    @Body() updatedCourseData: CourseSchema,
+  ) {
+    const updatedCourse = await this.curriculumService.updateCourse(
+      courseToUpdate.course_code,
+     updatedCourseData,
+    );
+    return updatedCourse;
+  }
+
 }

@@ -6,7 +6,9 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/guards/jwt-auth.guard';
 import { UsersRoutesController } from './gateway-users.controller';
-import { CurriculumModule } from 'apps/curriculum/curriculum.module';
+import { CurriculumController } from 'apps/curriculum/curriculum.controller';
+import { CurriculumService } from 'apps/curriculum/curriculum.service';
+import { PrismaModule } from 'apps/prisma/prisma.module';
 
 @Module({
   imports: [
@@ -14,10 +16,11 @@ import { CurriculumModule } from 'apps/curriculum/curriculum.module';
       envFilePath: ['.env.development.local', '.env.development', '.env'],
     }),
     AuthModule,
-    CurriculumModule,
+    PrismaModule,
   ],
-  controllers: [UsersRoutesController],
+  controllers: [UsersRoutesController, CurriculumController],
   providers: [
+    CurriculumService,
     {
       provide: APP_GUARD,
       useClass: JwtGuard,
