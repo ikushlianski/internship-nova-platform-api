@@ -1,63 +1,45 @@
-import {
-  IsString,
-  IsNotEmpty,
-  IsOptional,
-  IsDate,
-  IsBoolean,
-} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class IDClassParametr {
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty()
   class_id: string;
 }
 
 export class ClassSchema {
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty()
   class_id: string;
 
-  @IsOptional()
-  @IsString()
+  @ApiProperty()
   class_code?: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty()
   course_id: string;
 
-  @IsDate()
+  @ApiProperty()
   start_date: Date;
 
-  @IsOptional()
-  @IsDate()
+  @ApiProperty()
   end_date?: Date;
 
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty()
   tuition_lang_code: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty()
   time_of_day_id: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty()
   start_time_gmt3: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty()
   classSizeClass_size_id: string;
 
-  @IsOptional()
-  @IsDate()
+  @ApiProperty()
   created_date?: Date;
 
-  @IsOptional()
-  @IsDate()
+  @ApiProperty()
   updated_date?: Date;
 
-  @IsOptional()
-  @IsBoolean()
+  @ApiProperty()
   deleted?: boolean;
 
   // mentor_classes?: MentorsClasses[];
@@ -68,30 +50,24 @@ export class ClassSchema {
 }
 
 export class IDCourseParametr {
-  @IsString()
-  @IsNotEmpty()
+@ApiProperty()
   course_code: string;
 }
 
 export class CourseSchema {
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty()
   course_code: string; // Unique identifier for the course
 
-  @IsOptional()
-  @IsString()
+  @ApiProperty()
   course_name?: string; // Optional name of the course
 
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty()
   course_level_id: string; // Identifier for the associated course level
 
-  @IsOptional()
-  @IsDate()
+  @ApiProperty()
   created_date?: Date; // Optional creation date
 
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty()
   subject_code: string; // Identifier for the associated subject
 
   // course_level?: CourseLevel;
