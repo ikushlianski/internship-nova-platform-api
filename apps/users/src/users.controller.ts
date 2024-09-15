@@ -1,11 +1,11 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Get, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { ParsedUserData } from '../../gateway/src/auth/auth.types';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @Post('/')
   @HttpCode(HttpStatus.OK)
@@ -13,6 +13,13 @@ export class UsersController {
     const user = await this.usersService.createUser(userDto);
 
     return user;
+  }
+
+  @Get('/')
+  @HttpCode(HttpStatus.OK)
+  async getAllUsers() {
+    const users = await this.usersService.getAllUsers();
+    return users;
   }
 
   @MessagePattern({ cmd: 'find_or_create_user' })
