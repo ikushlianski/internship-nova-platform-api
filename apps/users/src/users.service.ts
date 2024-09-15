@@ -29,6 +29,10 @@ export class UsersService {
   }
 
   async getAllUsers() {
-    return await this.prismaService.user.findMany();
+    return await this.prismaService.user.findMany({
+      orderBy: {
+        user_email: 'asc',
+      },
+    });
   }
 }
