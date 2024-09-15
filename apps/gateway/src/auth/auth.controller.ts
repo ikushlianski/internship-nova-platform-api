@@ -7,9 +7,7 @@ import {
   Req,
   Res,
   UseGuards,
-  HttpException,
-  Headers,
-  Inject,
+  Query,
 } from '@nestjs/common';
 import { GoogleOauthGuard } from './guards/google-oauth.guard';
 import { Request, Response } from 'express';
@@ -19,8 +17,6 @@ import { Public } from './public.decorator';
 import { AuthResponse, ParsedUserData } from './auth.types';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AppEnvironment } from '../environment/environment.types';
-import { SERVICE_NAMES } from '../service-names';
-import { ClientProxy } from '@nestjs/microservices';
 
 const controllerName = 'auth';
 
@@ -38,25 +34,23 @@ export class AuthController {
   async googleAuthCallback(
     @Req() req: Request,
     @Res() res: Response,
-    @Headers('X-SSR') ssrHeader: string,
+    @Query('state') state: string,
   ) {
+    const stateFromLoginRequest = this.authService.parseLoginRequestState(state);
+
     let token: { jwt: string };
 
+    const { ssr, originalUrl: frontendUrl } = stateFromLoginRequest;
+
     try {
-      token = await this.authService.generateJwtToken(
-        req.user as ParsedUserData,
-      );
+      token = await this.authService.generateJwtToken(req.user as ParsedUserData);
     } catch (err) {
       return res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .send({ success: false, message: err.message });
     }
 
-    const frontendUrl = this.configService.get<string>('FRONTEND_URL');
-
-    const isSSR = ssrHeader === 'true';
-
-    if (isSSR) {
+    if (ssr === 'true') {
       // For SSR apps, redirect with the token in the query parameter
       return res.redirect(`${frontendUrl}/oauth?token=${token.jwt}`);
     } else {
@@ -94,7 +88,7 @@ export class AuthController {
     );
     if (this.configService.get<string>('APP_ENV') !== AppEnvironment.Prod) {
       try {
-        const token = await this.authService.generateJwtToken(body);
+        const token = this.authService.generateJwtToken(body);
 
         res.cookie('googleToken', token.jwt, {
           httpOnly: true,

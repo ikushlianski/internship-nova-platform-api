@@ -20,20 +20,20 @@ export class CurriculumController {
   constructor(private curriculumService: CurriculumService) {}
 
   @Public()
-  @Get()
+  @Get('class')
   getAllClasses() {
     return this.curriculumService.getAllClasses();
   }
 
   @Public()
-  @Get(':class_id')
+  @Get('class/:class_id')
   @HttpCode(HttpStatus.OK)
   getClassByID(@Param() ClassToGet: IDClassParametr) {
     return this.curriculumService.getClassByID(ClassToGet.class_id);
   }
 
   @UseGuards(JwtGuard)
-  @Post()
+  @Post('class')
   @HttpCode(HttpStatus.CREATED)
   async createClass(@Body() newClass: ClassSchema) {
     const createdClass = await this.curriculumService.createClass(newClass);
@@ -41,7 +41,7 @@ export class CurriculumController {
   }
 
   @UseGuards(JwtGuard)
-  @Delete(':class_id')
+  @Delete('class/:class_id')
   @HttpCode(HttpStatus.NO_CONTENT)
   deleteClass(@Param() ClassToDelete:  IDClassParametr) {
     const classID = this.curriculumService.deleteClass(ClassToDelete.class_id);
@@ -49,7 +49,7 @@ export class CurriculumController {
   }
 
   @UseGuards(JwtGuard)
-  @Put(':class_id')
+  @Put('class/:class_id')
   async updateClassInfo(
     @Param() classToUpdate: IDClassParametr,
     @Body() updatedClassData: ClassSchema,
@@ -62,21 +62,21 @@ export class CurriculumController {
   }
 
   @Public()
-  @Get()
+  @Get('course')
   getAllCourses() {
     return this.getAllCourses();
   }
 
 
   @Public()
-  @Get(':course_code')
+  @Get('course/:course_code')
   @HttpCode(HttpStatus.OK)
   getCourseByID(@Param() CourseToGet: IDCourseParametr) {
     return this.curriculumService.getCourseByID(CourseToGet.course_code);
   }
 
   @UseGuards(JwtGuard)
-  @Post()
+  @Post('course')
   @HttpCode(HttpStatus.CREATED)
   async createCourse(@Body() newCourse: CourseSchema) {
     const createdCourse = await this.curriculumService.createCourse(newCourse);
@@ -84,7 +84,7 @@ export class CurriculumController {
   }
 
   @UseGuards(JwtGuard)
-  @Delete(':course_code')
+  @Delete('course/:course_code')
   @HttpCode(HttpStatus.NO_CONTENT)
   deleteCourse(@Param() CourseToDelete:  IDCourseParametr) {
     const courseCode = this.curriculumService.deleteCourse(CourseToDelete.course_code);
@@ -92,7 +92,7 @@ export class CurriculumController {
   }
 
   @UseGuards(JwtGuard)
-  @Put(':course_code')
+  @Put('course/:course_code')
   async updateCourseInfo(
     @Param() courseToUpdate:  IDCourseParametr,
     @Body() updatedCourseData: CourseSchema,

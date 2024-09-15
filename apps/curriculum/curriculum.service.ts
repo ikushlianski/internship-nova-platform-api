@@ -40,6 +40,7 @@ export class CurriculumService {
         class_id,
       },
     });
+    console.log('class');
     if (!classToGet) {
       throw new HttpException('Class not found', HttpStatus.NOT_FOUND);
     }
@@ -85,6 +86,7 @@ export class CurriculumService {
         course_code,
       },
     });
+    console.log('course');
     if (!courseToGet) {
       throw new HttpException('Course not found', HttpStatus.NOT_FOUND);
     }
