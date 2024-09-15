@@ -3,12 +3,19 @@ import { ConfigService } from '@nestjs/config';
 import * as cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { GatewayModule } from './gateway.module';
+import { VersioningType } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(GatewayModule);
+
+  app.enableVersioning({
+    type: VersioningType.URI,
+    defaultVersion: app.get(ConfigService).get('DEFAULT_API_VERSION'),
+  });
+
   const gatewayPort = app.get(ConfigService).get('GATEWAY_PORT');
 
-  app.setGlobalPrefix('api/v1');
+  app.setGlobalPrefix('api');
   app.use(cookieParser());
 
   const config = new DocumentBuilder()
