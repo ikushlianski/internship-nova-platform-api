@@ -8,10 +8,12 @@ import {
   HttpStatus,
   HttpCode,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { CurriculumService } from './curriculum.service';
 import { Public } from '../gateway/src/auth/public.decorator';
 import { ClassSchema, CourseSchema, IDClassParametr, IDCourseParametr } from './dto/curriculum.dto';
+import { JwtGuard } from 'apps/gateway/src/auth/guards/jwt-auth.guard';
 
 @Controller('curriculum')
 export class CurriculumController {
@@ -23,12 +25,14 @@ export class CurriculumController {
     return this.curriculumService.getAllClasses();
   }
 
+  @Public()
   @Get(':class_id')
   @HttpCode(HttpStatus.OK)
   getClassByID(@Param() ClassToGet: IDClassParametr) {
     return this.curriculumService.getClassByID(ClassToGet.class_id);
   }
 
+  @UseGuards(JwtGuard)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async createClass(@Body() newClass: ClassSchema) {
@@ -36,6 +40,7 @@ export class CurriculumController {
     return createdClass;
   }
 
+  @UseGuards(JwtGuard)
   @Delete(':class_id')
   @HttpCode(HttpStatus.NO_CONTENT)
   deleteClass(@Param() ClassToDelete:  IDClassParametr) {
@@ -43,7 +48,7 @@ export class CurriculumController {
     return classID;
   }
 
-
+  @UseGuards(JwtGuard)
   @Put(':class_id')
   async updateClassInfo(
     @Param() classToUpdate: IDClassParametr,
@@ -63,12 +68,14 @@ export class CurriculumController {
   }
 
 
+  @Public()
   @Get(':course_code')
   @HttpCode(HttpStatus.OK)
   getCourseByID(@Param() CourseToGet: IDCourseParametr) {
     return this.curriculumService.getCourseByID(CourseToGet.course_code);
   }
 
+  @UseGuards(JwtGuard)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async createCourse(@Body() newCourse: CourseSchema) {
@@ -76,6 +83,7 @@ export class CurriculumController {
     return createdCourse;
   }
 
+  @UseGuards(JwtGuard)
   @Delete(':course_code')
   @HttpCode(HttpStatus.NO_CONTENT)
   deleteCourse(@Param() CourseToDelete:  IDCourseParametr) {
@@ -83,7 +91,7 @@ export class CurriculumController {
     return  courseCode;
   }
 
-
+  @UseGuards(JwtGuard)
   @Put(':course_code')
   async updateCourseInfo(
     @Param() courseToUpdate:  IDCourseParametr,
