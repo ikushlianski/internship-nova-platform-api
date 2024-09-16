@@ -6,6 +6,8 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/guards/jwt-auth.guard';
 import { UsersRoutesController } from './gateway-users.controller';
+import { DeckController } from 'apps/deck/deck.controller';
+import { DeckService } from 'apps/deck/deck.service';
 
 @Module({
   imports: [
@@ -14,8 +16,9 @@ import { UsersRoutesController } from './gateway-users.controller';
     }),
     AuthModule,
   ],
-  controllers: [UsersRoutesController],
+  controllers: [UsersRoutesController, DeckController],
   providers: [
+    DeckService,
     {
       provide: APP_GUARD,
       useClass: JwtGuard,

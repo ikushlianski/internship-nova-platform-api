@@ -9,6 +9,7 @@ import { JwtGuard } from './guards/jwt-auth.guard';
 import { EnvironmentService } from '../environment/environment.service';
 import { SERVICE_NAMES } from '../service-names';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
+import { PrismaService } from 'apps/prisma/prisma.service';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
   controllers: [AuthController],
   providers: [
     AuthService,
+    PrismaService,
     JwtGuardStrategy,
     JwtGuard,
     GoogleStrategy,

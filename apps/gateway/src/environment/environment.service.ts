@@ -14,7 +14,4 @@ export class EnvironmentService {
     // Check for a custom APP_ENV variable using the enum
     return environment === AppEnvironment.Dev || hasDevEnvFile;
   }
-
- 
 }
-
