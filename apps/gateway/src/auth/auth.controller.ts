@@ -7,9 +7,6 @@ import {
   Req,
   Res,
   UseGuards,
-  HttpException,
-  Headers,
-  Inject,
   Query,
 } from '@nestjs/common';
 import { GoogleOauthGuard } from './guards/google-oauth.guard';
@@ -39,27 +36,21 @@ export class AuthController {
     @Res() res: Response,
     @Query('state') state: string,
   ) {
-    const stateFromLoginRequest = Object.fromEntries([
-      decodeURIComponent(state).split('='),
-    ]);
-
-    /* stateFromLoginRequest = { ssr: 'true' or 'false' } */
+    const stateFromLoginRequest = this.authService.parseLoginRequestState(state);
 
     let token: { jwt: string };
 
+    const { ssr, originalUrl: frontendUrl } = stateFromLoginRequest;
+
     try {
-      token = await this.authService.generateJwtToken(
-        req.user as ParsedUserData,
-      );
+      token = await this.authService.generateJwtToken(req.user as ParsedUserData);
     } catch (err) {
       return res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .send({ success: false, message: err.message });
     }
 
-    const frontendUrl = this.configService.get<string>('FRONTEND_URL');
-
-    if (stateFromLoginRequest.ssr === 'true') {
+    if (ssr === 'true') {
       // For SSR apps, redirect with the token in the query parameter
       return res.redirect(`${frontendUrl}/oauth?token=${token.jwt}`);
     } else {
@@ -98,7 +89,7 @@ export class AuthController {
     );
     if (this.configService.get<string>('APP_ENV') !== AppEnvironment.Prod) {
       try {
-        const token = await this.authService.generateJwtToken(body);
+        const token = this.authService.generateJwtToken(body);
 
         res.cookie('googleToken', token.jwt, {
           httpOnly: true,
