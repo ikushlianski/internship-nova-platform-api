@@ -9,8 +9,8 @@ export class CardsController {
   @UseGuards(JwtGuard)
   @Get('/')
   async getAllCards(@Req() req) {
+    console.log('JWT Payload:', req.user); // Log to see if `email` is present
     const userEmail = req.user.email;
-
     const userData = await this.cardsService.getCardsByUserEmail(userEmail);
 
     // Group cards by deck
@@ -28,10 +28,3 @@ export class CardsController {
     return { decks: groupedCards };
   }
 }
-
-
-
-
-
-
-

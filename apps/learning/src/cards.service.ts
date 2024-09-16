@@ -6,17 +6,20 @@ export class CardsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getCardsByUserEmail(userEmail: string) {
+    console.log('Fetching cards for user email:', userEmail);
     return await this.prisma.user.findUnique({
-      where: { user_email: userEmail },
+      where: { user_email: userEmail }, 
       include: {
-        Deck: {
+        Deck: { 
           include: {
-            Card: true, // Include all cards for this deck
+            Card: true, 
           },
         },
+        UserCard: true, 
       },
     });
   }
+  
 }
 
 
