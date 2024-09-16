@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'apps/users/src/prisma/prisma.service';
-import { ParsedUserData } from '../../gateway/src/auth/auth.types';
+import { ParsedAdminData, ParsedUserData } from '../../gateway/src/auth/auth.types';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async createUser(userDto: ParsedUserData) {
+  async createUser(userDto: ParsedUserData | ParsedAdminData) {
     return await this.findOrCreateUser(userDto);
   }
 
-  async findOrCreateUser(userDto: ParsedUserData) {
+  async findOrCreateUser(userDto: ParsedUserData | ParsedAdminData) {
     let user = await this.prismaService.user.findUnique({
       where: { user_email: userDto.user_email },
     });
@@ -27,4 +27,5 @@ export class UsersService {
 
     return user;
   }
+ 
 }

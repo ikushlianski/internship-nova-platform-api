@@ -1,7 +1,7 @@
 import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { ParsedUserData } from '../../gateway/src/auth/auth.types';
+import { ParsedAdminData, ParsedUserData } from '../../gateway/src/auth/auth.types';
 
 @Controller('users')
 export class UsersController {
@@ -29,5 +29,23 @@ export class UsersController {
       email: 'abc@test-user.com',
       name: 'Test User',
     };
+  }
+
+ 
+  @MessagePattern({ cmd: 'add_admin' })
+  async createAdmin(@Body() body: ParsedAdminData) {
+    const user = await this.usersService.findOrCreateUser({...body, ...{
+      user_roles: {
+        create: [
+          {
+            role: {
+              connect: { role_id: 'admin' }
+            }
+          }
+        ]
+      }
+    }});
+
+    return user
   }
 }

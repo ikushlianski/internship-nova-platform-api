@@ -18,3 +18,15 @@ export class ParsedUserData {
   @ApiProperty()
   user_email: string;
 }
+
+export class ParsedAdminData {
+  @ApiProperty()
+  first_name: string;
+
+  @ApiProperty()
+  last_name: string;
+
+  @ApiProperty()
+  user_email: string;
+
+}
