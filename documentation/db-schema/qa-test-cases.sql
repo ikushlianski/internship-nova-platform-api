@@ -1,1 +1,0 @@
--- SQL for test cases of QAs

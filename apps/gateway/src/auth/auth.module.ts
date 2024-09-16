@@ -9,6 +9,9 @@ import { JwtGuard } from './guards/jwt-auth.guard';
 import { EnvironmentService } from '../environment/environment.service';
 import { SERVICE_NAMES } from '../service-names';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
+import { RolesGuard } from './guards/roles.guard';
+import { CurriculumController } from '../curriculum.controller';
+
 
 @Module({
   imports: [
@@ -25,13 +28,14 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
       envFilePath: ['.env.development.local', '.env.development', '.env'],
     }),
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, CurriculumController],
   providers: [
     AuthService,
     JwtGuardStrategy,
     JwtGuard,
     GoogleStrategy,
     EnvironmentService,
+    RolesGuard,
     {
       provide: SERVICE_NAMES.USERS_SERVICE,
       inject: [ConfigService],
