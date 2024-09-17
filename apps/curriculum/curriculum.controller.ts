@@ -8,12 +8,11 @@ import {
   HttpStatus,
   HttpCode,
   Put,
-  UseGuards,
 } from '@nestjs/common';
 import { CurriculumService } from './curriculum.service';
 import { Public } from '../gateway/src/auth/public.decorator';
-import { ClassSchema, CourseSchema, IDClassParametr, IDCourseParametr } from './dto/curriculum.dto';
-import { JwtGuard } from 'apps/gateway/src/auth/guards/jwt-auth.guard';
+import { ClassSchema, CourseSchema} from './dto/curriculum.dto';
+import { ValidateIdPipe } from './pipes/validation.pipe';
 
 @Controller('curriculum')
 export class CurriculumController {
@@ -25,14 +24,12 @@ export class CurriculumController {
     return this.curriculumService.getAllClasses();
   }
 
-  @Public()
   @Get('class/:class_id')
   @HttpCode(HttpStatus.OK)
-  getClassByID(@Param() ClassToGet: IDClassParametr) {
-    return this.curriculumService.getClassByID(ClassToGet.class_id);
+  getClassByID(@Param('class_id', ValidateIdPipe) class_id: string) {
+    return this.curriculumService.getClassByID(class_id);
   }
 
-  @UseGuards(JwtGuard)
   @Post('class')
   @HttpCode(HttpStatus.CREATED)
   async createClass(@Body() newClass: ClassSchema) {
@@ -40,24 +37,19 @@ export class CurriculumController {
     return createdClass;
   }
 
-  @UseGuards(JwtGuard)
   @Delete('class/:class_id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteClass(@Param() ClassToDelete:  IDClassParametr) {
-    const classID = this.curriculumService.deleteClass(ClassToDelete.class_id);
+  async deleteClass(@Param('class_id', ValidateIdPipe) class_id: string) {
+    const classID = this.curriculumService.deleteClass(class_id);
     return classID;
   }
 
-  @UseGuards(JwtGuard)
   @Put('class/:class_id')
   async updateClassInfo(
-    @Param() classToUpdate: IDClassParametr,
+    @Param('class_id', ValidateIdPipe) class_id: string,
     @Body() updatedClassData: ClassSchema,
   ) {
-    const updatedClass = await this.curriculumService.updateClass(
-      classToUpdate.class_id,
-     updatedClassData,
-    );
+    const updatedClass = await this.curriculumService.updateClass(class_id, updatedClassData);
     return updatedClass;
   }
 
@@ -67,15 +59,12 @@ export class CurriculumController {
     return this.getAllCourses();
   }
 
-
-  @Public()
   @Get('course/:course_code')
   @HttpCode(HttpStatus.OK)
-  getCourseByID(@Param() CourseToGet: IDCourseParametr) {
-    return this.curriculumService.getCourseByID(CourseToGet.course_code);
+  getCourseByID(@Param('course_code', ValidateIdPipe) course_code: string) {
+    return this.curriculumService.getCourseByID(course_code);
   }
 
-  @UseGuards(JwtGuard)
   @Post('course')
   @HttpCode(HttpStatus.CREATED)
   async createCourse(@Body() newCourse: CourseSchema) {
@@ -83,25 +72,22 @@ export class CurriculumController {
     return createdCourse;
   }
 
-  @UseGuards(JwtGuard)
   @Delete('course/:course_code')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteCourse(@Param() CourseToDelete:  IDCourseParametr) {
-    const courseCode = this.curriculumService.deleteCourse(CourseToDelete.course_code);
-    return  courseCode;
+  async deleteCourse(@Param('course_code', ValidateIdPipe) course_code: string) {
+    const courseCode = this.curriculumService.deleteCourse(course_code);
+    return courseCode;
   }
 
-  @UseGuards(JwtGuard)
   @Put('course/:course_code')
   async updateCourseInfo(
-    @Param() courseToUpdate:  IDCourseParametr,
+    @Param('course_code', ValidateIdPipe) course_code: string,
     @Body() updatedCourseData: CourseSchema,
   ) {
     const updatedCourse = await this.curriculumService.updateCourse(
-      courseToUpdate.course_code,
-     updatedCourseData,
+      course_code,
+      updatedCourseData,
     );
     return updatedCourse;
   }
-
 }
