@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersService } from './users.service';
-import { PrismaModule } from 'apps/users/src/prisma/prisma.module';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UsersController } from './users.controller';
+import { PrismaModule } from 'apps/prisma/prisma.module';
 
 // Define constants
 const USER_QUEUE = 'user_queue';

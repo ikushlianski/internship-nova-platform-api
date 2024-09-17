@@ -7,15 +7,9 @@ import { VersioningType } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(GatewayModule);
-
-  app.enableVersioning({
-    type: VersioningType.URI,
-    defaultVersion: app.get(ConfigService).get('DEFAULT_API_VERSION'),
-  });
-
   const gatewayPort = app.get(ConfigService).get('GATEWAY_PORT');
 
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api/v1');
   app.use(cookieParser());
 
   const config = new DocumentBuilder()
