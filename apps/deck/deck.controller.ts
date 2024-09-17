@@ -34,6 +34,6 @@ export class DeckController {
     @Body('lessons') lessons: LessonCard[],
   ): Promise<Deck> {
     const user = req.user;
-    return this.deckService.createDeck(user, deck_description, lessons);
+    return this.deckService.createDeck(user, deckDescription, lessons);
   }
 }
