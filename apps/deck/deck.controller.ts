@@ -14,11 +14,15 @@ import {
 import { DeckService } from './deck.service';
 import { JwtGuard } from 'apps/gateway/src/auth/guards/jwt-auth.guard';
 import { Deck, LessonCard } from '@prisma/client';
+import { SERVICE_NAMES } from './service-names';
 
 @Controller('decks')
 @UseGuards(JwtGuard)
 export class DeckController {
-  constructor(private readonly deckService: DeckService) {}
+  constructor(
+    //private readonly deckService: DeckService
+    @Inject(SERVICE_NAMES.LEARNING_SERVICE) private client: ClientProxy,
+  ) {}
 
   @Get()
   async getUserDecks(@Request() req) {
