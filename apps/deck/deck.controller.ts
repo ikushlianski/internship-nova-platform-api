@@ -20,8 +20,8 @@ import { SERVICE_NAMES } from './service-names';
 @UseGuards(JwtGuard)
 export class DeckController {
   constructor(
-    //private readonly deckService: DeckService
-    @Inject(SERVICE_NAMES.LEARNING_SERVICE) private client: ClientProxy,
+    private readonly deckService: DeckService
+    //@Inject(SERVICE_NAMES.LEARNING_SERVICE) private client: ClientProxy,
   ) {}
 
   @Get()
