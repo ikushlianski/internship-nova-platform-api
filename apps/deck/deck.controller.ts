@@ -16,17 +16,16 @@ import { JwtGuard } from 'apps/gateway/src/auth/guards/jwt-auth.guard';
 import { Deck, LessonCard } from '@prisma/client';
 
 @Controller('decks')
+@UseGuards(JwtGuard)
 export class DeckController {
   constructor(private readonly deckService: DeckService) {}
 
-  @UseGuards(JwtGuard)
   @Get()
   async getUserDecks(@Request() req) {
     const user = req.user;
     return this.deckService.getUserDecks(user);
   }
 
-  @UseGuards(JwtGuard)
   @Post()
   @HttpCode(201)
   async createDeck(
