@@ -34,7 +34,7 @@ describe('AuthService', () => {
     jwtService = module.get<JwtService>(JwtService);
   });
 
-  describe('findOrCreateUser', () => {
+  describe('createUser', () => {
     it('should call client.send with correct parameters', async () => {
       const userDto: ParsedUserData = {
         user_email: 'test@example.com',
@@ -47,7 +47,7 @@ describe('AuthService', () => {
         toPromise: jest.fn().mockResolvedValue(user),
       });
 
-      const result = await authService.findOrCreateUser(userDto);
+      const result = await authService.createUser(userDto);
       expect(clientProxy.send).toHaveBeenCalledWith({ cmd: 'find_or_create_user' }, userDto);
       expect(result).toEqual(user);
     });
