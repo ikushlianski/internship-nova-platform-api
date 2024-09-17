@@ -14,7 +14,7 @@ import {
 import { DeckService } from './deck.service';
 import { JwtGuard } from 'apps/gateway/src/auth/guards/jwt-auth.guard';
 import { Deck, LessonCard } from '@prisma/client';
-import { SERVICE_NAMES } from './service-names';
+//import { SERVICE_NAMES } from './service-names';
 
 @Controller('decks')
 @UseGuards(JwtGuard)
