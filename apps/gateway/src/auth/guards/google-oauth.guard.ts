@@ -7,8 +7,10 @@ export class GoogleOauthGuard extends AuthGuard('google') {
     // you can get access to the request object.
     const request = this.getRequest(context);
 
+    console.log(request.headers.referer);
+
     return {
-      state: encodeURIComponent(`ssr=${request.query.ssr}`),
+      state: encodeURIComponent(`ssr=${request.query.ssr}&originalUrl=${request.headers.referer}`),
     };
   }
 }
