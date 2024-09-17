@@ -30,7 +30,7 @@ export class DeckController {
   @HttpCode(201)
   async createDeck(
     @Request() req,
-    @Body('deck_description') deck_description: string,
+    @Body('deckDescription') deckDescription: string,
     @Body('lessons') lessons: LessonCard[],
   ): Promise<Deck> {
     const user = req.user;
