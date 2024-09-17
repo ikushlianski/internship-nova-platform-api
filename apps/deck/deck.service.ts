@@ -20,7 +20,7 @@ export class DeckService {
     });
   }
 
-  async createDeck(user: User, deckDescription: string, lessons: LessonCard[]): Promise<Deck> {
+  async createDeck(user: User, deck_description: string, lessons: LessonCard[]): Promise<Deck> {
     const userDetail = await this.prisma.user.findUnique({
       where: { user_email: user.user_email},
     });
@@ -33,7 +33,7 @@ export class DeckService {
       data: {
         deck_id: '',
         user_id: user.user_email,  
-        deckDescription,
+        deck_description,
         Card: {             
           create: lessons,
         },
