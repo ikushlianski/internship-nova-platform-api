@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 import { ParsedUserData } from './auth.types';
 import { SERVICE_NAMES } from '../service-names';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, from } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +13,7 @@ export class AuthService {
   ) { }
 
   async createUser(userDto: ParsedUserData) {
-    const user = await firstValueFrom(this.client.send({ cmd: 'create_user' }, userDto)); 
+    const user = await firstValueFrom(from(this.client.send({ cmd: 'create_user' }, userDto)));
     return user;
   }
 
