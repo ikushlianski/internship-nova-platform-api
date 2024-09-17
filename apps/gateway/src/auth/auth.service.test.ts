@@ -43,12 +43,10 @@ describe('AuthService', () => {
       };
       const user = { id: 1, ...userDto };
 
-      (clientProxy.send as jest.Mock).mockReturnValue({
-        toPromise: jest.fn().mockResolvedValue(user),
-      });
+      (clientProxy.send as jest.Mock).mockResolvedValue(user);
 
       const result = await authService.createUser(userDto);
-      expect(clientProxy.send).toHaveBeenCalledWith({ cmd: 'find_or_create_user' }, userDto);
+      expect(clientProxy.send).toHaveBeenCalledWith({ cmd: 'create_user' }, userDto);
       expect(result).toEqual(user);
     });
   });

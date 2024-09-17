@@ -3,23 +3,20 @@ import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 import { ParsedUserData } from './auth.types';
 import { SERVICE_NAMES } from '../service-names';
-import { firstValueFrom, from } from 'rxjs';
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(SERVICE_NAMES.USERS_SERVICE) private readonly client: ClientProxy,
     private readonly jwtService: JwtService,
-  ) { }
+  ) {}
 
   async createUser(userDto: ParsedUserData) {
-    const user = await firstValueFrom(from(this.client.send({ cmd: 'create_user' }, userDto)));
-    return user;
+    return this.client.send({ cmd: 'create_user' }, userDto);
   }
 
   async findUserByEmail(email: string) {
-    const user = await firstValueFrom(this.client.send({ cmd: 'find_user_by_email' }, email));
-    return user;
+    return this.client.send({ cmd: 'find_user_by_email' }, email);
   }
 
   generateJwtToken(user: ParsedUserData) {
