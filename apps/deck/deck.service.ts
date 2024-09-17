@@ -7,11 +7,11 @@ export class DeckService {
   constructor(private prisma: PrismaService) {}
 
   async getUserDecks(user: User): Promise<Deck[]> {
-    const user_detail = await this.prisma.user.findUnique({
+    const userDetail = await this.prisma.user.findUnique({
       where: { user_email: user.user_email },
     });
 
-    if (!user_detail) {
+    if (!userDetail) {
       throw new NotFoundException(`User with email ${user.user_email} not found`);
     }
 
@@ -21,11 +21,11 @@ export class DeckService {
   }
 
   async createDeck(user: User, deck_description: string, lessons: LessonCard[]): Promise<Deck> {
-    const user_detail = await this.prisma.user.findUnique({
+    const userDetail = await this.prisma.user.findUnique({
       where: { user_email: user.user_email},
     });
 
-    if (!user_detail) {
+    if (!userDetail) {
       throw new NotFoundException(`User with email ${user.user_email} not found`);
     }
 
