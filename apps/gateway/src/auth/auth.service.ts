@@ -11,10 +11,12 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async findOrCreateUser(userDto: ParsedUserData) {
-    const user = await this.client.send({ cmd: 'find_or_create_user' }, userDto).toPromise();
+  async createUser(userDto: ParsedUserData) {
+    return this.client.send({ cmd: 'create_user' }, userDto);
+  }
 
-    return user;
+  async findUserByEmail(email: string) {
+    return this.client.send({ cmd: 'find_user_by_email' }, email);
   }
 
   generateJwtToken(user: ParsedUserData) {

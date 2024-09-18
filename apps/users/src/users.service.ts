@@ -28,6 +28,13 @@ export class UsersService {
     return user;
   }
 
+  async findUserByEmail(email: string) {
+    let user = await this.prismaService.user.findUnique({
+      where: { user_email: email },
+    });
+    return user;
+  }
+
   async getAllUsers() {
     return await this.prismaService.user.findMany({
       orderBy: {
