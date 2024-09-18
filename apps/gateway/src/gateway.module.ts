@@ -6,9 +6,10 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/guards/jwt-auth.guard';
 import { UsersRoutesController } from './gateway-users.controller';
-import { CardsController } from 'apps/learning/src/cards.controller';
 import { PrismaModule } from 'apps/learning/src/prisma/prisma.module';
-import { CardsService } from 'apps/learning/src/cards.service';
+import { ClassAssignmentController } from 'apps/learning/src/class-assignment.controller';
+import { ClassAssignmentService } from 'apps/learning/src/class-assignment.service';
+
 
 @Module({
   imports: [
@@ -18,9 +19,9 @@ import { CardsService } from 'apps/learning/src/cards.service';
     AuthModule,
     PrismaModule, 
   ],
-  controllers: [UsersRoutesController, CardsController],
+  controllers: [UsersRoutesController, ClassAssignmentController],
   providers: [
-    CardsService,
+    ClassAssignmentService,
     {
       provide: APP_GUARD,
       useClass: JwtGuard,
