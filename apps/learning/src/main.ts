@@ -1,11 +1,11 @@
 import { NestFactory } from '@nestjs/core';
-import { ClassAssignmentModule } from './class-assignment.module'
+import { LearningModule } from './cards.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    ClassAssignmentModule,
+    LearningModule,
     {
       transport: Transport.TCP,
       options: {
