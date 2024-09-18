@@ -10,7 +10,6 @@ export class UsersController {
   @MessagePattern({ cmd: 'create_user' })
   async handleFindOrCreateUser(@Payload() userDto: ParsedUserData) {
     const user = await this.usersService.findOrCreateUser(userDto);
-
     return user;
   }
 
@@ -21,6 +20,11 @@ export class UsersController {
       email: 'abc@test-user.com',
       name: 'Test User',
     };
+  }
+
+  @MessagePattern({ cmd: 'find_user_by_email' })
+  async handleGetUserByEmail(@Payload() email: string) {
+    return await this.usersService.findUserByEmail(email);
   }
 
   @MessagePattern({ cmd: 'get_all_users' })
