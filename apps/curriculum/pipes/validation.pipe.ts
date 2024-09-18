@@ -4,7 +4,7 @@ import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from
 export class ValidateIdPipe implements PipeTransform {
   transform(value, metadata: ArgumentMetadata) {
     if (typeof value !== 'string') {
-      throw new BadRequestException('Invalid class (couse) ID');
+      throw new BadRequestException('Invalid class (course) ID');
     }
     return value;
   }

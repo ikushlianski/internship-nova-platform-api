@@ -1,11 +1,4 @@
-import {
-  Body,
-  HttpCode,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  Post,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Post } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Class, Course } from '@prisma/client';
 import { ClassSchema, CourseSchema } from './dto/curriculum.dto';
@@ -54,10 +47,7 @@ export class CurriculumService {
     return classToGet.class_id;
   }
 
-  async updateClass(
-    class_id: string,
-    updatedClassData: ClassSchema,
-  ): Promise<Class> {
+  async updateClass(class_id: string, updatedClassData: ClassSchema): Promise<Class> {
     const classToUpdate = await this.prisma.class.findUnique({
       where: {
         class_id,
@@ -112,10 +102,7 @@ export class CurriculumService {
     return courseToGet.course_code;
   }
 
-  async updateCourse(
-    course_code: string,
-    updatedCourseData: CourseSchema,
-  ): Promise<Course> {
+  async updateCourse(course_code: string, updatedCourseData: CourseSchema): Promise<Course> {
     const courseToUpdate = await this.prisma.course.findUnique({
       where: {
         course_code,
