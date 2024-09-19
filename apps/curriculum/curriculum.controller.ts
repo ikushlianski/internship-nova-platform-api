@@ -53,7 +53,6 @@ export class CurriculumController {
     return updatedClass;
   }
 
-  @Public()
   @Get('course')
   getAllCourses() {
     return this.curriculumService.getAllCourses();

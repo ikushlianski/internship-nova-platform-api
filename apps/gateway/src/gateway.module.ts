@@ -6,7 +6,6 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/guards/jwt-auth.guard';
 import { UsersRoutesController } from './gateway-users.controller';
-import { CurriculumController } from 'apps/curriculum/curriculum.controller';
 import { CurriculumService } from 'apps/curriculum/curriculum.service';
 import { PrismaModule } from 'apps/prisma/prisma.module';
 
@@ -18,7 +17,7 @@ import { PrismaModule } from 'apps/prisma/prisma.module';
     AuthModule,
     PrismaModule,
   ],
-  controllers: [UsersRoutesController, CurriculumController],
+  controllers: [UsersRoutesController],
   providers: [
     CurriculumService,
     {
@@ -34,19 +33,6 @@ import { PrismaModule } from 'apps/prisma/prisma.module';
           options: {
             host: configService.get('USER_SERVICE_HOST'), // name of microservice in docker-compose.yml
             port: configService.get('USER_SERVICE_PORT'),
-          },
-        });
-      },
-    },
-    {
-      provide: SERVICE_NAMES.CURRICULUM_SERVICE,
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        return ClientProxyFactory.create({
-          transport: Transport.TCP,
-          options: {
-            host: configService.get('CURRICULUM_SERVICE_HOST'), // name of microservice in docker-compose.yml
-            port: configService.get('CURRICULUM_SERVICE_PORT'),
           },
         });
       },
