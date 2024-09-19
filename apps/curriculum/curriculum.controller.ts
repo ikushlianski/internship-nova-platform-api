@@ -53,9 +53,10 @@ export class CurriculumController {
     return updatedClass;
   }
 
+  @Public()
   @Get('course')
   getAllCourses() {
-    return this.getAllCourses();
+    return this.curriculumService.getAllCourses();
   }
 
   @Get('course/:course_code')
