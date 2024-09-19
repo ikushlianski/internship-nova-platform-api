@@ -1,13 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma/prisma.service';
 
 @Injectable()
 export class CardsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getCardsByUserEmail(userEmail: string) {
+  async getCardsByUserEmail(requestingUserEmail: string, targetUserEmail: string) {
+    // Ensure the requesting user is trying to access their own data
+    if (requestingUserEmail !== targetUserEmail) {
+      throw new ForbiddenException('You are not allowed to access these cards.');
+    }
+
     const user = await this.prisma.user.findUnique({
-      where: { user_email: userEmail },
+      where: { user_email: targetUserEmail },
       include: {
         userDecks: true,
         userCard: true,
