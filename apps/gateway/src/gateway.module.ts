@@ -37,6 +37,19 @@ import { PrismaModule } from 'apps/prisma/prisma.module';
         });
       },
     },
+    {
+      provide: SERVICE_NAMES.CURRICULUM_SERVICE,
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        return ClientProxyFactory.create({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get('CURRICULUM_SERVICE_HOST'),
+            port: configService.get('CURRICULUM_SERVICE_PORT'),
+          },
+        });
+      },
+    },
   ],
 })
 export class GatewayModule {}
