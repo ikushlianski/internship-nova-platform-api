@@ -89,12 +89,7 @@ export class AuthController {
     @Res() res: Response,
     @Body() body: ParsedUserData,
   ): Promise<Response<AuthResponse>> {
-    console.log('Received body:', body);
-    console.log(
-      "this.configService.get<string>('APP_ENV')",
-      this.configService.get<string>('APP_ENV'),
-    );
-
+    
     console.log("dev token wcreated",);
     if (this.configService.get<string>('APP_ENV') !== AppEnvironment.Prod) {
       try {

@@ -1,34 +1,41 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { CardsService } from './cards.service';
-import { JwtGuard } from 'apps/gateway/src/auth/guards/jwt-auth.guard';
+import { MessagePattern } from '@nestjs/microservices';
 
 @Controller('user-cards')
 export class CardsController {
   constructor(private readonly cardsService: CardsService) {}
 
-  @UseGuards(JwtGuard)
-  @Get('/')
-  async getAllCards(@Req() req) {
-    console.log('JWT Payload:', req.user); // Log to see if `email` is present
-    const userEmail = req.user.email;
+  @Get('/:email')
+  async getAllCards(@Param('email') userEmail: string) {
     const userData = await this.cardsService.getCardsByUserEmail(userEmail);
 
-    if (!userData || !userData.Deck || !userData.UserCard) {
-      return { decks: [] }; // Return an empty array if no decks or user cards are found
+    // Ensure that userDecks and userCard fields are present
+    if (!userData || !userData.userDecks || !userData.userCard) {
+      return { userDecks: [], userCard: [] };
     }
 
-    // Group cards by deck
-    const groupedCards = userData.Deck.map((deck) => ({
-      id: deck.deck_id,
-      name: deck.deck_description,
-      cards: userData.UserCard.filter((card) => card.user_id === deck.user_id).map((card) => ({
-        id: card.user_card_id,
+    // Return only the necessary fields
+    return {
+      userDecks: userData.userDecks.map(deck => ({
+        deck_id: deck.deck_id,
+        user_id: deck.user_id,
+        deck_description: deck.deck_description,
+      })),
+      userCard: userData.userCard.map(card => ({
+        user_card_id: card.user_card_id,
+        user_id: card.user_id,
         question: card.question,
         answer: card.answer,
         example: card.example,
       })),
-    }));
+    };
+  }
 
-    return { decks: groupedCards };
+  @MessagePattern({ cmd: 'get_cards_by_user_email' })
+  async handleGetCardsByUserEmail(userEmail: string) {
+    return this.cardsService.getCardsByUserEmail(userEmail);
   }
 }
+
+

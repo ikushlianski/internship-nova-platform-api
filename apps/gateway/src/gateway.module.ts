@@ -7,8 +7,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/guards/jwt-auth.guard';
 import { UsersRoutesController } from './gateway-users.controller';
 import { PrismaModule } from 'apps/learning/src/prisma/prisma.module';
-import { CardsController } from 'apps/learning/src/cards.controller';
-import { CardsService } from 'apps/learning/src/cards.service';
+import { LearningRoutesController } from './gateway-learning.controller';
 
 
 
@@ -20,9 +19,8 @@ import { CardsService } from 'apps/learning/src/cards.service';
     AuthModule,
     PrismaModule, 
   ],
-  controllers: [UsersRoutesController, CardsController],
+  controllers: [UsersRoutesController, LearningRoutesController],
   providers: [
-    CardsService,
     {
       provide: APP_GUARD,
       useClass: JwtGuard,
