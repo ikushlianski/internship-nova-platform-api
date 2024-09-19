@@ -5,14 +5,10 @@ import { PrismaService } from './prisma/prisma.service';
 export class CardsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getCardsByUserEmail(requestingUserEmail: string, targetUserEmail: string) {
-    // Ensure the requesting user is trying to access their own data
-    if (requestingUserEmail !== targetUserEmail) {
-      throw new ForbiddenException('You are not allowed to access these cards.');
-    }
-
+  // Expect only the user email (target user)
+  async getCardsByUserEmail(userEmail: string) {
     const user = await this.prisma.user.findUnique({
-      where: { user_email: targetUserEmail },
+      where: { user_email: userEmail },
       include: {
         userDecks: true,
         userCard: true,
