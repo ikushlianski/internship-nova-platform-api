@@ -9,6 +9,7 @@ import { UsersRoutesController } from './gateway-users.controller';
 import { PrismaModule } from 'apps/curriculum/src/prisma/prisma.module';
 import { ClassAssignmentController } from 'apps/curriculum/src/class-assignment.controller';
 import { ClassAssignmentService } from 'apps/curriculum/src/class-assignment.service';
+import { CurriculumRoutesController } from './gareway-curriculum.contrloller';
 
 
 @Module({
@@ -19,7 +20,7 @@ import { ClassAssignmentService } from 'apps/curriculum/src/class-assignment.ser
     AuthModule,
     PrismaModule,
   ],
-  controllers: [UsersRoutesController, ClassAssignmentController],
+  controllers: [UsersRoutesController, ClassAssignmentController, CurriculumRoutesController],
   providers: [
     ClassAssignmentService,
     {
