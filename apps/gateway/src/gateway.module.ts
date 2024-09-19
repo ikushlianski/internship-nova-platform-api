@@ -6,9 +6,10 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/guards/jwt-auth.guard';
 import { UsersRoutesController } from './gateway-users.controller';
-import { CardsController } from 'apps/learning/src/cards.controller';
-import { PrismaModule } from 'apps/learning/src/prisma/prisma.module';
-import { CardsService } from 'apps/learning/src/cards.service';
+import { PrismaModule } from 'apps/curriculum/src/prisma/prisma.module';
+import { ClassAssignmentController } from 'apps/curriculum/src/class-assignment.controller';
+import { ClassAssignmentService } from 'apps/curriculum/src/class-assignment.service';
+
 
 @Module({
   imports: [
@@ -16,11 +17,11 @@ import { CardsService } from 'apps/learning/src/cards.service';
       envFilePath: ['.env.development.local', '.env.development', '.env'],
     }),
     AuthModule,
-    PrismaModule, 
+    PrismaModule,
   ],
-  controllers: [UsersRoutesController, CardsController],
+  controllers: [UsersRoutesController, ClassAssignmentController],
   providers: [
-    CardsService,
+    ClassAssignmentService,
     {
       provide: APP_GUARD,
       useClass: JwtGuard,
@@ -47,6 +48,19 @@ import { CardsService } from 'apps/learning/src/cards.service';
           options: {
             host: configService.get('LEARNING_SERVICE_HOST'),
             port: configService.get('LEARNING_SERVICE_PORT'),
+          },
+        });
+      },
+    },
+    {
+      provide: SERVICE_NAMES.CURRICULUM_SERVICE,
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        return ClientProxyFactory.create({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get('CURRICULUM_SERVICE_HOST'),
+            port: configService.get('CURRICULUM_SERVICE_PORT'),
           },
         });
       },
