@@ -15,11 +15,12 @@ services:
       - .:/usr/src/server
     ports:
       - "${GATEWAY_PORT}:${GATEWAY_PORT}"
-    command: npx nest start gateway --watch
+    entrypoint: sh -c "npx prisma migrate dev && npx nest start gateway --watch"
     networks:
       - local
     depends_on:
-      - database
+      database:
+        condition: service_healthy
   users:
     container_name: users
     env_file:
@@ -40,7 +41,8 @@ services:
     networks:
       - local
     depends_on:
-      - database
+      database:
+        condition: service_healthy
   learning:
     container_name: learning
     env_file:
@@ -61,7 +63,8 @@ services:
     networks:
       - local
     depends_on:
-      - database
+      database:
+        condition: service_healthy
   
   curriculum:
     container_name: curriculum
@@ -83,8 +86,9 @@ services:
     networks:
       - local
     depends_on:
-      - database
-      
+      database:
+        condition: service_healthy
+
   database:
     container_name: database
     restart: always
