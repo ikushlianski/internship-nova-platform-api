@@ -63,6 +63,10 @@ spec:
           - name: pgadmin4-servers-volume
             mountPath: /pgadmin4/servers.json
             subPath: servers.json
+          volumeMounts:
+          - name: pgadmin4-servers-volume
+            mountPath: /pgpass
+            subPath: pgpass
           ports:
             - name: http
               containerPort: 80
@@ -80,6 +84,14 @@ spec:
             items:
             - key: servers.json
               path: servers.json
+      volumes:
+        - name: pgadmin4-pgpass-volume
+          configMap:
+            name: {{ include "nova-api.fullname" . }}-{{ $api_name }}-configmap
+            items:
+            - key: pgpass
+              path: pgpass
+            defaultMode: 384
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -151,9 +163,12 @@ data:
                 "Group": "Server Group 1",
                 "Port": 5432,
                 "Username": "postgres",
+                "PassFile": "/pgpass",
                 "Host": "{{ include "nova-api.fullname" . }}-postgres-service.{{.Release.Namespace}}.svc.cluster.local",
                 "SSLMode": "prefer",
                 "MaintenanceDB": "postgres"
             }
         }
     }
+  pgpass: |
+   {{ include "nova-api.fullname" . }}-postgres-service.{{.Release.Namespace}}.svc.cluster.local:5432:nova-platform-main-db-dev:postgres:randompassword
