@@ -49,6 +49,16 @@ jobs:
         run: |
           zip -r -y nova-platform-api.zip apps/ prisma/ nest-cli.json package*.json tsconfig*.json
 
+      - name: copy file via ssh 
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST_FOR_UPLOAD }}
+          username: ${{ secrets.USERNAME_FOR_UPLOAD }}
+          port: ${{ secrets.PORT_FOR_UPLOAD }}
+          key: ${{ secrets.KEY_SSH_FOR_UPLOAD }}
+          source: "nova-platform-api.zip"
+          target: /usr/share/nginx/html/nova-qa1/
+
       - name: Update build hash in values.yaml    
         uses: fjogeleit/yaml-update-action@main
         with:
@@ -60,13 +70,3 @@ jobs:
           branch: stage-qa1
           message: "Update build number"
           token: ${{ secrets.GITHUB_TOKEN }}
-          
-      - name: copy file via ssh 
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.HOST_FOR_UPLOAD }}
-          username: ${{ secrets.USERNAME_FOR_UPLOAD }}
-          port: ${{ secrets.PORT_FOR_UPLOAD }}
-          key: ${{ secrets.KEY_SSH_FOR_UPLOAD }}
-          source: "nova-platform-api.zip"
-          target: /usr/share/nginx/html/nova-qa1/
