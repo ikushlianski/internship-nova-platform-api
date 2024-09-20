@@ -64,7 +64,7 @@ spec:
             mountPath: /pgadmin4/servers.json
             subPath: servers.json
           volumeMounts:
-          - name: pgadmin4-servers-volume
+          - name: pgadmin4-pgpass-volume
             mountPath: /pgpass
             subPath: pgpass
           ports:
