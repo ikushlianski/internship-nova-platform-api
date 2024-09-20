@@ -1,17 +1,25 @@
 name: Build project and deploy to qa1
 
-on:
-  workflow_dispatch:
-    inputs:
-      BRANCH:
-        description: 'Branch to use'
-        required: true
-        default: 'main'
-        type: choice
-        options:
-        - main
-        - stage-qa1
+on: workflow_dispatch
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       BRANCH:
+#         description: 'Branch to use'
+#         required: true
+#         default: 'main'
+#         type: choice
+#         options:
+#         - main
+#         - stage-qa1
 
+permissions:
+  id-token: write
+  contents: write
+  checks: write
+  issues: write
+  packages: write
+  pull-requests: write
 
 jobs:
   test-and-build:
