@@ -63,7 +63,6 @@ spec:
           - name: pgadmin4-servers-volume
             mountPath: /pgadmin4/servers.json
             subPath: servers.json
-          volumeMounts:
           - name: pgadmin4-pgpass-volume
             mountPath: /pgpass
             subPath: pgpass
@@ -84,7 +83,6 @@ spec:
             items:
             - key: servers.json
               path: servers.json
-      volumes:
         - name: pgadmin4-pgpass-volume
           configMap:
             name: {{ include "nova-api.fullname" . }}-{{ $api_name }}-configmap
