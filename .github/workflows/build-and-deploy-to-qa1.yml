@@ -1,4 +1,4 @@
-name: Build project and deploy to qa2
+name: Build project and deploy to qa1
 
 on:
   workflow_dispatch:
