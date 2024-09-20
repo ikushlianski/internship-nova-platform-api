@@ -7,8 +7,6 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/guards/jwt-auth.guard';
 import { UsersRoutesController } from './gateway-users.controller';
 import { PrismaModule } from 'apps/curriculum/src/prisma/prisma.module';
-import { ClassAssignmentController } from 'apps/curriculum/src/class-assignment.controller';
-import { ClassAssignmentService } from 'apps/curriculum/src/class-assignment.service';
 import { CurriculumRoutesController } from './gareway-curriculum.contrloller';
 
 
@@ -20,9 +18,8 @@ import { CurriculumRoutesController } from './gareway-curriculum.contrloller';
     AuthModule,
     PrismaModule,
   ],
-  controllers: [UsersRoutesController, ClassAssignmentController, CurriculumRoutesController],
+  controllers: [UsersRoutesController, CurriculumRoutesController],
   providers: [
-    ClassAssignmentService,
     {
       provide: APP_GUARD,
       useClass: JwtGuard,
