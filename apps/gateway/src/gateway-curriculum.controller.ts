@@ -2,20 +2,16 @@ import {
   Body,
   Controller,
   Delete,
-  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
   Param,
   Post,
   Put,
-  Req,
-  UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { SERVICE_NAMES } from './service-names';
 import { Inject } from '@nestjs/common';
-import { JwtGuard } from './auth/guards/jwt-auth.guard';
 import { Public } from './auth/public.decorator';
 import { ValidateIdPipe } from 'apps/curriculum/pipes/validation.pipe';
 import { ClassSchema, CourseSchema } from 'apps/curriculum/dto/curriculum.dto';

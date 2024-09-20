@@ -28,6 +28,6 @@ COPY --from=base /usr/src/server/dist ./dist
 
 RUN npm run build
 
-EXPOSE ${GATEWAY_PORT}
+EXPOSE ${CURRICULUM_SERVICE_PORT}
 
 CMD ["npm", "run", "start:prod" ]

@@ -1,18 +1,8 @@
 import {
   Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  HttpStatus,
-  HttpCode,
-  Put,
 } from '@nestjs/common';
 import { CurriculumService } from './curriculum.service';
-import { Public } from '../gateway/src/auth/public.decorator';
 import { ClassSchema, CourseSchema } from './dto/curriculum.dto';
-import { ValidateIdPipe } from './pipes/validation.pipe';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 
 @Controller('curriculum')
