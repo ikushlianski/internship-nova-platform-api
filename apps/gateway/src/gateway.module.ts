@@ -8,6 +8,7 @@ import { JwtGuard } from './auth/guards/jwt-auth.guard';
 import { UsersRoutesController } from './gateway-users.controller';
 import { CurriculumService } from 'apps/curriculum/curriculum.service';
 import { PrismaModule } from 'apps/prisma/prisma.module';
+import { CurriculumRoutesController } from './gateway-curriculum.controller';
 
 @Module({
   imports: [
@@ -17,9 +18,8 @@ import { PrismaModule } from 'apps/prisma/prisma.module';
     AuthModule,
     PrismaModule,
   ],
-  controllers: [UsersRoutesController],
+  controllers: [UsersRoutesController, CurriculumRoutesController],
   providers: [
-    CurriculumService,
     {
       provide: APP_GUARD,
       useClass: JwtGuard,
@@ -31,7 +31,7 @@ import { PrismaModule } from 'apps/prisma/prisma.module';
         return ClientProxyFactory.create({
           transport: Transport.TCP,
           options: {
-            host: configService.get('USER_SERVICE_HOST'), // name of microservice in docker-compose.yml
+            host: configService.get('USER_SERVICE_HOST'),
             port: configService.get('USER_SERVICE_PORT'),
           },
         });
