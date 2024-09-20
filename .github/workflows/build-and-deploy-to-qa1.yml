@@ -1,4 +1,4 @@
-name: Build project and deploy to qa1
+name: Build project and deploy to qa2
 
 on: workflow_dispatch
 
@@ -27,27 +27,26 @@ jobs:
       - name: Build the project
         run: npm run build
 
-      # - name: Archive production artifacts nova-platform-api
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: nova-platform-api
-      #     path: |
-      #       apps
-      #       prisma
-      #       nest-cli.json
-      #       package*.json
-      #       tsconfig*.json
-      # - name: Download artifact
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: nova-platform-api
-      #     path: nova-platform-api
-      # - name: zip all the files
-      #   working-directory: ./nova-platform-api
-      #   run: zip -r ../nova-platform-api.zip *
-      - name: zip nova-platform-api
-        run: |
-          zip -r -y nova-platform-api.zip apps/ prisma/ nest-cli.json package*.json tsconfig*.json
+      - name: Archive production artifacts nova-platform-api
+        uses: actions/upload-artifact@v4
+        with:
+          name: nova-platform-api
+          path: |
+            apps
+            prisma
+            nest-cli.json
+            package*.json
+            tsconfig*.json
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nova-platform-api
+          path: nova-platform-api
+      - name: zip all the files
+        working-directory: ./nova-platform-api
+        run: zip -r ../nova-platform-api.zip *
+      # - name: Display structure of downloaded files
+      #   run: ls -al
 
       - name: copy file via ssh 
         uses: appleboy/scp-action@v0.1.7
