@@ -52,7 +52,6 @@ export class CurriculumRoutesController {
     return this.client.send({ cmd: 'updateClassInfo' }, { class_id, updatedClassData });
   }
 
-  @Public()
   @Get('course')
   async getAllCourses() {
     return this.client.send({ cmd: 'getAllCourses' }, {});
