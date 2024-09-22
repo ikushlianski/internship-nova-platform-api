@@ -4,7 +4,7 @@ model Deck {
   deck_description String?
 
   user User         @relation(fields: [user_id], references: [user_email])
-  Card LessonCard[]
+  card LessonCard[]
 
   @@map("deck")
 }
