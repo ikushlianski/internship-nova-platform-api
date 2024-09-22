@@ -5,6 +5,7 @@ enum UserRole {
   SALES = 'Sales',
   MANAGER = 'Manager',
   ADMIN = 'Admin',
+  LEAD = 'Lead'
 }
 
 export default UserRole;

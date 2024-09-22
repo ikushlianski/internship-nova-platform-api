@@ -1,11 +1,12 @@
 import { Controller } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { ParsedUserData } from '../../gateway/src/auth/auth.types';
+import { ParsedUserData} from '../../gateway/src/auth/auth.types';
+import { User } from 'prisma/prisma-client';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @MessagePattern({ cmd: 'create_user' })
   async handleFindOrCreateUser(@Payload() userDto: ParsedUserData) {

@@ -5,9 +5,7 @@ import { ParsedUserData } from './auth/auth.types';
 
 @Controller('users')
 export class UsersRoutesController {
-  constructor(
-    @Inject(SERVICE_NAMES.USERS_SERVICE) private client: ClientProxy,
-  ) { }
+  constructor(@Inject(SERVICE_NAMES.USERS_SERVICE) private client: ClientProxy) {}
 
   @Get(':id')
   getUserByID(@Param('id') id) {

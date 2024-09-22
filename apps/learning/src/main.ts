@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { LearningModule } from './cards.module';
+import { LearningModule } from './learning.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 

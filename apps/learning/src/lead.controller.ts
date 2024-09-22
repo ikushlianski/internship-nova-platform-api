@@ -1,10 +1,10 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller} from '@nestjs/common';
 import { CardsService } from './cards.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { UserSchema } from 'apps/shared-logic/src/dto/dto';
 
-@Controller('user-cards')
-export class CardsController {
+@Controller('lead')
+export class LeadController {
   constructor(private readonly cardsService: CardsService) {}
 
   @MessagePattern({ cmd: 'get_cards_by_user_email' })
