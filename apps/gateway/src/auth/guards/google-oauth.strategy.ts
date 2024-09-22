@@ -2,13 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { configDotenv } from 'dotenv';
 import { Strategy, VerifyCallback } from 'passport-google-oauth2';
-import { AuthService } from '../auth.service';
 
 configDotenv();
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-  constructor(private readonly authService: AuthService) {
+  constructor() {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -25,15 +24,11 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   ): Promise<any> {
     const { name, emails } = profile;
 
-    // Find or create the user
-    const user = await this.authService.findOrCreateUser({
+    const user = {
       user_email: emails[0].value,
       first_name: name.givenName,
       last_name: name.familyName,
-      // todo hasAcceptedTerms
-
-      // todo pass readyPrivacyPolicy flag from FE to this Strategy and validate right here instead of relying on FE
-    });
+    };
 
     return done(null, user);
   }

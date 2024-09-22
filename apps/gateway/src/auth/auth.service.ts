@@ -11,15 +11,15 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async findOrCreateUser(userDto: ParsedUserData) {
-    const user = await this.client
-      .send({ cmd: 'find_or_create_user' }, userDto)
-      .toPromise();
-
-    return user;
+  async createUser(userDto: ParsedUserData) {
+    return this.client.send({ cmd: 'create_user' }, userDto);
   }
 
-  async generateJwtToken(user: ParsedUserData) {
+  async findUserByEmail(email: string) {
+    return this.client.send({ cmd: 'find_user_by_email' }, email);
+  }
+
+  generateJwtToken(user: ParsedUserData) {
     const payload = {
       email: user.user_email,
       first_name: user.first_name,
@@ -27,5 +27,13 @@ export class AuthService {
     };
     const jwt = this.jwtService.sign(payload, { expiresIn: '30d' });
     return { jwt };
+  }
+
+  parseLoginRequestState(state: string) {
+    return Object.fromEntries(
+      decodeURIComponent(state)
+        .split('&')
+        .map((pair) => pair.split('=')),
+    );
   }
 }

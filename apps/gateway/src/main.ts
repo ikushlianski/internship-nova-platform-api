@@ -1,14 +1,21 @@
-import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
-import * as cookieParser from 'cookie-parser';
+import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as cookieParser from 'cookie-parser';
 
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
+import { VersioningType } from '@nestjs/common';
 import { GatewayModule } from './gateway.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(GatewayModule);
+
+  app.enableVersioning({
+    type: VersioningType.URI,
+    defaultVersion: app.get(ConfigService).get('DEFAULT_API_VERSION'),
+  });
+
   const gatewayPort = app.get(ConfigService).get('GATEWAY_PORT');
 
   app.connectMicroservice<MicroserviceOptions>({
@@ -24,7 +31,7 @@ async function bootstrap() {
     },
   });
 
-  app.setGlobalPrefix('api/v1');
+  app.setGlobalPrefix('api');
   app.use(cookieParser());
 
   const config = new DocumentBuilder()
