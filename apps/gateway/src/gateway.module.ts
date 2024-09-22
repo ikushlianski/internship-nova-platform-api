@@ -8,7 +8,6 @@ import { JwtGuard } from './auth/guards/jwt-auth.guard';
 import { UsersRoutesController } from './gateway-users.controller';
 import { PrismaModule } from 'apps/learning/src/prisma/prisma.module';
 import { LearningRoutesController } from './gateway-learning.controller';
-import { CurriculumService } from 'apps/curriculum/curriculum.service';
 import { CurriculumRoutesController } from './gateway-curriculum.controller';
 
 @Module({

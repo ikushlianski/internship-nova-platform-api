@@ -10,8 +10,8 @@ export class CardsService {
     const user = await this.prisma.user.findUnique({
       where: { user_email: userEmail },
       include: {
-        userDecks: true,
-        userCard: true,
+        Deck: true,
+        UserCard: true,
       },
     });
 
@@ -20,12 +20,12 @@ export class CardsService {
     }
 
     return {
-      userDecks: user.userDecks.map(deck => ({
+      userDecks: user.Deck.map((deck) => ({
         deck_id: deck.deck_id,
         user_id: deck.user_id,
         deck_description: deck.deck_description,
       })),
-      userCard: user.userCard.map(card => ({
+      userCard: user.UserCard.map((card) => ({
         user_card_id: card.user_card_id,
         user_id: card.user_id,
         question: card.question,
@@ -35,15 +35,3 @@ export class CardsService {
     };
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
