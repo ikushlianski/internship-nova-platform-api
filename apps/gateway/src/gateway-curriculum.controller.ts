@@ -14,7 +14,7 @@ import { SERVICE_NAMES } from './service-names';
 import { Inject } from '@nestjs/common';
 import { Public } from './auth/public.decorator';
 import { ValidateIdPipe } from 'apps/curriculum/pipes/validation.pipe';
-import { ClassSchema, CourseSchema } from 'apps/curriculum/dto/curriculum.dto';
+import { ClassSchema, CourseSchema } from 'apps/shared-logic/src/dto/dto';
 
 @Controller('curriculum')
 export class CurriculumRoutesController {

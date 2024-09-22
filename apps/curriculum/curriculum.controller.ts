@@ -1,8 +1,6 @@
-import {
-  Controller,
-} from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { CurriculumService } from './curriculum.service';
-import { ClassSchema, CourseSchema } from './dto/curriculum.dto';
+import { ClassSchema, CourseSchema } from '../shared-logic/src/dto/dto';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 
 @Controller('curriculum')
