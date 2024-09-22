@@ -18,19 +18,6 @@ async function bootstrap() {
 
   const gatewayPort = app.get(ConfigService).get('GATEWAY_PORT');
 
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.RMQ,
-    options: {
-      urls: [
-        `amqp://${process.env.RABBITMQ_USER}:${process.env.RABBITMQ_PASSWORD}@rabbitmq:${process.env.RABBITMQ_PORT}`,
-      ],
-      queue: 'main_queue',
-      queueOptions: {
-        durable: false,
-      },
-    },
-  });
-
   app.setGlobalPrefix('api');
   app.use(cookieParser());
 
