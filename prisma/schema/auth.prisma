@@ -13,8 +13,8 @@ model User {
   mentor                       Mentor[]
   is_student_of                Student[]
   DataRemovalRequest           DataRemovalRequest[]
-  Deck                         Deck[]
-  UserCard                     UserCard[]
+  userDecks                         Deck[]
+  userCard                     UserCard[]
   VocabularyInbox              VocabularyInbox[]
 
   @@map("user")
