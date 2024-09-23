@@ -408,7 +408,14 @@ const subjects = [
   { subject_code: 'english', subject_name: 'English Language' },
   { subject_code: 'programming', subject_name: 'Programming' },
 ];
-
+const roles=[
+  {role_id:"0",role_name:"Spectator", role_description:"Spectator"},
+  {role_id:"1",role_name:"Student", role_description:"Student"},
+  {role_id:"2",role_name:"Teacher", role_description:"Teacher"},
+  {role_id:"3",role_name:"Sales", role_description:"Sales"},
+  {role_id:"4",role_name:"Manager", role_description:"Manager"},
+  {role_id:"5",role_name:"Admin", role_description:"Admin"},
+]
 export {
   courses,
   courseLevels,
@@ -423,4 +430,5 @@ export {
   taskContexts,
   subjects,
   tuitionLanguages,
+  roles,
 };

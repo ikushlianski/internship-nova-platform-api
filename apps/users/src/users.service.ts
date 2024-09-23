@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'apps/users/src/prisma/prisma.service';
 import { ParsedUserData } from '../../gateway/src/auth/auth.types';
-import UserRole from 'apps/shared-logic/src/auth/userRoles.enum';
+import { create } from 'domain';
+//import { UserRoleDTO } from 'apps/shared-logic/src/DTO/UserRoleDTO';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prismaService: PrismaService) { }
+  constructor(private readonly prismaService: PrismaService) {}
 
   async createUser(userDto: ParsedUserData) {
     return await this.findOrCreateUser(userDto);
@@ -45,7 +46,7 @@ export class UsersService {
   }
   // Student controller logic temp
   async getAllStudents() {
-    return await "all students";
+    return await 'all students';
   }
   async findOrCreateStudent(userDto: ParsedUserData) {
     let user = await this.prismaService.user.findUnique({
@@ -58,12 +59,54 @@ export class UsersService {
           ...userDto,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
-          user_roles:UserRole[1]
-          
+          user_roles: {
+            create: [
+              {
+                role_id: '1',
+              },
+            ],
+          },
+        },
+      });
+    } else {
+      user = await this.prismaService.user.update({
+        where: {
+          user_email: userDto.user_email,
+        },
+        data: {
+          ...userDto,
+          updated_at: new Date().toISOString(),
+          user_roles: {
+            create: [
+              {
+                role_id: '1',
+              },
+            ],
+          },
         },
       });
     }
+    let student = await this.prismaService.student.create({
+      data: {
+        //user_id: user.user_email,
+        student_id: uuidv4(),
+        student_nickname: user.nickname || null,
+        user: {
+          connect: {
+            user_email: userDto.user_email, // Connecting to existing user by user_email
+          },
+        },
+        class: {
+          connect: {
+            class_id: '0',
+          },
+        },
+      },
+    });
 
-    return user;
+    return student;
   }
+}
+function uuidv4(): any {
+  throw new Error('Function not implemented.');
 }

@@ -12,6 +12,7 @@ import {
   lessons,
   tasks,
   taskOptions,
+  roles,
 } from './sampleData';
 import { PrismaClient } from '@prisma/client';
 
@@ -20,6 +21,7 @@ export const prisma = new PrismaClient();
 // write data:
 async function up() {
   console.log('Seeding data');
+  await prisma.role.createMany({ data: roles });
   await prisma.subject.createMany({ data: subjects });
   await prisma.tuitionLang.createMany({ data: tuitionLanguages });
   await prisma.taskContext.createMany({ data: taskContexts });

@@ -4,7 +4,8 @@ import { UsersService } from './users.service';
 import { PrismaModule } from 'apps/users/src/prisma/prisma.module';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UsersController } from './users.controller';
-import { StudentsController } from 'apps/gateway/src/students.controller';
+import { StudentsController } from './student/students.controller';
+
 
 // Define constants
 const USER_QUEUE = 'user_queue';
