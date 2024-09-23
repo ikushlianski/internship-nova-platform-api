@@ -1,16 +1,19 @@
 import { NestFactory } from '@nestjs/core';
 import { LearningModule } from './cards.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { ConfigService } from '@nestjs/config';
+import { RMQ_Queue } from '../../shared-logic/src/RabbitMQ/rabbitmq.enums';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     LearningModule,
     {
-      transport: Transport.TCP,
+      transport: Transport.RMQ,
       options: {
-        host: '0.0.0.0',  
-        port:  new ConfigService().get('LEARNING_SERVICE_PORT'),
+        urls: [ process.env.RABBITMQ_URL],
+        queue: RMQ_Queue.LEARNING_QUEUE,
+        queueOptions: {
+          durable: false
+        },
       },
     },
   );

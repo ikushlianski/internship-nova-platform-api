@@ -1,35 +1,31 @@
-import { Controller } from '@nestjs/common';
-import { UsersService } from './users.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
+import { Controller } from '@nestjs/common';
 import { ParsedUserData } from '../../gateway/src/auth/auth.types';
+import { UsersService } from './users.service';
+import { RabbitMQ } from '../../shared-logic/src/RabbitMQ/rabbitmq.enums';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
-  @MessagePattern({ cmd: 'create_user' })
+  @MessagePattern({ cmd: RabbitMQ.CREATE_USER_COMMAND })
   async handleFindOrCreateUser(@Payload() userDto: ParsedUserData) {
-    const user = await this.usersService.findOrCreateUser(userDto);
-    return user;
+    return await this.usersService.findOrCreateUser(userDto);
   }
 
-  @MessagePattern({ cmd: 'get_user' })
-  async handleGetUserByID(@Payload() id: string) {
-    return {
-      id,
-      email: 'abc@test-user.com',
-      name: 'Test User',
-    };
+  @MessagePattern(RabbitMQ.TEST_MESSAGE)
+  handleMessage(message: any) {
+    console.log('Received message:', message);
+    return { success: true };
   }
 
-  @MessagePattern({ cmd: 'find_user_by_email' })
+  @MessagePattern({ cmd: RabbitMQ.FIND_USER_BY_EMAIL_COMMAND })
   async handleGetUserByEmail(@Payload() email: string) {
     return await this.usersService.findUserByEmail(email);
   }
 
-  @MessagePattern({ cmd: 'get_all_users' })
+  @MessagePattern({ cmd: RabbitMQ.GET_ALL_USERS_COMMAND })
   async handleGetAllUsers() {
-    const users = await this.usersService.getAllUsers();
-    return users;
+    return await this.usersService.getAllUsers();
   }
 }

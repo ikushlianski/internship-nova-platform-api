@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ClientProxyFactory, Transport } from '@nestjs/microservices';
+import { ConfigModule } from '@nestjs/config';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { SERVICE_NAMES } from './service-names';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
@@ -9,6 +9,9 @@ import { UsersRoutesController } from './gateway-users.controller';
 import { PrismaModule } from 'apps/learning/src/prisma/prisma.module';
 import { LearningRoutesController } from './gateway-learning.controller';
 import { StudentsRoutesController } from './gateway-students.controller';
+import * as process from 'node:process';
+import { RMQ_Queue } from 'apps/shared-logic/src/RabbitMQ/rabbitmq.enums';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -16,38 +19,37 @@ import { StudentsRoutesController } from './gateway-students.controller';
     }),
     AuthModule,
     PrismaModule,
+    ClientsModule.register([
+      {
+        name: SERVICE_NAMES.USERS_SERVICE,
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RABBITMQ_URL],
+          queue: RMQ_Queue.USERS_QUEUE,
+          queueOptions: {
+            durable: false,
+          },
+        },
+      },
+      {
+        name: SERVICE_NAMES.LEARNING_SERVICE,
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RABBITMQ_URL],
+          queue: RMQ_Queue.LEARNING_QUEUE,
+          queueOptions: {
+            durable: false,
+          },
+        },
+      },
+    ]),
   ],
-  controllers: [UsersRoutesController,StudentsRoutesController,LearningRoutesController],
+
+  controllers: [UsersRoutesController, StudentsRoutesController, LearningRoutesController],
   providers: [
     {
       provide: APP_GUARD,
       useClass: JwtGuard,
-    },
-    {
-      provide: SERVICE_NAMES.USERS_SERVICE,
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        return ClientProxyFactory.create({
-          transport: Transport.TCP,
-          options: {
-            host: configService.get('USERS_SERVICE_HOST'),
-            port: configService.get('USERS_SERVICE_PORT'),
-          },
-        });
-      },
-    },
-    {
-      provide: SERVICE_NAMES.LEARNING_SERVICE,
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        return ClientProxyFactory.create({
-          transport: Transport.TCP,
-          options: {
-            host: configService.get('LEARNING_SERVICE_HOST'),
-            port: configService.get('LEARNING_SERVICE_PORT'),
-          },
-        });
-      },
     },
   ],
 })
