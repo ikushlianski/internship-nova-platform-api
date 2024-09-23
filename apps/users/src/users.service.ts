@@ -88,12 +88,11 @@ export class UsersService {
     }
     let student = await this.prismaService.student.create({
       data: {
-        //user_id: user.user_email,
         student_id: uuidv4(),
         student_nickname: user.nickname || null,
         user: {
           connect: {
-            user_email: userDto.user_email, // Connecting to existing user by user_email
+            user_email: userDto.user_email,
           },
         },
         class: {
