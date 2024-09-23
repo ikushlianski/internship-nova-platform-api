@@ -1,6 +1,6 @@
 import { Controller, Post, Body, HttpException, HttpStatus, Get, Param, UseGuards, Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { JwtGuard } from './auth/guards/jwt-auth.guard'; // Adjust path as needed
+import { JwtGuard } from './auth/guards/jwt-auth.guard'; 
 import { SERVICE_NAMES } from './service-names';
 import { StudentDto } from 'apps/curriculum/src/assign-student.dto';
 
@@ -15,7 +15,8 @@ export class CurriculumRoutesController {
   @UseGuards(JwtGuard)
   async assignStudentToClass(@Body() studentDto: StudentDto) {
     try {
-      return await this.client.send({ cmd: 'assign_student_to_class' }, studentDto);
+      // Forward the assign student request to the curriculum microservice
+      return await this.client.send({ cmd: 'assign_student_to_class' }, studentDto).toPromise();
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -25,7 +26,8 @@ export class CurriculumRoutesController {
   @UseGuards(JwtGuard)
   async getClassAssignments(@Param('id') classId: string) {
     try {
-      return await this.client.send({ cmd: 'get_class_assignments' }, classId);
+      // Forward the get class assignments request to the curriculum microservice
+      return await this.client.send({ cmd: 'get_class_assignments' }, classId).toPromise();
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

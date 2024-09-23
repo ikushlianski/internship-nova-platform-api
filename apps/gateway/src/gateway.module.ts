@@ -7,7 +7,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/guards/jwt-auth.guard';
 import { UsersRoutesController } from './gateway-users.controller';
 import { PrismaModule } from 'apps/curriculum/src/prisma/prisma.module';
-import { CurriculumRoutesController } from './gareway-curriculum.contrloller';
+import { CurriculumRoutesController } from './gateway-curriculum.controller';
 
 
 @Module({
