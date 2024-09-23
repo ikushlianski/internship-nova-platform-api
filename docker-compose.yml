@@ -21,6 +21,8 @@ services:
     depends_on:
       database:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
 
   users:
     container_name: users
@@ -43,6 +45,8 @@ services:
       - local
     depends_on:
       database:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
 
   learning:
@@ -67,7 +71,8 @@ services:
     depends_on:
       database:
         condition: service_healthy
-
+      rabbitmq:
+        condition: service_healthy
   database:
     container_name: database
     restart: always
@@ -83,6 +88,26 @@ services:
       - "${DATABASE_PORT}:${DATABASE_PORT}"
     networks:
       - local
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:4.0.1-management
+    env_file:
+      - ${ENV_FILE}
+    healthcheck:
+      test: "rabbitmq-diagnostics -q ping"
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "${RABBITMQ_PORT}:${RABBITMQ_PORT}"
+      - "${RABBITMQ_MC_PORT}:${RABBITMQ_MC_PORT}"
+    volumes:
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    networks:
+      - local
+    depends_on:
+      database:
+        condition: service_healthy
 
 volumes:
   database:
