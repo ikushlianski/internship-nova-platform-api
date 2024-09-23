@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'apps/users/src/prisma/prisma.service';
 import { ParsedUserData } from '../../gateway/src/auth/auth.types';
-import { create } from 'domain';
-//import { UserRoleDTO } from 'apps/shared-logic/src/DTO/UserRoleDTO';
 
 @Injectable()
 export class UsersService {
@@ -88,7 +86,7 @@ export class UsersService {
     }
     let student = await this.prismaService.student.create({
       data: {
-        student_id: uuidv4(),
+        student_id: userDto.user_email,
         student_nickname: user.nickname || null,
         user: {
           connect: {
@@ -105,7 +103,4 @@ export class UsersService {
 
     return student;
   }
-}
-function uuidv4(): any {
-  throw new Error('Function not implemented.');
 }

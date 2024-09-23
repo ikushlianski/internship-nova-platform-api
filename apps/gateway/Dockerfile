@@ -1,4 +1,5 @@
 # stage name is the same as NODE_ENV
+
 FROM node:22-alpine as development
 WORKDIR /usr/src/server
 

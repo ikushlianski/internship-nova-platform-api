@@ -8,9 +8,9 @@ import { JwtGuard } from './auth/guards/jwt-auth.guard';
 import { UsersRoutesController } from './gateway-users.controller';
 import { PrismaModule } from 'apps/learning/src/prisma/prisma.module';
 import { LearningRoutesController } from './gateway-learning.controller';
-import { StudentsRoutesController } from './gateway-students.controller';
 import * as process from 'node:process';
 import { RMQ_Queue } from 'apps/shared-logic/src/RabbitMQ/rabbitmq.enums';
+import { StudentsRoutesController } from './gateway-students.controller';
 
 @Module({
   imports: [
@@ -44,8 +44,7 @@ import { RMQ_Queue } from 'apps/shared-logic/src/RabbitMQ/rabbitmq.enums';
       },
     ]),
   ],
-
-  controllers: [UsersRoutesController, StudentsRoutesController, LearningRoutesController],
+  controllers: [UsersRoutesController, LearningRoutesController, StudentsRoutesController],
   providers: [
     {
       provide: APP_GUARD,
