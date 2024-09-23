@@ -2,9 +2,6 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
-
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-
 import { VersioningType } from '@nestjs/common';
 import { GatewayModule } from './gateway.module';
 

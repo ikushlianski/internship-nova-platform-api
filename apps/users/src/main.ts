@@ -1,16 +1,19 @@
 import { NestFactory } from '@nestjs/core';
 import { UsersModule } from './users.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { ConfigService } from '@nestjs/config';
+import { RMQ_Queue } from '../../shared-logic/src/RabbitMQ/rabbitmq.enums';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     UsersModule,
     {
-      transport: Transport.TCP,
+      transport: Transport.RMQ,
       options: {
-        host: 'users',
-        port: new ConfigService().get('USERS_SERVICE_PORT'),
+        urls: [ process.env.RABBITMQ_URL],
+        queue: RMQ_Queue.USERS_QUEUE,
+        queueOptions: {
+          durable: false
+        },
       },
     },
   );
