@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CardsController } from './cards.controller';
 import { CardsService } from './cards.service';
-import { PrismaModule } from './prisma/prisma.module';
-
+import { PrismaModule } from '../../shared-logic/prisma/prisma.module';
 
 @Module({
   imports: [PrismaModule],
@@ -10,4 +9,3 @@ import { PrismaModule } from './prisma/prisma.module';
   providers: [CardsService],
 })
 export class LearningModule {}
-

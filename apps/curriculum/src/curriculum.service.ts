@@ -1,11 +1,11 @@
 import { HttpException, HttpStatus, Injectable, Post } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../../shared-logic/prisma/prisma.service';
 import { Class, Course } from '@prisma/client';
-import { ClassSchema, CourseSchema } from '../shared-logic/src/dto/dto';
+import { ClassSchema, CourseSchema } from '../../shared-logic/src/dto/dto';
 
 @Injectable()
 export class CurriculumService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async getAllClasses() {
     return await this.prisma.class.findMany();

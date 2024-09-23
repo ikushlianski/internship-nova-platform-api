@@ -50,7 +50,7 @@
       "type": "application",
       "root": "apps/curriculum",
       "entryFile": "main",
-      "sourceRoot": "apps/curriculum",
+      "sourceRoot": "apps/curriculum/src",
       "compilerOptions": {
         "tsConfigPath": "apps/curriculum/tsconfig.app.json"
       }

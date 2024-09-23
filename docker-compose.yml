@@ -23,7 +23,6 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-
   users:
     container_name: users
     env_file:
@@ -37,7 +36,7 @@ services:
         - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
         - ENV_FILE=${ENV_FILE}
     ports:
-      - '${USERS_SERVICE_PORT}:${USERS_SERVICE_PORT}'
+      - "${USERS_SERVICE_PORT}:${USERS_SERVICE_PORT}"
     volumes:
       - .:/usr/src/server
     command: npx nest start users --watch
@@ -61,14 +60,16 @@ services:
         - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
         - ENV_FILE=${ENV_FILE}
     ports:
-      - '${CURRICULUM_SERVICE_PORT}:${CURRICULUM_SERVICE_PORT}'
+      - "${CURRICULUM_SERVICE_PORT}:${CURRICULUM_SERVICE_PORT}"
     volumes:
       - .:/usr/src/server
-    command: npx nest start data --watch
+    command: npx nest start curriculum --watch
     networks:
       - local
     depends_on:
       database:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
   learning:
     container_name: learning
@@ -129,11 +130,9 @@ services:
     depends_on:
       database:
         condition: service_healthy
-
 volumes:
   database:
     driver: local
-
 networks:
   local:
     driver: bridge
