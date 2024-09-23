@@ -27,6 +27,7 @@ export class CurriculumRoutesController {
     return this.client.send(RabbitMQ.TEST_MESSAGE, message);
   }
 
+  @Public()
   @Get('class')
   getAllClasses() {
     return this.client.send({ cmd: RabbitMQ.GET_ALL_CLASSES }, {});
@@ -58,6 +59,7 @@ export class CurriculumRoutesController {
     return this.client.send({ cmd: RabbitMQ.UPDATE_CLASS_BY_ID }, { class_id, updatedClassData });
   }
 
+  @Public()
   @Get('course')
   async getAllCourses() {
     return this.client.send({ cmd: RabbitMQ.GET_ALL_COURSES }, {});
