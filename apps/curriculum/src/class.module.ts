@@ -2,11 +2,12 @@
 import { Module } from '@nestjs/common';
 import { PrismaService } from './prisma/prisma.service';
 import { ClassService } from './class.service';
-import { ClassController } from './class.controller';
+import { CurriculumPrismaModule } from './prisma/prisma.module';
+
 
 
 @Module({
-  controllers: [ClassController],
+  imports: [CurriculumPrismaModule],
   providers: [ClassService, PrismaService], // Ensure PrismaService is injected
 })
 export class ClassModule {}

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { PrismaService } from './prisma.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PrismaClient } from 'prisma/prisma-client';
+import { PrismaService } from './prisma.service';
 
 
 @Module({
@@ -24,4 +24,4 @@ import { PrismaClient } from 'prisma/prisma-client';
   ],
   exports: [PrismaService],
 })
-export class CurriculumPrismaModule  {}
+export class LearningPrismaModule {}
