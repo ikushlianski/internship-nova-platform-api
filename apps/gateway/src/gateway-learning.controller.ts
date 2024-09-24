@@ -3,8 +3,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { JwtGuard } from './auth/guards/jwt-auth.guard'; // Ensure correct path to JwtGuard
 import { SERVICE_NAMES } from './service-names'; // Service name constants
 import { Inject } from '@nestjs/common';
-import { RabbitMQ } from 'apps/shared-logic/src/RabbitMQ/rabbitmq.enum';
-
+import { RabbitMQ } from '../../shared-logic/src/RabbitMQ/rabbitmq.enums';
 
 @Controller('learning')
 export class LearningRoutesController {

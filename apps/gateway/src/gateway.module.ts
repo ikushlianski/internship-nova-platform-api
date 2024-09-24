@@ -11,7 +11,7 @@ import { RMQ_Queue } from 'apps/shared-logic/src/RabbitMQ/rabbitmq.enum';
 import { LearningPrismaModule } from 'apps/learning/src/prisma/prisma.module';
 import { LearningRoutesController } from './gateway-learning.controller';
 import { CurriculumRoutesController } from './gateway-class.controller';
-
+import * as process from 'node:process';
 
 @Module({
   imports: [

@@ -57,3 +57,12 @@ npm run seed:dev
 ```
 
 This will seed the database with initial data provided in `prisma/sampleData.ts`. The seeding script itself is in `prisma/seed.ts`. `npm run seed:dev` will run the seeding script in the development environment and ensure all required env vars are applied locally.
+
+## RabbitMQ
+http://localhost:15672/ - RabbitMQ management console
+You can test RabbitMQ sending GET request to /users/test_RMQ
+You can test RabbitMQ sending GET request to /learning/test_RMQ
+You should receive back: 
+{
+    "success": true
+} 
