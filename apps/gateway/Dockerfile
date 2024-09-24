@@ -1,5 +1,6 @@
 # stage name is the same as NODE_ENV
-FROM node:22-alpine as development
+FROM node:22-alpine AS development
+
 WORKDIR /usr/src/server
 
 ARG GATEWAY_PORT
@@ -20,13 +21,16 @@ RUN npm ci
 EXPOSE ${GATEWAY_PORT}
 
 # `gateway` microservice not only starts but also runs migrations, because it's kind of "main" microservice
-ENTRYPOINT ["executable"]
+# ENTRYPOINT ["executable"]
 
-FROM development as production
+FROM development AS production
 
-COPY --from=base /usr/src/server/node_modules ./node_modules
-COPY --from=base /usr/src/server/package*.json ./
-COPY --from=base /usr/src/server/dist ./dist
+WORKDIR /usr/src/server
+
+COPY --from=development /usr/src/server/node_modules ./node_modules
+COPY --from=development /usr/src/server/package*.json ./
+COPY apps/ ./apps
+COPY dist/ ./dist
 
 RUN npm run build
 

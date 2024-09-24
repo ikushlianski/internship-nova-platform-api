@@ -1,174 +1,75 @@
-{{ $api_name := "gateway"}}
-
-apiVersion: apps/v1
-kind: Deployment
+{{- if .Values.gateway.create }}
+{{- if .Values.serviceAccounts.create }}
+apiVersion: v1
+kind: ServiceAccount
 metadata:
-  # name: {{ include "nova-api.fullname" . }}
-  name: {{ include "nova-api.fullname" . }}-{{ $api_name }}
-  labels:
-    {{- include "nova-api.labels" . | nindent 4 }}
-    {{- include "nova-api.deploymentLabels" . | nindent 4 }}
-    app: {{ include "nova-api.fullname" . }}-{{ $api_name }}
-spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+  name: {{ .Values.gateway.name }}
+  namespace: {{.Release.Namespace}}
+  {{- with .Values.serviceAccounts.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
   {{- end }}
-  selector:
-    matchLabels:
-      # {{- include "nova-api.selectorLabels" . | nindent 6 }}
-      app: {{ include "nova-api.fullname" . }}-{{ $api_name }}
-  template:
-    metadata:
-      {{- with .Values.podAnnotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      labels:
-        {{- include "nova-api.labels" . | nindent 8 }}
-        {{- with .Values.podLabels }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
-        {{- include "nova-api.deploymentLabels" . | nindent 8 }}
-        app: {{ include "nova-api.fullname" . }}-{{ $api_name }}
-    spec:
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      serviceAccountName: {{ include "nova-api.serviceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      initContainers:
-      - name: {{ .Chart.Name }}-npm-ci
-        image: node:20
-        # workingDir: /usr/src/server
-        workingDir: {{ .Values.workingDir }}
-        # command: ["npm"]
-        # args: ["ci"]
-        command: ["/bin/sh"]
-        args:
-          - -c
-          - >-
-              rm * -f -r &&
-              wget -O nova-platform-api.zip http://nginx-static-files.nova-dev.svc.cluster.local/{{.Release.Namespace}}/nova-platform-api.zip &&
-              unzip nova-platform-api.zip -d . &&
-              touch .env.development.local &&
-              npm ci
-        {{- with .Values.volumeMounts }}
-        volumeMounts:
-          {{- toYaml . | nindent 12 }}
-        {{- end }}
-      containers:
-        - name: {{ .Chart.Name }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image_node.repository }}:{{ .Values.image_node.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image_node.pullPolicy }}
-          workingDir: {{ .Values.workingDir }}
-          env:          
-            {{- range $counter, $value := .Values.env }}
-            - name: {{ $value.name }}
-              value: "{{ $value.value }}"
-            {{- end }}
-            - name: "GATEWAY_HOST"
-              value: "{{ include "nova-api.fullname" . }}.{{.Release.Namespace}}.svc.cluster.local"
-            - name: "USER_SERVICE_HOST"
-              value: "{{ include "nova-api.fullname" . }}-users-service.{{.Release.Namespace}}.svc.cluster.local"
-            - name: "GOOGLE_CALLBACK_URL"
-              value: "https://{{ .Values.application_environment }}.{{ .Values.domain_name }}/api/v1/auth/google/callback"
-            - name: "GOOGLE_CLIENT_ID"
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "nova-api.fullname" . }}-secrets
-                  key: GOOGLE_CLIENT_ID
-            - name: "GOOGLE_CLIENT_SECRET"
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "nova-api.fullname" . }}-secrets
-                  key: GOOGLE_CLIENT_SECRET
-            - name: "JWT_SECRET"
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "nova-api.fullname" . }}-secrets
-                  key: JWT_SECRET
-            - name: "GOOGLE_CALLBACK_URL"
-              value: "http://{{ include "nova-api.fullname" . }}-{{ $api_name }}-service.{{.Release.Namespace}}.svc.cluster.local/api/v1/auth/google/callback" ### REWORK!### REWORK!### REWORK!
-          command: ["npx"]
-          args: ["nest", "start", "gateway", "--watch"]
-          ports:
-            - name: http
-              containerPort: {{ .Values.service.port }}
-              protocol: TCP
-          livenessProbe:
-            null
-          readinessProbe:
-            null
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
-          volumeMounts:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-      {{- with .Values.volumes }}
-      volumes:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-
 ---
+{{- end }}
 apiVersion: v1
 kind: Service
 metadata:
-  # name: {{ include "nova-api.fullname" . }}
-  name: {{ include "nova-api.fullname" . }}-{{ $api_name }}-service
-  labels:
-    # {{- include "nova-api.labels" . | nindent 4 }}
-    app: {{ include "nova-api.fullname" . }}-{{ $api_name }}
-spec:
-  type: {{ .Values.service.type }}
-  ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
-  selector:
-    # {{- include "nova-api.selectorLabels" . | nindent 4 }} 
-    app: {{ include "nova-api.fullname" . }}-{{ $api_name }}
-
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: {{ include "nova-api.fullname" . }}-{{ $api_name }}-ingress
+  name: {{ .Values.gateway.name }}
+  namespace: {{ .Release.Namespace }}
   annotations:
-    # nginx.ingress.kubernetes.io/rewrite-target: /
+    prometheus.io/scrape: "true"
 spec:
-  ingressClassName: nginx
-  rules:
-  - host: {{ .Values.application_environment }}.{{ .Values.domain_name }}
-    http: &backend
-      paths:
-      - path: /api/v1/
-        pathType: Prefix
-        backend:
-          service:
-            name: {{ include "nova-api.fullname" . }}-{{ $api_name }}-service
-            port:
-              number: 80
-  - host: {{ .Values.application_environment }}.memo.{{ .Values.domain_name }}
-    http: *backend
-  - host: {{ .Values.application_environment }}.student.{{ .Values.domain_name }}
-    http: *backend
-  - host: {{ .Values.application_environment }}.admin.{{ .Values.domain_name }}
-    http: *backend
+  type: ClusterIP
+  selector:
+    app: {{ .Values.gateway.name }}
+  ports:
+  - name: listener
+    port: {{ .Values.gateway.service.port }}
+    targetPort: {{ .Values.gateway.service.targetPort }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.gateway.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+#   serviceName: {{ .Values.gateway.name }}
+  replicas: {{ .Values.gateway.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.gateway.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.gateway.name }}
+    spec:
+      {{- if .Values.serviceAccounts.create }}
+      serviceAccountName: {{ .Values.gateway.name }}
+      {{- else }}
+      serviceAccountName: default
+      {{- end }}
+      # terminationGracePeriodSeconds: 5
+      # securityContext:
+      #   fsGroup: 1000
+      #   runAsGroup: 1000
+      #   runAsNonRoot: true
+      #   runAsUser: 1000
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: {{ .Values.gateway.name }}
+        # securityContext:
+        #   runAsUser: 1000
+        image: {{ .Values.images.repository }}/{{ .Values.gateway.image.name }}:{{ .Values.gateway.image.tag }}
+        command: ["/bin/sh"]
+        args: ["-c", "npx prisma migrate dev && npx nest start gateway --watch"]
+        ports:
+        - containerPort: {{ .Values.gateway.service.targetPort }}
+        env:          
+        {{- range $counter, $item := .Values.env }}
+        - name: {{ $item.name }}
+          value: "{{ $item.value }}"
+        {{- end }}
+        resources:
+          {{- toYaml .Values.gateway.resources | nindent 10 }}
+{{- end }}

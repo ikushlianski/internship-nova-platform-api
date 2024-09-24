@@ -1,3 +1,96 @@
+{{- if .Values.postgres.create }}
+{{- if .Values.serviceAccounts.create }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Values.postgres.name }}
+  namespace: {{.Release.Namespace}}
+  {{- with .Values.serviceAccounts.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+---
+{{- end }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.postgres.name }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    prometheus.io/scrape: "true"
+spec:
+  type: ClusterIP
+  clusterIP: None
+  selector:
+    app: {{ .Values.postgres.name }}
+  ports:
+  - name: listener
+    port: {{ .Values.postgres.service.port }}
+    targetPort: {{ .Values.postgres.service.targetPort }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.postgres.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  serviceName: {{ .Values.postgres.name }}
+  replicas: {{ .Values.postgres.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.postgres.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.postgres.name }}
+    spec:
+      {{- if .Values.serviceAccounts.create }}
+      serviceAccountName: {{ .Values.postgres.name }}
+      {{- else }}
+      serviceAccountName: default
+      {{- end }}
+      # terminationGracePeriodSeconds: 5
+      # securityContext:
+      #   fsGroup: 1000
+      #   runAsGroup: 1000
+      #   runAsNonRoot: true
+      #   runAsUser: 1000
+      containers:
+      - name: {{ .Values.postgres.name }}
+        # securityContext:
+        #   runAsUser: 1000
+        image: postgres:{{ .Values.postgres.image.tag }}
+        ports:
+        - containerPort: {{ .Values.postgres.service.targetPort }}
+        env:
+        - name: POSTGRES_PASSWORD
+          value: "randompassword"
+        - name: POSTGRES_USER
+          value: "postgres"
+        - name: DATABASE_PORT
+          value: "5432"
+        - name: POSTGRES_DB
+          value: "nova-platform-main-db-dev"
+        resources:
+          {{- toYaml .Values.postgres.resources | nindent 10 }}
+        readinessProbe:
+          initialDelaySeconds: 20
+          periodSeconds: 15
+          exec:
+            command: ["pg_isready" ,"-U" ,"$(POSTGRES_USER)", "-d" ,"$(POSTGRES_DB)"]
+        # livenessProbe:
+        #   initialDelaySeconds: 20
+        #   periodSeconds: 15
+        #   grpc:
+        #     port: 9555
+{{- end }}
+
+
+
+
+
+
+{{- /*
 {{ $api_name := "postgres"}}
 
 apiVersion: apps/v1
@@ -116,3 +209,4 @@ spec:
       protocol: TCP
   selector:
     app: {{ include "nova-api.fullname" . }}-{{ $api_name }}
+*/}}
