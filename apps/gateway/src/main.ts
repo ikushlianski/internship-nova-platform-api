@@ -4,6 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 import { VersioningType } from '@nestjs/common';
 import { GatewayModule } from './gateway.module';
+import * as process from 'node:process';
 
 async function bootstrap() {
   const app = await NestFactory.create(GatewayModule);
@@ -28,6 +29,8 @@ async function bootstrap() {
 
   SwaggerModule.setup('api', app, document);
 
+  app.enableCors({origin: process.env.FRONTEND_URL});
+  
   await app.listen(gatewayPort);
 }
 
