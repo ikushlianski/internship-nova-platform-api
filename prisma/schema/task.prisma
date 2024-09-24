@@ -24,10 +24,10 @@ model Student {
   created_date     DateTime?
   updated_date     DateTime?
   deleted          Boolean   @default(false)
-  class_id         String
+  class_id         String?
 
   user            User            @relation(fields: [user_id], references: [user_email])
-  class           Class           @relation(fields: [class_id], references: [class_id])
+  class           Class?           @relation(fields: [class_id], references: [class_id])
   student_task    StudentTask[]
   student_answers StudentAnswer[]
 

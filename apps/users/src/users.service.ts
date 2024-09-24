@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'apps/users/src/prisma/prisma.service';
 import { ParsedUserData } from '../../gateway/src/auth/auth.types';
+import { connect } from 'http2';
+import { ClassSizesEnum } from 'prisma/prisma-client';
 
 @Injectable()
 export class UsersService {
@@ -42,11 +44,13 @@ export class UsersService {
       },
     });
   }
-  // Student controller logic temp
+  // Student controller logic
   async getAllStudents() {
-    return await 'all students';
+    return 'all students';
   }
+
   async findOrCreateStudent(userDto: ParsedUserData) {
+    //find or create user with role student
     let user = await this.prismaService.user.findUnique({
       where: { user_email: userDto.user_email },
     });
@@ -55,51 +59,67 @@ export class UsersService {
       user = await this.prismaService.user.create({
         data: {
           ...userDto,
+          nickname: userDto.last_name,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
           user_roles: {
             create: [
               {
-                role_id: '1',
+                role_id: '1', //role_id - STUDENT
               },
             ],
           },
         },
       });
     } else {
-      user = await this.prismaService.user.update({
+      const existingUserRole = await this.prismaService.userRole.findUnique({
         where: {
-          user_email: userDto.user_email,
+          user_email_role_id: {
+            user_email: userDto.user_email,
+            role_id: '1', //role_id - STUDENT
+          },
         },
-        data: {
-          ...userDto,
-          updated_at: new Date().toISOString(),
-          user_roles: {
-            create: [
-              {
-                role_id: '1',
+      });
+      if (!existingUserRole) {
+        await this.prismaService.user.update({
+          where: {
+            user_email: userDto.user_email,
+          },
+          data: {
+            updated_at: new Date().toISOString(),
+            user_roles: {
+              create: {
+                role_id: '1', //role_id - STUDENT
               },
-            ],
+            },
+          },
+        });
+      } else {
+        return 'User already has this role';
+      }
+    }
+    // find or create student
+    let student = await this.prismaService.student.findUnique({
+      where: { student_id: userDto.user_email },
+    });
+    if (!student) {
+      student = await this.prismaService.student.create({
+        data: {
+          student_id: userDto.user_email,
+          student_nickname: user.nickname,
+          user: {
+            connectOrCreate: {
+              where: {
+                user_email: userDto.user_email, // Check if user already exists
+              },
+              create: {
+                ...userDto,
+              },
+            },
           },
         },
       });
     }
-    let student = await this.prismaService.student.create({
-      data: {
-        student_id: userDto.user_email,
-        student_nickname: user.nickname || null,
-        user: {
-          connect: {
-            user_email: userDto.user_email,
-          },
-        },
-        class: {
-          connect: {
-            class_id: '0',
-          },
-        },
-      },
-    });
 
     return student;
   }
