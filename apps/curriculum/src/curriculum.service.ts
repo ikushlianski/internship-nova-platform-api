@@ -8,7 +8,35 @@ export class CurriculumService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getAllClasses() {
-    return await this.prisma.class.findMany();
+    const currentDate = new Date();
+    const classes = await this.prisma.class.findMany({
+      include: {
+        students: {
+          select: {
+            student_id: true,
+            student_nickname: true,
+          },
+        },
+        class_size_id: {
+          select: {
+            class_size_id: true,
+            class_size_name: true,
+          },
+        },
+      },
+    });
+    const filteredClasses = classes.filter((classItem) => {
+      return (
+        classItem.start_date >= currentDate &&
+        classItem.students.length <=
+          parseInt(
+            classItem.class_size_id.class_size_name[
+              classItem.class_size_id.class_size_name.length - 1
+            ],
+          )
+      );
+    });
+    return filteredClasses;
   }
 
   async getClassByID(class_id: string): Promise<Class> {
