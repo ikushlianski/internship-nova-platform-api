@@ -14,7 +14,7 @@ metadata:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.gateway.name }}
+  name: {{ .Values.gateway.service.name }}
   namespace: {{ .Release.Namespace }}
   annotations:
     prometheus.io/scrape: "true"
@@ -33,7 +33,6 @@ metadata:
   name: {{ .Values.gateway.name }}
   namespace: {{ .Release.Namespace }}
 spec:
-#   serviceName: {{ .Values.gateway.name }}
   replicas: {{ .Values.gateway.replicas }}
   selector:
     matchLabels:
@@ -56,6 +55,10 @@ spec:
       #   runAsUser: 1000
       imagePullSecrets:
       - name: regcred
+      initContainers:
+      - name: wait-for-db
+        image: alpine
+        command: ["/bin/sh", "-c", "until nc -zv -w1 {{ .Values.postgres.service.name }} {{ .Values.postgres.service.port }}; do sleep 2; done"]
       containers:
       - name: {{ .Values.gateway.name }}
         # securityContext:

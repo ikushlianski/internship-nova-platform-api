@@ -14,7 +14,7 @@ metadata:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.postgres.name }}
+  name: {{ .Values.postgres.service.name }}
   namespace: {{ .Release.Namespace }}
   annotations:
     prometheus.io/scrape: "true"
@@ -34,7 +34,7 @@ metadata:
   name: {{ .Values.postgres.name }}
   namespace: {{ .Release.Namespace }}
 spec:
-  serviceName: {{ .Values.postgres.name }}
+  serviceName: {{ .Values.postgres.service.name }}
   replicas: {{ .Values.postgres.replicas }}
   selector:
     matchLabels:

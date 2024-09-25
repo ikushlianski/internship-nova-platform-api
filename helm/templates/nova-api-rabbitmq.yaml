@@ -1,0 +1,116 @@
+{{- if .Values.rabbitmq.create }}
+{{- if .Values.serviceAccounts.create }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Values.rabbitmq.name }}
+  namespace: {{.Release.Namespace}}
+  {{- with .Values.serviceAccounts.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+---
+{{- end }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.rabbitmq.service.name }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    prometheus.io/scrape: "true"
+spec:
+  type: ClusterIP
+  selector:
+    app: {{ .Values.rabbitmq.name }}
+  ports:
+  {{- range .Values.rabbitmq.service.ports }}
+  - name: {{ .name }}
+    port: {{ .port }}
+    targetPort: {{ .targetPort }}
+  {{- end }}
+---
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: rabbitmq-conf
+#   namespace: {{ .Release.Namespace }}
+# data:
+#   rabbitmq.conf: |
+#     # The identifier Backend is internal to nginx, and used to name this specific upstream
+#     upstream Backend {
+#         # hello is the internal DNS name used by the backend Service inside Kubernetes
+#         server dsp;
+#     }
+configMapGenerator:
+- name: rabbitmq-conf
+  options:
+    labels:
+      game-config: config-5
+  files:
+  - rabbitmq.conf=../../rabbitmq.conf
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.rabbitmq.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  serviceName: {{ .Values.rabbitmq.service.name }}
+  replicas: {{ .Values.rabbitmq.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.rabbitmq.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.rabbitmq.name }}
+    spec:
+      {{- if .Values.serviceAccounts.create }}
+      serviceAccountName: {{ .Values.rabbitmq.name }}
+      {{- else }}
+      serviceAccountName: default
+      {{- end }}
+      # terminationGracePeriodSeconds: 5
+      # securityContext:
+      #   fsGroup: 1000
+      #   runAsGroup: 1000
+      #   runAsNonRoot: true
+      #   runAsUser: 1000
+      containers:
+      - name: {{ .Values.rabbitmq.name }}
+        # securityContext:
+        #   runAsUser: 1000
+        image: rabbitmq:{{ .Values.rabbitmq.image.tag }}
+        ports:
+        {{- range .Values.rabbitmq.service.ports }}
+        - name: {{ .name }}
+          containerPort: {{ .targetPort }}
+        {{- end }}
+        env:
+        {{- range .Values.env }}
+        - name: {{ .name }}
+          value: {{ .value | quote }}
+        {{- end }}
+        resources:
+          {{- toYaml .Values.rabbitmq.resources | nindent 10 }}
+        volumeMounts:
+        - mountPath: /etc/rabbitmq/rabbitmq.conf
+          name: rabbitmq-conf
+        readinessProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          exec:
+            command: ["rabbitmq-diagnostics", "-q", "ping"]
+        # livenessProbe:
+        #   initialDelaySeconds: 20
+        #   periodSeconds: 15
+        #   grpc:
+        #     port: 9555
+      volumes:
+      - name: rabbitmq-conf
+        configMap: 
+          name: rabbitmq-conf
+          items:
+            - key: rabbitmq.conf
+              path: rabbitmq.conf
+{{- end }}

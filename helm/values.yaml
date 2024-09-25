@@ -20,6 +20,7 @@ postgres:
     tag: 16.3-alpine
   replicas: 1
   service:
+    name: postgres
     port: 5432
     targetPort: 5432
   resources:
@@ -38,15 +39,39 @@ gateway:
     tag: latest
   replicas: 1
   service:
+    name: gateway
     port: 3000
     targetPort: 3000
-  resources: {}
-    # requests:
-    #   cpu: 200m
-    #   memory: 180Mi
-    # limits:
-    #   cpu: 300m
-    #   memory: 300Mi
+  resources:
+    requests:
+      cpu: 500m
+      memory: 800Mi
+    limits:
+      cpu: 900m
+      memory: 1200Mi
+
+rabbitmq:
+  create: true
+  name: rabbitmq
+  image:
+    tag: 4.0.1-management
+  replicas: 1
+  service:
+    name: rabbitmq
+    ports:
+      - name: port
+        port: 5672
+        targetPort: 5672
+      - name: mc_port
+        port: 15672
+        targetPort: 15672
+  resources:
+    requests:
+      cpu: 200m
+      memory: 180Mi
+    limits:
+      cpu: 300m
+      memory: 300Mi
 
 env:
 - name: "HOST"
@@ -77,6 +102,18 @@ env:
   value: ".env.development.local"
 - name: DATABASE_URL
   value: "postgresql://postgres:randompassword@database:5432/nova-platform-main-db-dev"
+- name: RABBITMQ_USER
+  value: guest
+- name: RABBITMQ_PASSWORD
+  value: guest
+- name: RABBITMQ_PORT
+  value: 5672
+- name: RABBITMQ_MC_PORT
+  value: 15672
+- name: RABBITMQ_HOST
+  value: "rabbitmq"
+- name: RABBITMQ_URL
+  value: amqp://rabbitmq:5672
 
 # replicaCount: 1
 
