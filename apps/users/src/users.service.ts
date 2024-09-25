@@ -99,13 +99,15 @@ export class UsersService {
       }
     }
     // find or create student
-    let student = await this.prismaService.student.findUnique({
-      where: { student_id: userDto.user_email },
+    let student = await this.prismaService.student.findFirst({
+      where: { user_id: userDto.user_email,
+        
+      },
     });
     if (!student) {
       student = await this.prismaService.student.create({
         data: {
-          student_id: userDto.user_email,
+          
           student_nickname: user.nickname,
           user: {
             connectOrCreate: {
