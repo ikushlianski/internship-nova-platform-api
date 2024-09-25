@@ -29,25 +29,19 @@ spec:
     targetPort: {{ .targetPort }}
   {{- end }}
 ---
-# apiVersion: v1
-# kind: ConfigMap
-# metadata:
-#   name: rabbitmq-conf
-#   namespace: {{ .Release.Namespace }}
-# data:
-#   rabbitmq.conf: |
-#     # The identifier Backend is internal to nginx, and used to name this specific upstream
-#     upstream Backend {
-#         # hello is the internal DNS name used by the backend Service inside Kubernetes
-#         server dsp;
-#     }
-configMapGenerator:
-- name: rabbitmq-conf
-  options:
-    labels:
-      game-config: config-5
-  files:
-  - rabbitmq.conf=../../rabbitmq.conf
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rabbitmq-conf
+  namespace: {{ .Release.Namespace }}
+data:
+  rabbitmq.conf: |
+    # Permit the use of the deprecated management_metrics_collection feature
+    deprecated_features.permit.management_metrics_collection = true
+    # Logging to console (can be true or false)
+    log.console = true
+    # Log level for console logging
+    log.console.level = error
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -55,7 +49,7 @@ metadata:
   name: {{ .Values.rabbitmq.name }}
   namespace: {{ .Release.Namespace }}
 spec:
-  serviceName: {{ .Values.rabbitmq.service.name }}
+  # serviceName: {{ .Values.rabbitmq.service.name }}
   replicas: {{ .Values.rabbitmq.replicas }}
   selector:
     matchLabels:
@@ -76,6 +70,10 @@ spec:
       #   runAsGroup: 1000
       #   runAsNonRoot: true
       #   runAsUser: 1000
+      initContainers:
+      - name: wait-for-db
+        image: alpine
+        command: ["/bin/sh", "-c", "until nc -zv -w1 {{ .Values.postgres.service.name }} {{ .Values.postgres.service.port }}; do sleep 2; done"]
       containers:
       - name: {{ .Values.rabbitmq.name }}
         # securityContext:
@@ -96,11 +94,11 @@ spec:
         volumeMounts:
         - mountPath: /etc/rabbitmq/rabbitmq.conf
           name: rabbitmq-conf
-        readinessProbe:
-          initialDelaySeconds: 5
-          periodSeconds: 5
-          exec:
-            command: ["rabbitmq-diagnostics", "-q", "ping"]
+        # readinessProbe:
+        #   initialDelaySeconds: 5
+        #   periodSeconds: 5
+        #   exec:
+        #     command: ["rabbitmq-diagnostics", "-q", "ping"]
         # livenessProbe:
         #   initialDelaySeconds: 20
         #   periodSeconds: 15

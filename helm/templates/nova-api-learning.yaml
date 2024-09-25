@@ -1,9 +1,9 @@
-{{- if .Values.gateway.create }}
+{{- if .Values.learning.create }}
 {{- if .Values.serviceAccounts.create }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ .Values.gateway.name }}
+  name: {{ .Values.learning.name }}
   namespace: {{.Release.Namespace}}
   {{- with .Values.serviceAccounts.annotations }}
   annotations:
@@ -14,36 +14,36 @@ metadata:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.gateway.service.name }}
+  name: {{ .Values.learning.service.name }}
   namespace: {{ .Release.Namespace }}
   annotations:
     prometheus.io/scrape: "true"
 spec:
   type: ClusterIP
   selector:
-    app: {{ .Values.gateway.name }}
+    app: {{ .Values.learning.name }}
   ports:
   - name: listener
-    port: {{ .Values.gateway.service.port }}
-    targetPort: {{ .Values.gateway.service.targetPort }}
+    port: {{ .Values.learning.service.port }}
+    targetPort: {{ .Values.learning.service.targetPort }}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.gateway.name }}
+  name: {{ .Values.learning.name }}
   namespace: {{ .Release.Namespace }}
 spec:
-  replicas: {{ .Values.gateway.replicas }}
+  replicas: {{ .Values.learning.replicas }}
   selector:
     matchLabels:
-      app: {{ .Values.gateway.name }}
+      app: {{ .Values.learning.name }}
   template:
     metadata:
       labels:
-        app: {{ .Values.gateway.name }}
+        app: {{ .Values.learning.name }}
     spec:
       {{- if .Values.serviceAccounts.create }}
-      serviceAccountName: {{ .Values.gateway.name }}
+      serviceAccountName: {{ .Values.learning.name }}
       {{- else }}
       serviceAccountName: default
       {{- end }}
@@ -62,19 +62,19 @@ spec:
         command: ["/bin/sh", "-c", "until nc -zv -w1 {{ $.Values.rabbitmq.service.name }} {{ .port }}; do sleep 2; done"]
         {{- end }}
       containers:
-      - name: {{ .Values.gateway.name }}
+      - name: {{ .Values.learning.name }}
         # securityContext:
         #   runAsUser: 1000
-        image: {{ .Values.images.repository }}/{{ .Values.gateway.image.name }}:{{ .Values.gateway.image.tag }}
+        image: {{ .Values.images.repository }}/{{ .Values.learning.image.name }}:{{ .Values.learning.image.tag }}
         command: ["/bin/sh"]
-        args: ["-c", "npx prisma migrate dev && npx nest start gateway --watch"]
+        args: ["-c", "npx nest start learning --watch"]
         ports:
-        - containerPort: {{ .Values.gateway.service.targetPort }}
+        - containerPort: {{ .Values.learning.service.targetPort }}
         env:          
         {{- range .Values.env }}
         - name: {{ .name }}
           value: "{{ .value }}"
         {{- end }}
         resources:
-          {{- toYaml .Values.gateway.resources | nindent 10 }}
+          {{- toYaml .Values.learning.resources | nindent 10 }}
 {{- end }}
