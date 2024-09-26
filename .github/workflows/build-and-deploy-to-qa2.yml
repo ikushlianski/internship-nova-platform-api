@@ -2,6 +2,14 @@ name: Build project and deploy to qa2
 
 on: workflow_dispatch
 
+permissions:
+  id-token: write
+  contents: write
+  checks: write
+  issues: write
+  packages: write
+  pull-requests: write
+
 jobs:
   test-and-build:
     runs-on: ubuntu-latest
@@ -47,17 +55,7 @@ jobs:
         run: zip -r ../nova-platform-api.zip *
       # - name: Display structure of downloaded files
       #   run: ls -al
-      - name: Update build hash in values.yaml    
-        uses: fjogeleit/yaml-update-action@main
-        with:
-          valueFile: 'helm/values.yaml'
-          propertyPath: 'build_hash'
-          value: ${{ github.sha }}
-          commitChange: true
-          branch: ${{ github.head_ref || github.ref_name }} 
-          message: "Update build number"
-          token: ${{ secrets.GITHUB_TOKEN }}
-          
+
       - name: copy file via ssh 
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -66,4 +64,16 @@ jobs:
           port: ${{ secrets.PORT_FOR_UPLOAD }}
           key: ${{ secrets.KEY_SSH_FOR_UPLOAD }}
           source: "nova-platform-api.zip"
-          target: /usr/share/nginx/html/nova-qa1/
+          target: /usr/share/nginx/html/nova-qa2/
+
+      - name: Update build hash in values.yaml    
+        uses: fjogeleit/yaml-update-action@main
+        with:
+          valueFile: 'helm/values.yaml'
+          propertyPath: 'build_hash'
+          value: ${{ github.sha }}
+          commitChange: true
+          # branch: ${{ github.head_ref || github.ref_name }} 
+          branch: stage-qa2
+          message: "Update build number"
+          token: ${{ secrets.GITHUB_TOKEN }}
