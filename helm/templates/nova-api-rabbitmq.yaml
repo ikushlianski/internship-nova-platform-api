@@ -90,7 +90,7 @@ spec:
           value: {{ .value | quote }}
         {{- end }}
         resources:
-          {{- toYaml .Values.rabbitmq.resources | nindent 10 }}
+        #   {{- toYaml .Values.rabbitmq.resources | nindent 10 }}
         volumeMounts:
         - mountPath: /etc/rabbitmq/rabbitmq.conf
           name: rabbitmq-conf

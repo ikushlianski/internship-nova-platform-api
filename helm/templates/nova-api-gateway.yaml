@@ -76,5 +76,5 @@ spec:
           value: "{{ .value }}"
         {{- end }}
         resources:
-          {{- toYaml .Values.gateway.resources | nindent 10 }}
+        #   {{- toYaml .Values.gateway.resources | nindent 10 }}
 {{- end }}

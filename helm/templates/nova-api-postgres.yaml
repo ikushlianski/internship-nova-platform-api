@@ -72,7 +72,7 @@ spec:
         - name: POSTGRES_DB
           value: "nova-platform-main-db-dev"
         resources:
-          {{- toYaml .Values.postgres.resources | nindent 10 }}
+        #   {{- toYaml .Values.postgres.resources | nindent 10 }}
         readinessProbe:
           initialDelaySeconds: 20
           periodSeconds: 15
