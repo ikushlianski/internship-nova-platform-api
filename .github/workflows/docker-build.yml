@@ -11,9 +11,7 @@ on:
   #   branches: [main]
 
 env:
-  REGISTRY: ghcr.io
-  # REGISTRY: registry.novaenglish.by
-  IMAGE_NAME: ${{ github.repository }}
+  REGISTRY: registry.novaenglish.by
 
 jobs:
   build:
@@ -41,10 +39,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: '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'
-          # username: ${{ vars.REGISTRY_USERNAME }}
-          # password: ${{ secrets.REGISTRY_PASSWORD }}
+          username: ${{ vars.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - name: Get short SHA
         id: slug
@@ -56,4 +52,4 @@ jobs:
           context: .
           push: true
           file: apps/${{ matrix.service }}/Dockerfile
-          tags: ${{ env.REGISTRY }}/${{ github.repository }}/nova-platform-api-${{ matrix.service }}:${{ steps.slug.outputs.sha7 }}
+          tags: ${{ env.REGISTRY }}/nova-platform-api-${{ matrix.service }}:${{ steps.slug.outputs.sha7 }}
