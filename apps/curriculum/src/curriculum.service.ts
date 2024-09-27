@@ -31,7 +31,9 @@ export class CurriculumService {
         classItem.students.length <=
           parseInt(
             classItem.class_size_id.class_size_name[
-              classItem.class_size_id.class_size_name.length - 1
+              classItem.class_size_id.class_size_name.split('_')[
+                classItem.class_size_id.class_size_name.split('_').length - 1
+              ]
             ],
           )
       );
