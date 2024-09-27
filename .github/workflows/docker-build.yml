@@ -12,6 +12,11 @@ on:
 
 jobs:
   build:
+
+    strategy:
+      matrix:
+        service: ['gateway', 'learning', 'users']
+
     runs-on: ubuntu-latest
 
     steps:
@@ -25,13 +30,13 @@ jobs:
       #   uses: docker/login-action@v3
       #   with:
       #     registry: registry.novaenglish.by
-      #     username: ${{ secrets.REGISTRY_USERNAME }}
+      #     username: ${{ vars.REGISTRY_USERNAME }}
       #     password: ${{ secrets.REGISTRY_PASSWORD }}
-      
-      - name: Build and push
+
+      - name: Build and push 
         uses: docker/build-push-action@v6
         with:
           context: .
           push: false
-          file: apps/gateway/Dockerfile
-          tags: registry.novaenglish.by/nova-platform-api-gateway:latest
+          file: apps/${{ matrix.service }}/Dockerfile
+          tags: registry.novaenglish.by/nova-platform-api-${{ matrix.service }}:latest
