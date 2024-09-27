@@ -33,15 +33,10 @@ jobs:
       #     username: ${{ vars.REGISTRY_USERNAME }}
       #     password: ${{ secrets.REGISTRY_PASSWORD }}
 
-      - name: Extract branch name
-        shell: bash
-        run: echo "branch=$(echo ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}) | tr '/'" >> $GITHUB_OUTPUT
-        id: extract_branch
-
       - name: Build and push 
         uses: docker/build-push-action@v6
         with:
           context: .
           push: false
           file: apps/${{ matrix.service }}/Dockerfile
-          tags: registry.novaenglish.by/nova-platform-api-${{ matrix.service }}:${{ steps.extract_branch.outputs.branch }}
+          tags: registry.novaenglish.by/nova-platform-api-${{ matrix.service }}:${GITHUB_SHA::7}
