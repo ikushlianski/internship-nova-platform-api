@@ -33,10 +33,14 @@ jobs:
       #     username: ${{ vars.REGISTRY_USERNAME }}
       #     password: ${{ secrets.REGISTRY_PASSWORD }}
 
+      - name: Get short SHA
+        id: slug
+        run: echo "::set-output name=sha7::$(echo ${GITHUB_SHA} | cut -c1-7)"
+
       - name: Build and push 
         uses: docker/build-push-action@v6
         with:
           context: .
           push: false
           file: apps/${{ matrix.service }}/Dockerfile
-          tags: registry.novaenglish.by/nova-platform-api-${{ matrix.service }}:${GITHUB_SHA::7}
+          tags: registry.novaenglish.by/nova-platform-api-${{ matrix.service }}:${{ steps.slug.outputs.sha7 }}
