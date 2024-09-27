@@ -30,7 +30,7 @@ WORKDIR /usr/src/server
 COPY --from=development /usr/src/server/node_modules ./node_modules
 COPY --from=development /usr/src/server/package*.json ./
 COPY apps/ ./apps
-COPY dist/ ./dist
+# COPY --from=development /usr/src/server/dist/ ./dist
 
 RUN npm run build
 
