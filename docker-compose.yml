@@ -15,11 +15,15 @@ services:
       - .:/usr/src/server
     ports:
       - "${GATEWAY_PORT}:${GATEWAY_PORT}"
-    command: npx nest start gateway --watch
+    entrypoint: sh -c "npx prisma migrate dev && npx nest start gateway --watch"
     networks:
       - local
     depends_on:
-      - database
+      database:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
   users:
     container_name: users
     env_file:
@@ -40,7 +44,35 @@ services:
     networks:
       - local
     depends_on:
-      - database
+      database:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  learning:
+    container_name: learning
+    env_file:
+      - ${ENV_FILE}
+    build:
+      target: ${NODE_ENV}
+      context: .
+      dockerfile: apps/learning/Dockerfile
+      args:
+        - LEARNING_SERVICE_PORT=${LEARNING_SERVICE_PORT}
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        - ENV_FILE=${ENV_FILE}
+    ports:
+      - "${LEARNING_SERVICE_PORT}:${LEARNING_SERVICE_PORT}"
+    volumes:
+      - .:/usr/src/server
+    command: npx nest start learning --watch
+    networks:
+      - local
+    depends_on:
+      database:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
   database:
     container_name: database
     restart: always
@@ -56,6 +88,27 @@ services:
       - "${DATABASE_PORT}:${DATABASE_PORT}"
     networks:
       - local
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:4.0.1-management
+    env_file:
+      - ${ENV_FILE}
+    healthcheck:
+      test: "rabbitmq-diagnostics -q ping"
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "${RABBITMQ_PORT}:${RABBITMQ_PORT}"
+      - "${RABBITMQ_MC_PORT}:${RABBITMQ_MC_PORT}"
+    volumes:
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    networks:
+      - local
+    depends_on:
+      database:
+        condition: service_healthy
+
 volumes:
   database:
     driver: local

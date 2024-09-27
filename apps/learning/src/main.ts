@@ -1,16 +1,16 @@
 import { NestFactory } from '@nestjs/core';
-import { UsersModule } from './users.module';
+import { LearningModule } from './cards.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { RMQ_Queue } from '../../shared-logic/src/RabbitMQ/rabbitmq.enums';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    UsersModule,
+    LearningModule,
     {
       transport: Transport.RMQ,
       options: {
         urls: [ process.env.RABBITMQ_URL],
-        queue: RMQ_Queue.USERS_QUEUE,
+        queue: RMQ_Queue.LEARNING_QUEUE,
         queueOptions: {
           durable: false
         },
@@ -22,3 +22,4 @@ async function bootstrap() {
 }
 
 bootstrap();
+

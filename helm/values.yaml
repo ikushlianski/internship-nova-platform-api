@@ -1,0 +1,69 @@
+replicaCount: 1
+image_node:
+  repository: node
+  pullPolicy: IfNotPresent
+  tag: 20-alpine
+imagePullSecrets: []
+nameOverride: ''
+fullnameOverride: ''
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ''
+podAnnotations: {}
+podLabels: {}
+podSecurityContext: {}
+securityContext: {}
+service:
+  type: ClusterIP
+  port: 80
+ingress:
+  enabled: false
+  className: ''
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+resources: {}
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+volumes:
+  - name: nova-api
+volumeMounts:
+  - name: nova-api
+    mountPath: /usr/src/server
+workingDir: /usr/src/server
+nodeSelector: {}
+tolerations: []
+affinity: {}
+env:
+  - name: POSTGRES_PASSWORD
+    value: randompassword
+  - name: POSTGRES_USER
+    value: postgres
+  - name: DATABASE_PORT
+    value: '5432'
+  - name: POSTGRES_DB
+    value: nova-platform-main-db-dev
+  - name: APP_ENV
+    value: dev
+  - name: NODE_ENV
+    value: development
+  - name: FRONTEND_URL
+    value: http://nova-front.nova-dev.svc.cluster.local/
+  - name: GATEWAY_PORT
+    value: '80'
+  - name: USER_SERVICE_PORT
+    value: '80'
+  - name: ENV_FILE
+    value: .env.development.local
+application_environment: dev
+domain_name: nova.local
+build_hash: e7fa5157b9b91ccf5074017f3e361e7b47aff234

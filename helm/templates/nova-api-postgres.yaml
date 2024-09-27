@@ -1,0 +1,118 @@
+{{ $api_name := "postgres"}}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # name: {{ include "nova-api.fullname" . }}
+  name: {{ include "nova-api.fullname" . }}-{{ $api_name }}
+  labels:
+    {{- include "nova-api.labels" . | nindent 4 }}
+    {{- include "nova-api.deploymentLabels" . | nindent 4 }}
+    app: {{ include "nova-api.fullname" . }}-{{ $api_name }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      # {{- include "nova-api.selectorLabels" . | nindent 6 }}
+      app: {{ include "nova-api.fullname" . }}-{{ $api_name }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "nova-api.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- include "nova-api.deploymentLabels" . | nindent 8 }}
+        app: {{ include "nova-api.fullname" . }}-{{ $api_name }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "nova-api.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+      - name: {{ .Chart.Name }}-npm-ci
+        image: busybox
+        workingDir: "/docker-entrypoint-initdb.d/"
+        command: ["/bin/sh"]
+        args:
+          - -c
+          - >-
+              ls -al &&
+              wget -O ddl.sql http://nginx-static-files.nova-dev.svc.cluster.local/{{.Release.Namespace}}/ddl.sql
+
+        volumeMounts:
+        - name: nova-api-postgres
+          mountPath: "/docker-entrypoint-initdb.d/"
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          # image: "{{ .Values.image_node.repository }}:{{ .Values.image_node.tag | default .Chart.AppVersion }}"
+          image: postgres:16.3-alpine
+          imagePullPolicy: {{ .Values.image_node.pullPolicy }}
+          # workingDir: {{ .Values.workingDir }}
+          env:          
+            {{- range $counter, $value := .Values.env }}
+            - name: {{ $value.name }}
+              value: "{{ $value.value }}"
+            {{- end }}
+            - name: "GATEWAY_HOST"
+              value: "{{ include "nova-api.fullname" . }}.{{.Release.Namespace}}.svc.cluster.local"
+          # command: ["npx"]
+          # args: ["nest", "start", "gateway", "--watch"]
+          ports:
+            - name: http
+              containerPort: 5432
+              protocol: TCP
+          livenessProbe:
+            null
+          readinessProbe:
+            null
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+          volumeMounts:
+          - name: nova-api-postgres
+            mountPath: "/docker-entrypoint-initdb.d/"
+
+
+      volumes:
+      - name: nova-api-postgres
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "nova-api.fullname" . }}-{{ $api_name }}-service
+  labels:
+    app: {{ include "nova-api.fullname" . }}-{{ $api_name }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+  selector:
+    app: {{ include "nova-api.fullname" . }}-{{ $api_name }}

@@ -1,0 +1,79 @@
+name: Build project and deploy to qa3
+
+on: workflow_dispatch
+
+permissions:
+  id-token: write
+  contents: write
+  checks: write
+  issues: write
+  packages: write
+  pull-requests: write
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test -- --passWithNoTests
+
+      - name: Compilation check
+        run: npx tsc --noEmit
+
+      - name: Build the project
+        run: npm run build
+
+      - name: Archive production artifacts nova-platform-api
+        uses: actions/upload-artifact@v4
+        with:
+          name: nova-platform-api
+          path: |
+            apps
+            prisma
+            nest-cli.json
+            package*.json
+            tsconfig*.json
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nova-platform-api
+          path: nova-platform-api
+      - name: zip all the files
+        working-directory: ./nova-platform-api
+        run: zip -r ../nova-platform-api.zip *
+      # - name: Display structure of downloaded files
+      #   run: ls -al
+
+      - name: copy file via ssh 
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST_FOR_UPLOAD }}
+          username: ${{ secrets.USERNAME_FOR_UPLOAD }}
+          port: ${{ secrets.PORT_FOR_UPLOAD }}
+          key: ${{ secrets.KEY_SSH_FOR_UPLOAD }}
+          source: "nova-platform-api.zip"
+          target: /usr/share/nginx/html/nova-qa3/
+
+      - name: Update build hash in values.yaml    
+        uses: fjogeleit/yaml-update-action@main
+        with:
+          valueFile: 'helm/values.yaml'
+          propertyPath: 'build_hash'
+          value: ${{ github.sha }}
+          commitChange: true
+          # branch: ${{ github.head_ref || github.ref_name }} 
+          branch: stage-qa3
+          message: "Update build number"
+          token: ${{ secrets.GITHUB_TOKEN }}
