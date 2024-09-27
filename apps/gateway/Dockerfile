@@ -25,6 +25,9 @@ EXPOSE ${GATEWAY_PORT}
 
 FROM development AS production
 
+LABEL org.opencontainers.image.source=https://github.com/ikushlianski/nova-platform-api
+LABEL org.opencontainers.image.description="Gateway"
+
 WORKDIR /usr/src/server
 
 COPY --from=development /usr/src/server/node_modules ./node_modules

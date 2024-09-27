@@ -10,6 +10,11 @@ on:
   # pull_request:
   #   branches: [main]
 
+env:
+  REGISTRY: ghcr.io
+  # REGISTRY: registry.novaenglish.by
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
   build:
 
@@ -19,6 +24,12 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,12 +37,14 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # - name: Login to the Registry
-      #   uses: docker/login-action@v3
-      #   with:
-      #     registry: registry.novaenglish.by
-      #     username: ${{ vars.REGISTRY_USERNAME }}
-      #     password: ${{ secrets.REGISTRY_PASSWORD }}
+      - name: Login to the Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: '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'
+          # username: ${{ vars.REGISTRY_USERNAME }}
+          # password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - name: Get short SHA
         id: slug
@@ -41,6 +54,6 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          push: false
+          push: true
           file: apps/${{ matrix.service }}/Dockerfile
-          tags: registry.novaenglish.by/nova-platform-api-${{ matrix.service }}:${{ steps.slug.outputs.sha7 }}
+          tags: ${{ env.REGISTRY }}/${{ github.repository }}/nova-platform-api-${{ matrix.service }}:${{ steps.slug.outputs.sha7 }}
