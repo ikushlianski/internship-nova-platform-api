@@ -12,60 +12,143 @@ serviceAccounts:
   create: false
   # Annotations to add to the service accounts.
   annotations: {}
-  name: ''
-podAnnotations: {}
-podLabels: {}
-podSecurityContext: {}
-securityContext: {}
-service:
-  type: ClusterIP
-  port: 80
-ingress:
-  enabled: false
-  className: ''
-  annotations: {}
-  hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls: []
-resources: {}
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-volumes:
-  - name: nova-api
-volumeMounts:
-  - name: nova-api
-    mountPath: /usr/src/server
-workingDir: /usr/src/server
-nodeSelector: {}
-tolerations: []
-affinity: {}
+
+postgres:
+  create: true
+  name: database
+  image:
+    tag: 16.3-alpine
+  replicas: 1
+  service:
+    name: database
+    port: 5432
+    targetPort: 5432
+  resources: {}
+    # requests:
+    #   cpu: 200m
+    #   memory: 180Mi
+    # limits:
+    #   cpu: 300m
+    #   memory: 300Mi
+
+gateway:
+  create: true
+  name: gateway
+  image:
+    name: nova-platform-api-gateway
+    tag: latest
+  replicas: 1
+  service:
+    name: gateway
+    port: 3000
+    targetPort: 3000
+  resources: {}
+  #   requests:
+  #     cpu: 500m
+  #     memory: 800Mi
+  #   limits:
+  #     cpu: 900m
+  #     memory: 1200Mi
+
+rabbitmq:
+  create: true
+  name: rabbitmq
+  image:
+    tag: 4.0.1-management
+  replicas: 1
+  service:
+    name: rabbitmq
+    ports:
+      - name: port
+        port: 5672
+        targetPort: 5672
+      - name: mc-port
+        port: 15672
+        targetPort: 15672
+  resources: {}
+    # requests:
+    #   cpu: 200m
+    #   memory: 180Mi
+    # limits:
+    #   cpu: 300m
+    #   memory: 300Mi
+
+users:
+  create: true
+  name: users
+  image:
+    name: nova-platform-api-users
+    tag: latest
+  replicas: 1
+  service:
+    name: users
+    port: 3001
+    targetPort: 3001
+  resources: {}
+    # requests:
+    #   cpu: 200m
+    #   memory: 400Mi
+    # limits:
+    #   cpu: 300m
+    #   memory: 600Mi
+
+learning:
+  create: true
+  name: learning
+  image:
+    name: nova-platform-api-learning
+    tag: latest
+  replicas: 1
+  service:
+    name: learning
+    port: 3002
+    targetPort: 3002
+  resources: {}
+    # requests:
+    #   cpu: 200m
+    #   memory: 400Mi
+    # limits:
+    #   cpu: 300m
+    #   memory: 600Mi
+
 env:
-  - name: POSTGRES_PASSWORD
-    value: randompassword
-  - name: POSTGRES_USER
-    value: postgres
-  - name: DATABASE_PORT
-    value: '5432'
-  - name: POSTGRES_DB
-    value: nova-platform-main-db-dev
-  - name: APP_ENV
-    value: dev
-  - name: NODE_ENV
-    value: development
-  - name: FRONTEND_URL
-    value: http://nova-front.nova-dev.svc.cluster.local/
-  - name: GATEWAY_PORT
-    value: '80'
-  - name: USER_SERVICE_PORT
-    value: '80'
-  - name: ENV_FILE
-    value: .env.development.local
-application_environment: dev
-domain_name: nova.local
-build_hash: e7fa5157b9b91ccf5074017f3e361e7b47aff234
+- name: "HOST"
+  value: "database"
+# - name: "DATABASE_URL"
+#   value: "postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
+- name: "POSTGRES_PASSWORD"
+  value: "randompassword"
+- name: "POSTGRES_USER"
+  value: "postgres"
+- name: "DATABASE_PORT"
+  value: "5432"
+- name: "POSTGRES_DB"
+  value: "nova-platform-main-db-dev"
+- name: "APP_ENV"
+  value: "dev"
+- name: "NODE_ENV"
+  value: "development"
+- name: "FRONTEND_URL"
+  value: "http://nova-front.nova-dev.svc.cluster.local/"
+# - name: "GOOGLE_CALLBACK_URL"
+#   value: "https://qa1.nova.local/api/v1/auth/google/callback"
+- name: "GATEWAY_PORT"
+  value: "80"
+- name: "USER_SERVICE_PORT"
+  value: "80"
+- name: "ENV_FILE"
+  value: ".env.development.local"
+- name: DATABASE_URL
+  value: "postgresql://postgres:randompassword@database:5432/nova-platform-main-db-dev"
+- name: RABBITMQ_USER
+  value: guest
+- name: RABBITMQ_PASSWORD
+  value: guest
+- name: RABBITMQ_PORT
+  value: 5672
+- name: RABBITMQ_MC_PORT
+  value: 15672
+- name: RABBITMQ_HOST
+  value: "rabbitmq"
+- name: RABBITMQ_URL
+  value: amqp://rabbitmq:5672
