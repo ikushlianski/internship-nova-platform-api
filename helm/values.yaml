@@ -12,108 +12,99 @@ serviceAccounts:
   create: false
   # Annotations to add to the service accounts.
   annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
 
-postgres:
-  create: true
-  name: database
-  image:
-    tag: 16.3-alpine
-  replicas: 1
-  service:
-    name: database
-    port: 5432
-    targetPort: 5432
-  resources: {}
-    # requests:
-    #   cpu: 200m
-    #   memory: 180Mi
-    # limits:
-    #   cpu: 300m
-    #   memory: 300Mi
+podAnnotations: {}
+podLabels: {}
 
-gateway:
-  create: true
-  name: gateway
-  image:
-    name: nova-platform-api-gateway
-    tag: latest
-  replicas: 1
-  service:
-    name: gateway
-    port: 3000
-    targetPort: 3000
-  resources: {}
-  #   requests:
-  #     cpu: 500m
-  #     memory: 800Mi
-  #   limits:
-  #     cpu: 900m
-  #     memory: 1200Mi
+podSecurityContext: {}
+# fsGroup: 2000
 
-rabbitmq:
-  create: true
-  name: rabbitmq
-  image:
-    tag: 4.0.1-management
-  replicas: 1
-  service:
-    name: rabbitmq
-    ports:
-      - name: port
-        port: 5672
-        targetPort: 5672
-      - name: mc-port
-        port: 15672
-        targetPort: 15672
-  resources: {}
-    # requests:
-    #   cpu: 200m
-    #   memory: 180Mi
-    # limits:
-    #   cpu: 300m
-    #   memory: 300Mi
+securityContext: {}
+# capabilities:
+#   drop:
+#   - ALL
+# readOnlyRootFilesystem: true
+# runAsNonRoot: true
+# runAsUser: 1000
 
-users:
-  create: true
-  name: users
-  image:
-    name: nova-platform-api-users
-    tag: latest
-  replicas: 1
-  service:
-    name: users
-    port: 3001
-    targetPort: 3001
-  resources: {}
-    # requests:
-    #   cpu: 200m
-    #   memory: 400Mi
-    # limits:
-    #   cpu: 300m
-    #   memory: 600Mi
+service:
+  type: ClusterIP
+  port: 80
 
-learning:
-  create: true
-  name: learning
-  image:
-    name: nova-platform-api-learning
-    tag: latest
-  replicas: 1
-  service:
-    name: learning
-    port: 3002
-    targetPort: 3002
-  resources: {}
-    # requests:
-    #   cpu: 200m
-    #   memory: 400Mi
-    # limits:
-    #   cpu: 300m
-    #   memory: 600Mi
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  # kubernetes.io/ingress.class: nginx
+  # kubernetes.io/tls-acme: "true"
+  hosts:
+  - host: chart-example.local
+    paths:
+    - path: /
+      pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+# We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
+# resources, such as Minikube. If you do want to specify resources, uncomment the following
+# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+# limits:
+#   cpu: 100m
+#   memory: 128Mi
+# requests:
+#   cpu: 100m
+#   memory: 128Mi
+
+# livenessProbe:
+#   httpGet:
+#     path: /
+#     port: http
+# readinessProbe:
+#   httpGet:
+#     path: /
+#     port: http
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# Additional volumes on the output Deployment definition.
+# volumes: []
+volumes:
+- name: nova-api
+# - name: foo
+#   secret:
+#     secretName: mysecret
+#     optional: false
+
+# Additional volumeMounts on the output Deployment definition.
+# volumeMounts: []
+volumeMounts:
+- name: nova-api
+  mountPath: "/usr/src/server"
+# - name: foo
+#   mountPath: "/etc/foo"
+#   readOnly: true
+workingDir: "/usr/src/server"
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
 
 env:
-- name: "HOST"
-  value: "database"
 # - name: "DATABASE_URL"
 #   value: "postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
 - name: "POSTGRES_PASSWORD"
@@ -138,17 +129,14 @@ env:
   value: "80"
 - name: "ENV_FILE"
   value: ".env.development.local"
-- name: DATABASE_URL
-  value: "postgresql://postgres:randompassword@database:5432/nova-platform-main-db-dev"
-- name: RABBITMQ_USER
-  value: guest
-- name: RABBITMQ_PASSWORD
-  value: guest
-- name: RABBITMQ_PORT
-  value: 5672
-- name: RABBITMQ_MC_PORT
-  value: 15672
-- name: RABBITMQ_HOST
-  value: "rabbitmq"
-- name: RABBITMQ_URL
-  value: amqp://rabbitmq:5672
+
+
+
+
+
+
+
+#########
+application_environment: dev
+domain_name: nova.local
+build_hash: empty
