@@ -53,11 +53,39 @@ jobs:
           file: apps/${{ matrix.service }}/Dockerfile
           tags: ${{ env.REGISTRY }}/nova-platform-api-${{ matrix.service }}:${{ steps.slug.outputs.sha7 }}
 
+      - name: Save tag for the next step
+        uses: edumserrano/share-jobs-data@v1
+        with:
+          command: set-data
+          data: |
+            tag: ${{ steps.slug.outputs.sha7 }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build]
+
+    steps:
+      - name: Read tag
+        id: read-data
+        uses: edumserrano/share-jobs-data@v1
+        with:
+          command: read-data-current-workflow
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to the Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ env.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
       - name: Deploy
         uses: WyriHaximus/github-action-helm3@v4.0.1
         with:
           exec: |
             helm upgrade --install nova-api helm/ -n nova-qa3 \
-              --set images.tag=${{ steps.slug.outputs.sha7 }}
+              --set images.tag=${{ steps.read-data.outputs.tag }}
           kubeconfig: '${{ secrets.KUBECONFIG }}'
           # overrule_existing_kubeconfig: "true"
