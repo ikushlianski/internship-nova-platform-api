@@ -1,7 +1,7 @@
 FROM node:22-alpine as development
 WORKDIR /usr/src/server
 
-ARG LEARNING_SERVICE_PORT
+ARG CURRICULUM_SERVICE_PORT
 ARG POSTGRES_PASSWORD
 ARG ENV_FILE
 
@@ -15,7 +15,7 @@ COPY tsconfig*.json ./
 
 RUN npm ci
 
-EXPOSE ${LEARNING_SERVICE_PORT}
+EXPOSE ${CURRICULUM_SERVICE_PORT}
 
 # command at this stage will come from docker-compose
 
@@ -28,6 +28,6 @@ COPY --from=base /usr/src/server/dist ./dist
 
 RUN npm run build
 
-EXPOSE ${LEARNING_SERVICE_PORT}
+EXPOSE ${CURRICULUM_SERVICE_PORT}
 
 CMD ["npm", "run", "start:prod" ]
