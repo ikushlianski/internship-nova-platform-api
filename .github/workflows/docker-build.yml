@@ -39,7 +39,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ vars.REGISTRY_USERNAME }}
+          username: novaenglishby
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - name: Get short SHA
