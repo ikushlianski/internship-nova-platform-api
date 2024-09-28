@@ -56,7 +56,8 @@ jobs:
       - name: Deploy
         uses: WyriHaximus/github-action-helm3@v4.0.1
         with:
-          exec: helm upgrade --install nova-api helm/ -n nova-qa3 \
-            --set images.tag=${{ steps.slug.outputs.sha7 }}
+          exec: |
+            helm upgrade --install nova-api helm/ -n nova-qa3 \
+              --set images.tag=${{ steps.slug.outputs.sha7 }}
           kubeconfig: '${{ secrets.KUBECONFIG }}'
           # overrule_existing_kubeconfig: "true"
