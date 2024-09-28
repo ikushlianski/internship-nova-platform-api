@@ -2,10 +2,10 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-images:
+images: 
   repository: registry.novaenglish.by
   # Overrides the image tag whose default is the chart appVersion.
-  # tag: "latest"
+  tag: &apptag "latest"
 
 serviceAccounts:
   # Specifies whether service accounts should be created.
@@ -36,7 +36,7 @@ gateway:
   name: gateway
   image:
     name: nova-platform-api-gateway
-    tag: latest
+    tag: *apptag
   replicas: 1
   service:
     name: gateway
@@ -78,7 +78,7 @@ users:
   name: users
   image:
     name: nova-platform-api-users
-    tag: latest
+    tag: *apptag
   replicas: 1
   service:
     name: users
@@ -97,7 +97,7 @@ learning:
   name: learning
   image:
     name: nova-platform-api-learning
-    tag: latest
+    tag: *apptag
   replicas: 1
   service:
     name: learning
