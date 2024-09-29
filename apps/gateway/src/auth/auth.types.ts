@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+import { UserPayload } from 'apps/shared-logic/src/auth/user.types';
+
 export class AuthResponse {
   @ApiProperty()
   success: boolean;
@@ -17,4 +19,8 @@ export class ParsedUserData {
 
   @ApiProperty()
   user_email: string;
+}
+
+export interface RequestWithUser extends Request {
+  user: UserPayload;
 }

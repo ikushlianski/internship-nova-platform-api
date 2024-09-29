@@ -4,6 +4,7 @@ export enum RabbitMQ {
   FIND_USER_BY_EMAIL_COMMAND = 'find_user_by_email',
   GET_ALL_USERS_COMMAND = 'get_all_users',
   GET_CARDS_BY_USER_EMAIL_COMMAND = 'get_cards_by_user_email',
+  GET_USER = 'get_user',
 }
 
 export enum RMQ_Queue {
