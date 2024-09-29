@@ -2,13 +2,14 @@ import { Controller, Post, Body, HttpException, HttpStatus } from '@nestjs/commo
 import { ClassAssignmentService } from './class-assignment.service';
 import { StudentDto } from './assign-student.dto';
 import { MessagePattern, Payload } from '@nestjs/microservices';
+import { RabbitMQ } from 'apps/shared-logic/src/RabbitMQ/rabbitmq.enums';
 
 @Controller('class-assignment')
 export class ClassAssignmentController {
   constructor(private readonly classAssignmentService: ClassAssignmentService) {}
 
 
-  @MessagePattern({ cmd: 'assign_student_to_class' })
+  @MessagePattern({ cmd: RabbitMQ.ASSIGN_STUDENT_TO_CLASS })
   async assignStudentToClass(@Payload() studentDto: StudentDto) {
     try {
       return await this.classAssignmentService.assignStudent(studentDto);
@@ -17,7 +18,7 @@ export class ClassAssignmentController {
     }
   }
 
-  @MessagePattern({ cmd: 'get_class_assignments' })
+  @MessagePattern({ cmd: RabbitMQ.GET_CLASS_ASSIGNMENTS })
   async getClassAssignments(@Payload() classId: string) {
     try {
       return await this.classAssignmentService.getClassAssignments(classId);

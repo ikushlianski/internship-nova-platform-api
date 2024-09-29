@@ -95,32 +95,6 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-  
-  curriculum:
-    container_name: curriculum
-    env_file:
-      - ${ENV_FILE}
-    build:
-      target: ${NODE_ENV}
-      context: .
-      dockerfile: apps/curriculum/Dockerfile
-      args:
-        - CURRICULUM_SERVICE_PORT=${CURRICULUM_SERVICE_PORT}
-        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-        - ENV_FILE=${ENV_FILE}
-    ports:
-      - "${CURRICULUM_SERVICE_PORT}:${CURRICULUM_SERVICE_PORT}"
-    volumes:
-      - .:/usr/src/server
-    command: npx nest start curriculum --watch
-    networks:
-      - local
-    depends_on:
-      database:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-
   database:
     container_name: database
     restart: always

@@ -24,4 +24,4 @@ import { PrismaService } from './prisma.service';
   ],
   exports: [PrismaService],
 })
-export class LearningPrismaModule {}
+export class PrismaModule {}

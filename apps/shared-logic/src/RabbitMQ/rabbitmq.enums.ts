@@ -14,9 +14,12 @@ export enum RabbitMQ {
   CREATE_COURSE = 'create_course',
   DELETE_COURSE_BY_CODE = 'delete_course_by_code',
   UPDATE_COURSE_BY_CODE = 'update_course_by_code',
+  ASSIGN_STUDENT_TO_CLASS = 'assign_student_to_class',
+  GET_CLASS_ASSIGNMENTS = 'get_class_assignments'
 }
 
 export enum RMQ_Queue {
   USERS_QUEUE = 'users_queue',
   LEARNING_QUEUE = 'learning_queue',
+  CURRICULUM_QUEUE = 'curriculum_queue',
 }
