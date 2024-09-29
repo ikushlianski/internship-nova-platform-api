@@ -72,11 +72,13 @@ spec:
             {{- end }}
             - name: "GATEWAY_HOST"
               value: "{{ include "nova-api.fullname" . }}-gateway-service.{{.Release.Namespace}}.svc.cluster.local"  ### REWORK!
+            - name: "USER_SERVICE_HOST"
+              value: "{{ include "nova-api.fullname" . }}-users-service.{{.Release.Namespace}}.svc.cluster.local"
             - name: "DATABASE_URL"
               # value: "{{ include "nova-api.fullname" . }}.{{.Release.Namespace}}.svc.cluster.local"
               value: "postgresql://johndoe:randompassword@{{ include "nova-api.fullname" . }}-postgres-service.{{.Release.Namespace}}.svc.cluster.local:5432/mydb?schema=public"
             - name: "GOOGLE_CALLBACK_URL"
-              value: "http://{{ include "nova-api.fullname" . }}-gateway-service.{{.Release.Namespace}}.svc.cluster.local/api/v1/auth/google/callback" ### REWORK!### REWORK!### REWORK!
+              value: "https://{{ .Values.application_environment }}.{{ .Values.domain_name }}/api/v1/auth/google/callback"
           command: ["npx"]
           args: ["nest", "start", "users", "--watch"]
           ports:

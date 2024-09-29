@@ -9,3 +9,4 @@ import { PrismaModule } from '../../shared-logic/prisma/prisma.module';
   providers: [CardsService],
 })
 export class LearningModule {}
+
