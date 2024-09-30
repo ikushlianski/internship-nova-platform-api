@@ -1,4 +1,4 @@
-FROM node:22-alpine as development
+FROM node:22-alpine AS development
 WORKDIR /usr/src/server
 
 ARG CURRICULUM_SERVICE_PORT
@@ -20,11 +20,12 @@ EXPOSE ${CURRICULUM_SERVICE_PORT}
 # command at this stage will come from docker-compose
 
 
-FROM base as production
+FROM development AS production
 
-COPY --from=base /usr/src/server/node_modules ./node_modules
-COPY --from=base /usr/src/server/package*.json ./
-COPY --from=base /usr/src/server/dist ./dist
+COPY --from=development /usr/src/server/node_modules ./node_modules
+COPY --from=development /usr/src/server/package*.json ./
+COPY apps/ ./apps
+# COPY --from=development /usr/src/server/dist ./dist
 
 RUN npm run build
 

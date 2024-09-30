@@ -89,11 +89,11 @@ services:
         - ENV_FILE=${ENV_FILE}
     ports:
       - "${CURRICULUM_SERVICE_PORT}:${CURRICULUM_SERVICE_PORT}"
-    volumes:
-      - .:/usr/src/server
+    # volumes:
+    #   - .:/usr/src/server
     command: npx nest start curriculum --watch
-    networks:
-      - local
+    # networks:
+    #   - local
     depends_on:
       database:
         condition: service_healthy
