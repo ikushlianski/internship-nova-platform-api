@@ -5,7 +5,7 @@
 images: 
   repository: registry.novaenglish.by
   # Overrides the image tag whose default is the chart appVersion.
-  tag: &apptag "latest"
+  tag: &apptag
 
 serviceAccounts:
   # Specifies whether service accounts should be created.
