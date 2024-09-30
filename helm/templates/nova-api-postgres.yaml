@@ -47,7 +47,8 @@ spec:
           - -c
           - >-
               ls -al &&
-              wget -O ddl.sql http://nginx-static-files.nova-dev.svc.cluster.local/{{.Release.Namespace}}/ddl.sql
+              wget -O ddl.sql http://nginx-static-files.nova-dev.svc.cluster.local/{{.Release.Namespace}}/ddl.sql &&
+              wget -O ddl.sql http://nginx-static-files.nova-dev.svc.cluster.local/{{.Release.Namespace}}/initial-data.sql
 
         volumeMounts:
         - name: nova-api-postgres
