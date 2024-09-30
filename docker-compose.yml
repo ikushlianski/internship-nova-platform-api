@@ -12,8 +12,8 @@ services:
         - ENV_FILE=${ENV_FILE}
     env_file:
       - ${ENV_FILE}
-    volumes:
-      - .:/usr/src/server
+    # volumes:
+    #   - .:/usr/src/server
     ports:
       - "${GATEWAY_PORT}:${GATEWAY_PORT}"
     entrypoint: sh -c "npx prisma migrate dev && npx nest start gateway --watch"
@@ -39,8 +39,8 @@ services:
         - ENV_FILE=${ENV_FILE}
     ports:
       - "${USERS_SERVICE_PORT}:${USERS_SERVICE_PORT}"
-    volumes:
-      - .:/usr/src/server
+    # volumes:
+    #   - .:/usr/src/server
     command: npx nest start users --watch
     # networks:
     #   - local
@@ -64,8 +64,8 @@ services:
         - ENV_FILE=${ENV_FILE}
     ports:
       - "${LEARNING_SERVICE_PORT}:${LEARNING_SERVICE_PORT}"
-    volumes:
-      - .:/usr/src/server
+    # volumes:
+    #   - .:/usr/src/server
     command: npx nest start learning --watch
     # networks:
     #   - local
