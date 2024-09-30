@@ -77,7 +77,7 @@ spec:
           # args: ["nest", "start", "gateway", "--watch"]
           ports:
             - name: http
-              containerPort: "{{ .Values.DATABASE_PORT }}"
+              containerPort: 5432
               protocol: TCP
           livenessProbe:
             null
