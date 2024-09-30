@@ -92,7 +92,9 @@ spec:
                   name: {{ include "nova-api.fullname" . }}-secrets
                   key: JWT_SECRET
             - name: "GOOGLE_CALLBACK_URL"
-              value: "http://{{ include "nova-api.fullname" . }}-{{ $api_name }}-service.{{.Release.Namespace}}.svc.cluster.local/api/v1/auth/google/callback" ### REWORK!### REWORK!### REWORK!
+              value: "https://{{ .Values.application_environment }}.admin.{{ .Values.domain_name }}/api/v1/auth/google/callback"
+            - name: DATABASE_URL
+              value: "postgresql://{{ .Values.POSTGRES_USER }}:{{ .Values.POSTGRES_PASSWORD }}@{{ include "nova-api.fullname" . }}-postgres-service.{{.Release.Namespace}}.svc.cluster.local:{{ .Values.DATABASE_PORT }}/{{ .Values.POSTGRES_DB }}"
           command: ["npx"]
           args: ["nest", "start", "gateway", "--watch"]
           ports:
