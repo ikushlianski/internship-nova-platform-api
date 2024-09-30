@@ -72,12 +72,12 @@ spec:
             - name: POSTGRES_DB
               value: {{ .Values.POSTGRES_DB }}
             - name: DATABASE_PORT
-              value: {{ .Values.DATABASE_PORT }}
+              value: "{{ .Values.DATABASE_PORT }}"
           # command: ["npx"]
           # args: ["nest", "start", "gateway", "--watch"]
           ports:
             - name: http
-              containerPort: {{ .Values.DATABASE_PORT }}
+              containerPort: "{{ .Values.DATABASE_PORT }}"
               protocol: TCP
           livenessProbe:
             null
