@@ -1,9 +1,8 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Param, Post } from '@nestjs/common';
-// import { SERVICE_NAMES } from './service-names';
 import { ClientProxy } from '@nestjs/microservices';
 import { ParsedUserData } from './auth/auth.types';
 import { SERVICE_NAMES } from './service-names';
-// import { ParsedUserData } from './auth/auth.types';
+
 
 @Controller('students')
 export class StudentsRoutesController {

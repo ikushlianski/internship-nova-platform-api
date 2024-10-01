@@ -23,7 +23,6 @@ export class JwtGuardStrategy extends PassportStrategy(Strategy) {
 
   private static extractJWT(@Req() req: Request): string | null {
     if (req.cookies && 'googleToken' in req.cookies) {
-      console.log("cookie good");
       return req.cookies.googleToken;
     }
 

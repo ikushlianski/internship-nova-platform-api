@@ -1,7 +1,5 @@
-import { Controller } from '@nestjs/common';
-
-import { MessagePattern, Payload } from '@nestjs/microservices';
-
+import { Controller, HttpException, HttpStatus } from '@nestjs/common';
+import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
 import { ParsedUserData } from 'apps/gateway/src/auth/auth.types';
 import { UsersService } from 'apps/users/src/users.service';
 
@@ -11,8 +9,15 @@ export class StudentsController {
 
   @MessagePattern({ cmd: 'create_student' })
   async handleFindOrCreateStudent(@Payload() userDto: ParsedUserData) {
-    const student = await this.userService.findOrCreateStudent(userDto);
-    return student;
+    const user = await this.userService.findOrCreateUserWRoleId(userDto,'1');
+    console.log(user);
+    if(user){
+      return await this.userService.findOrCreateStudent(user);
+    }
+    return new HttpException(
+      "This user already have Student role",
+      HttpStatus.BAD_REQUEST,
+    );
   }
 
   @MessagePattern({ cmd: 'get_student' })
