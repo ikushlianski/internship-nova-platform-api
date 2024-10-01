@@ -84,11 +84,8 @@ spec:
         - name: {{ .name }}
           containerPort: {{ .targetPort }}
         {{- end }}
-        env:
-        {{- range .Values.env }}
-        - name: {{ .name }}
-          value: {{ .value | quote }}
-        {{- end }}
+        envFrom:
+          {{- toYaml .Values.envFrom | nindent 12 }}
         resources:
         #   {{- toYaml .Values.rabbitmq.resources | nindent 10 }}
         volumeMounts:

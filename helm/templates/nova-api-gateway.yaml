@@ -65,16 +65,13 @@ spec:
       - name: {{ .Values.gateway.name }}
         # securityContext:
         #   runAsUser: 1000
-        image: {{ .Values.images.repository }}/{{ .Values.gateway.image.name }}:{{ .Values.gateway.image.tag }}
+        image: {{ .Values.images.repository }}/{{ .Values.gateway.image.name }}:{{ .Values.images.tag }}
         command: ["/bin/sh"]
         args: ["-c", "npx prisma migrate dev && npx nest start gateway --watch"]
         ports:
         - containerPort: {{ .Values.gateway.service.targetPort }}
-        env:          
-        {{- range .Values.env }}
-        - name: {{ .name }}
-          value: "{{ .value }}"
-        {{- end }}
+        envFrom:
+          {{- toYaml .Values.envFrom | nindent 12 }}
         resources:
         #   {{- toYaml .Values.gateway.resources | nindent 10 }}
 {{- end }}

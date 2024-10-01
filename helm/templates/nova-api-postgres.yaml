@@ -62,15 +62,8 @@ spec:
         image: postgres:{{ .Values.postgres.image.tag }}
         ports:
         - containerPort: {{ .Values.postgres.service.targetPort }}
-        env:
-        - name: POSTGRES_PASSWORD
-          value: "randompassword"
-        - name: POSTGRES_USER
-          value: "postgres"
-        - name: DATABASE_PORT
-          value: "5432"
-        - name: POSTGRES_DB
-          value: "nova-platform-main-db-dev"
+        envFrom:
+          {{- toYaml .Values.envFrom | nindent 12 }}
         resources:
         #   {{- toYaml .Values.postgres.resources | nindent 10 }}
         readinessProbe:

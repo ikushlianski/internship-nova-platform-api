@@ -65,16 +65,13 @@ spec:
       - name: {{ .Values.learning.name }}
         # securityContext:
         #   runAsUser: 1000
-        image: {{ .Values.images.repository }}/{{ .Values.learning.image.name }}:{{ .Values.learning.image.tag }}
+        image: {{ .Values.images.repository }}/{{ .Values.learning.image.name }}:{{ .Values.images.tag }}
         command: ["/bin/sh"]
         args: ["-c", "npx nest start learning --watch"]
         ports:
         - containerPort: {{ .Values.learning.service.targetPort }}
-        env:          
-        {{- range .Values.env }}
-        - name: {{ .name }}
-          value: "{{ .value }}"
-        {{- end }}
+        envFrom:
+          {{- toYaml .Values.envFrom | nindent 12 }}
         resources:
         #   {{- toYaml .Values.learning.resources | nindent 10 }}
 {{- end }}

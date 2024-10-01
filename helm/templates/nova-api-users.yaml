@@ -65,16 +65,13 @@ spec:
       - name: {{ .Values.users.name }}
         # securityContext:
         #   runAsUser: 1000
-        image: {{ .Values.images.repository }}/{{ .Values.users.image.name }}:{{ .Values.users.image.tag }}
+        image: {{ .Values.images.repository }}/{{ .Values.users.image.name }}:{{ .Values.images.tag }}
         command: ["/bin/sh"]
         args: ["-c", "npx nest start users --watch"]
         ports:
         - containerPort: {{ .Values.users.service.targetPort }}
-        env:          
-        {{- range .Values.env }}
-        - name: {{ .name }}
-          value: "{{ .value }}"
-        {{- end }}
+        envFrom:
+          {{- toYaml .Values.envFrom | nindent 12 }}
         resources:
         #   {{- toYaml .Values.users.resources | nindent 10 }}
 {{- end }}

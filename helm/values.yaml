@@ -5,7 +5,7 @@
 images: 
   repository: registry.novaenglish.by
   # Overrides the image tag whose default is the chart appVersion.
-  tag: &apptag "4e6dc8d"
+  tag: latest
 
 serviceAccounts:
   # Specifies whether service accounts should be created.
@@ -36,7 +36,6 @@ gateway:
   name: gateway
   image:
     name: nova-platform-api-gateway
-    tag: *apptag
   replicas: 1
   service:
     name: gateway
@@ -78,7 +77,6 @@ users:
   name: users
   image:
     name: nova-platform-api-users
-    tag: *apptag
   replicas: 1
   service:
     name: users
@@ -97,7 +95,6 @@ learning:
   name: learning
   image:
     name: nova-platform-api-learning
-    tag: *apptag
   replicas: 1
   service:
     name: learning
@@ -116,7 +113,6 @@ curriculum:
   name: curriculum
   image:
     name: nova-platform-api-curriculum
-    tag: *apptag
   replicas: 1
   service:
     name: curriculum
@@ -130,46 +126,36 @@ curriculum:
     #   cpu: 300m
     #   memory: 600Mi
 
-env:
-- name: "HOST"
-  value: "database"
-# - name: "DATABASE_URL"
-#   value: "postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
-- name: "POSTGRES_PASSWORD"
-  value: "randompassword"
-- name: "POSTGRES_USER"
-  value: "postgres"
-- name: "DATABASE_PORT"
-  value: "5432"
-- name: "POSTGRES_DB"
-  value: "nova-platform-main-db-dev"
-- name: "APP_ENV"
-  value: "dev"
-- name: "NODE_ENV"
-  value: "development"
-- name: "FRONTEND_URL"
-  value: "http://nova-front.nova-dev.svc.cluster.local/"
+envFrom:
+- configMapRef:
+    name: nova-env
+- secretRef:
+    name: nova-secret-env
+
+configmap:
+  HOST: "database"
+  POSTGRES_USER: "postgres"
+  DATABASE_PORT: "5432"
+  POSTGRES_DB: "nova-platform-main-db-dev"
+  APP_ENV: "dev"
+  NODE_ENV: "development"
+  FRONTEND_URL: "http://nova-front.nova-dev.svc.cluster.local/"
 # - name: "GOOGLE_CALLBACK_URL"
 #   value: "https://qa1.nova.local/api/v1/auth/google/callback"
-- name: "GATEWAY_PORT"
-  value: "80"
-- name: "USER_SERVICE_PORT"
-  value: "80"
-- name: "ENV_FILE"
-  value: ".env.development.local"
-- name: DATABASE_URL
-  value: "postgresql://postgres:randompassword@database:5432/nova-platform-main-db-dev"
-- name: RABBITMQ_USER
-  value: guest
-- name: RABBITMQ_PASSWORD
-  value: guest
-- name: RABBITMQ_PORT
-  value: 5672
-- name: RABBITMQ_MC_PORT
-  value: 15672
-- name: RABBITMQ_HOST
-  value: "rabbitmq"
-- name: RABBITMQ_URL
-  value: amqp://rabbitmq:5672
-- name: CURRICULUM_SERVICE_PORT
-  value: 3003
+  # GATEWAY_PORT: 3000
+  # USER_SERVICE_PORT: 3001
+  ENV_FILE: ".env.development.local"
+  RABBITMQ_USER: guest
+  RABBITMQ_PORT: 5672
+  RABBITMQ_MC_PORT: 15672
+  RABBITMQ_HOST: "rabbitmq"
+  RABBITMQ_URL: amqp://rabbitmq:5672
+  CURRICULUM_SERVICE_PORT: 3003
+  GOOGLE_CLIENT_ID: 634293760963-9e379hughfejbm4j6093mpoi2s6btsos.apps.googleusercontent.com
+  GOOGLE_CLIENT_SECRET: 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
+  GOOGLE_CALLBACK_URL: http://localhost:3000/api/v1/auth/google/callback
+  JWT_SECRET: supersecuresecret
+
+secrets:
+  POSTGRES_PASSWORD: "randompassword"
+  RABBITMQ_PASSWORD: guest
