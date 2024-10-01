@@ -35,7 +35,7 @@ const courses = [
     subject_code: 'english',
   },
   {
-    course_code: 'english-for-backend-a2',
+    course_code: 'english-for-backend-a27',
     course_name: 'English for Backend Developers A2 (regular intensity)',
     course_level_id: 'A2',
     created_date: new Date().toISOString(),

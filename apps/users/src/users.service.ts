@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Body, Injectable } from '@nestjs/common';
 import { PrismaService } from 'apps/users/src/prisma/prisma.service';
 import { ParsedUserData } from '../../gateway/src/auth/auth.types';
 import { connect } from 'http2';
@@ -49,80 +49,81 @@ export class UsersService {
     return 'all students';
   }
 
-  async findOrCreateStudent(userDto: ParsedUserData) {
+  async findOrCreateStudent(@Body() userDto: any) {
     //find or create user with role student
-    let user = await this.prismaService.user.findUnique({
-      where: { user_email: userDto.user_email },
-    });
+    console.log(userDto);
+    // let user = await this.prismaService.user.findUnique({
+    //   where: { user_email: userDto.user_email },
+    // });
 
-    if (!user) {
-      user = await this.prismaService.user.create({
-        data: {
-          ...userDto,
-          nickname: userDto.last_name,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          user_roles: {
-            create: [
-              {
-                role_id: '1', //role_id - STUDENT
-              },
-            ],
-          },
-        },
-      });
-    } else {
-      const existingUserRole = await this.prismaService.userRole.findUnique({
-        where: {
-          user_email_role_id: {
-            user_email: userDto.user_email,
-            role_id: '1', //role_id - STUDENT
-          },
-        },
-      });
-      if (!existingUserRole) {
-        await this.prismaService.user.update({
-          where: {
-            user_email: userDto.user_email,
-          },
-          data: {
-            updated_at: new Date().toISOString(),
-            user_roles: {
-              create: {
-                role_id: '1', //role_id - STUDENT
-              },
-            },
-          },
-        });
-      } else {
-        return 'User already has this role';
-      }
-    }
-    // find or create student
-    let student = await this.prismaService.student.findFirst({
-      where: { user_id: userDto.user_email,
+    // if (!user) {
+    //   user = await this.prismaService.user.create({
+    //     data: {
+    //       ...userDto,
+    //       nickname: userDto.last_name,
+    //       created_at: new Date().toISOString(),
+    //       updated_at: new Date().toISOString(),
+    //       user_roles: {
+    //         create: [
+    //           {
+    //             role_id: '1', //role_id - STUDENT
+    //           },
+    //         ],
+    //       },
+    //     },
+    //   });
+    // } else {
+    //   const existingUserRole = await this.prismaService.userRole.findUnique({
+    //     where: {
+    //       user_email_role_id: {
+    //         user_email: userDto.user_email,
+    //         role_id: '1', //role_id - STUDENT
+    //       },
+    //     },
+    //   });
+    //   if (!existingUserRole) {
+    //     await this.prismaService.user.update({
+    //       where: {
+    //         user_email: userDto.user_email,
+    //       },
+    //       data: {
+    //         updated_at: new Date().toISOString(),
+    //         user_roles: {
+    //           create: {
+    //             role_id: '1', //role_id - STUDENT
+    //           },
+    //         },
+    //       },
+    //     });
+    //   } else {
+    //     return 'User already has this role';
+    //   }
+    // }
+    // // find or create student
+    // let student = await this.prismaService.student.findFirst({
+    //   where: { user_id: userDto.user_email,
         
-      },
-    });
-    if (!student) {
-      student = await this.prismaService.student.create({
-        data: {
+    //   },
+    // });
+    // if (!student) {
+    //   student = await this.prismaService.student.create({
+    //     data: {
           
-          student_nickname: user.nickname,
-          user: {
-            connectOrCreate: {
-              where: {
-                user_email: userDto.user_email, // Check if user already exists
-              },
-              create: {
-                ...userDto,
-              },
-            },
-          },
-        },
-      });
-    }
+    //       student_nickname: user.nickname,
+    //       user: {
+    //         connectOrCreate: {
+    //           where: {
+    //             user_email: userDto.user_email, // Check if user already exists
+    //           },
+    //           create: {
+    //             ...userDto,
+    //           },
+    //         },
+    //       },
+    //     },
+    //   });
+    // }
 
-    return student;
+    return userDto;
   }
 }
