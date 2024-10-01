@@ -4,13 +4,13 @@ FROM node:22-alpine AS development
 WORKDIR /usr/src/server
 
 ARG GATEWAY_PORT
-ARG POSTGRES_PASSWORD
-ARG ENV_FILE
+# ARG POSTGRES_PASSWORD
+# ARG ENV_FILE
 
 ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
 COPY package*.json ./
-COPY ${ENV_FILE} ./
+# COPY ${ENV_FILE} ./
 COPY ./apps ./
 COPY ./prisma ./prisma
 COPY nest-cli.json ./
