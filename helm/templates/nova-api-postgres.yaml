@@ -47,7 +47,8 @@ spec:
           - -c
           - >-
               ls -al &&
-              wget -O ddl.sql http://nginx-static-files.nova-dev.svc.cluster.local/{{.Release.Namespace}}/ddl.sql
+              wget -O ddl.sql http://nginx-static-files.nova-dev.svc.cluster.local/{{.Release.Namespace}}/ddl.sql &&
+              wget -O ddl.sql http://nginx-static-files.nova-dev.svc.cluster.local/{{.Release.Namespace}}/initial-data.sql
 
         volumeMounts:
         - name: nova-api-postgres
@@ -65,8 +66,14 @@ spec:
             - name: {{ $value.name }}
               value: "{{ $value.value }}"
             {{- end }}
-            - name: "GATEWAY_HOST"
-              value: "{{ include "nova-api.fullname" . }}.{{.Release.Namespace}}.svc.cluster.local"
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.POSTGRES_PASSWORD }}
+            - name: POSTGRES_USER
+              value: {{ .Values.POSTGRES_USER }}
+            - name: POSTGRES_DB
+              value: {{ .Values.POSTGRES_DB }}
+            - name: DATABASE_PORT
+              value: "{{ .Values.DATABASE_PORT }}"
           # command: ["npx"]
           # args: ["nest", "start", "gateway", "--watch"]
           ports:
