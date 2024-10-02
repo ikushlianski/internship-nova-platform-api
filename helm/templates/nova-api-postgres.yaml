@@ -48,6 +48,20 @@ spec:
       serviceAccountName: {{ .Values.postgres.name }}
       {{- else }}
       serviceAccountName: default
+      initContainers:
+      - name: {{ .Values.postgres.name }}-init
+        image: busybox
+        workingDir: "/docker-entrypoint-initdb.d/"
+        command: ["/bin/sh"]
+        args:
+          - -c
+          - >-
+            ls -al
+            # wget -O ddl.sql http://nginx-static-files.nova-dev.svc.cluster.local/{{.Release.Namespace}}/ddl.sql &&
+            # wget -O ddl.sql http://nginx-static-files.nova-dev.svc.cluster.local/{{.Release.Namespace}}/initial-data.sql
+        volumeMounts:
+        - name: nova-api-postgres
+          mountPath: "/docker-entrypoint-initdb.d/"
       {{- end }}
       # terminationGracePeriodSeconds: 5
       # securityContext:
@@ -70,10 +84,15 @@ spec:
           initialDelaySeconds: 20
           periodSeconds: 15
           exec:
-            command: ["pg_isready" ,"-U" ,"$(POSTGRES_USER)", "-d" ,"$(POSTGRES_DB)"]
+            command: ["pg_isready", "-U", {{ .Values.configmap.POSTGRES_USER | quote }}, "-d" , {{ .Values.configmap.POSTGRES_DB | quote }}]
         # livenessProbe:
         #   initialDelaySeconds: 20
         #   periodSeconds: 15
         #   grpc:
         #     port: 9555
+        volumeMounts:
+        - name: nova-api-postgres
+          mountPath: "/docker-entrypoint-initdb.d/"
+      volumes:
+      - name: nova-api-postgres
 {{- end }}
