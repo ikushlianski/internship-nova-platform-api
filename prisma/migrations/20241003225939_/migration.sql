@@ -8,6 +8,9 @@
 
 */
 -- DropForeignKey
+ALTER TABLE "student" DROP CONSTRAINT "student_class_id_fkey";
+
+-- DropForeignKey
 ALTER TABLE "student_answer" DROP CONSTRAINT "student_answer_student_id_fkey";
 
 -- DropForeignKey
@@ -17,6 +20,7 @@ ALTER TABLE "student_task" DROP CONSTRAINT "student_task_student_id_fkey";
 ALTER TABLE "student" DROP CONSTRAINT "student_pkey",
 DROP COLUMN "student_id",
 ADD COLUMN     "student_id" SERIAL NOT NULL,
+ALTER COLUMN "class_id" DROP NOT NULL,
 ADD CONSTRAINT "student_pkey" PRIMARY KEY ("student_id");
 
 -- AlterTable
@@ -26,6 +30,9 @@ ADD COLUMN     "student_id" INTEGER NOT NULL;
 -- AlterTable
 ALTER TABLE "student_task" DROP COLUMN "student_id",
 ADD COLUMN     "student_id" INTEGER NOT NULL;
+
+-- AddForeignKey
+ALTER TABLE "student" ADD CONSTRAINT "student_class_id_fkey" FOREIGN KEY ("class_id") REFERENCES "class"("class_id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "student_answer" ADD CONSTRAINT "student_answer_student_id_fkey" FOREIGN KEY ("student_id") REFERENCES "student"("student_id") ON DELETE RESTRICT ON UPDATE CASCADE;

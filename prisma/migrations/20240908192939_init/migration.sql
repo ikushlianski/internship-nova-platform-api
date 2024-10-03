@@ -17,10 +17,7 @@ CREATE TYPE "StudentTaskStatus" AS ENUM ('PENDING', 'BLOCKED', 'IN_PROGRESS', 'C
 CREATE TABLE "user" (
     "user_email" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3),
-    "first_name" TEXT NOT NULL,
-    "last_name" TEXT NOT NULL,
-    "nickname" TEXT,
+    "updated_at" TIMESTAMP(3) NOT NULL,
     "deleted" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "user_pkey" PRIMARY KEY ("user_email")
@@ -30,7 +27,6 @@ CREATE TABLE "user" (
 CREATE TABLE "role" (
     "role_id" TEXT NOT NULL,
     "role_name" TEXT,
-    "role_description" TEXT,
 
     CONSTRAINT "role_pkey" PRIMARY KEY ("role_id")
 );
@@ -54,13 +50,13 @@ CREATE TABLE "user_application_preferences" (
 );
 
 -- CreateTable
-CREATE TABLE "application" (
+CREATE TABLE "Application" (
     "application_id" TEXT NOT NULL,
     "application_name" TEXT NOT NULL,
     "application_description" TEXT,
     "application_url" TEXT,
 
-    CONSTRAINT "application_pkey" PRIMARY KEY ("application_id")
+    CONSTRAINT "Application_pkey" PRIMARY KEY ("application_id")
 );
 
 -- CreateTable
@@ -75,11 +71,11 @@ CREATE TABLE "data_removal_request" (
 );
 
 -- CreateTable
-CREATE TABLE "meeting_kind" (
+CREATE TABLE "MeetingKind" (
     "meeting_kind_id" TEXT NOT NULL,
     "meeting_kind_name" TEXT NOT NULL,
 
-    CONSTRAINT "meeting_kind_pkey" PRIMARY KEY ("meeting_kind_id")
+    CONSTRAINT "MeetingKind_pkey" PRIMARY KEY ("meeting_kind_id")
 );
 
 -- CreateTable
@@ -99,7 +95,7 @@ CREATE TABLE "class" (
     "course_id" TEXT NOT NULL,
     "start_date" TIMESTAMP(3) NOT NULL,
     "end_date" TIMESTAMP(3),
-    "tuition_lang_code" TEXT NOT NULL,
+    "tuition_lang_id" TEXT NOT NULL,
     "time_of_day_id" TEXT NOT NULL,
     "start_time_gmt3" TEXT NOT NULL,
     "created_date" TIMESTAMP(3),
@@ -154,7 +150,7 @@ CREATE TABLE "course_advice" (
 );
 
 -- CreateTable
-CREATE TABLE "course_task" (
+CREATE TABLE "CourseTask" (
     "course_task_id" TEXT NOT NULL,
     "course_id" TEXT NOT NULL,
     "module_id" INTEGER NOT NULL,
@@ -163,7 +159,7 @@ CREATE TABLE "course_task" (
     "task_id" INTEGER NOT NULL,
     "question" TEXT NOT NULL,
 
-    CONSTRAINT "course_task_pkey" PRIMARY KEY ("course_task_id")
+    CONSTRAINT "CourseTask_pkey" PRIMARY KEY ("course_task_id")
 );
 
 -- CreateTable
@@ -256,7 +252,7 @@ CREATE TABLE "module" (
 );
 
 -- CreateTable
-CREATE TABLE "section" (
+CREATE TABLE "Section" (
     "section_id" SERIAL NOT NULL,
     "section_name" TEXT NOT NULL,
     "section_description" TEXT,
@@ -266,7 +262,7 @@ CREATE TABLE "section" (
     "deleted" BOOLEAN NOT NULL DEFAULT false,
     "module_id" INTEGER NOT NULL,
 
-    CONSTRAINT "section_pkey" PRIMARY KEY ("section_id")
+    CONSTRAINT "Section_pkey" PRIMARY KEY ("section_id")
 );
 
 -- CreateTable
@@ -279,10 +275,10 @@ CREATE TABLE "time_of_day" (
 
 -- CreateTable
 CREATE TABLE "tuition_language" (
-    "tuition_lang_code" TEXT NOT NULL,
+    "tuition_lang_id" TEXT NOT NULL,
     "tuition_lang_name" TEXT NOT NULL,
 
-    CONSTRAINT "tuition_language_pkey" PRIMARY KEY ("tuition_lang_code")
+    CONSTRAINT "tuition_language_pkey" PRIMARY KEY ("tuition_lang_id")
 );
 
 -- CreateTable
@@ -456,7 +452,7 @@ CREATE TABLE "_TaskToTaskForm" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "meeting_kind_meeting_kind_name_key" ON "meeting_kind"("meeting_kind_name");
+CREATE UNIQUE INDEX "MeetingKind_meeting_kind_name_key" ON "MeetingKind"("meeting_kind_name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "class_size_class_size_name_key" ON "class_size"("class_size_name");
@@ -468,7 +464,7 @@ CREATE UNIQUE INDEX "lesson_lesson_name_key" ON "lesson"("lesson_name");
 CREATE UNIQUE INDEX "module_module_name_key" ON "module"("module_name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "section_section_name_key" ON "section"("section_name");
+CREATE UNIQUE INDEX "Section_section_name_key" ON "Section"("section_name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "time_of_day_time_of_day_name_key" ON "time_of_day"("time_of_day_name");
@@ -492,7 +488,7 @@ ALTER TABLE "user_role" ADD CONSTRAINT "user_role_role_id_fkey" FOREIGN KEY ("ro
 ALTER TABLE "user_application_preferences" ADD CONSTRAINT "user_application_preferences_user_email_fkey" FOREIGN KEY ("user_email") REFERENCES "user"("user_email") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "user_application_preferences" ADD CONSTRAINT "user_application_preferences_application_id_fkey" FOREIGN KEY ("application_id") REFERENCES "application"("application_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "user_application_preferences" ADD CONSTRAINT "user_application_preferences_application_id_fkey" FOREIGN KEY ("application_id") REFERENCES "Application"("application_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "data_removal_request" ADD CONSTRAINT "data_removal_request_user_email_fkey" FOREIGN KEY ("user_email") REFERENCES "user"("user_email") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -504,7 +500,7 @@ ALTER TABLE "course_structure" ADD CONSTRAINT "course_structure_course_id_fkey" 
 ALTER TABLE "course_structure" ADD CONSTRAINT "course_structure_module_id_fkey" FOREIGN KEY ("module_id") REFERENCES "module"("module_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "course_structure" ADD CONSTRAINT "course_structure_section_id_fkey" FOREIGN KEY ("section_id") REFERENCES "section"("section_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "course_structure" ADD CONSTRAINT "course_structure_section_id_fkey" FOREIGN KEY ("section_id") REFERENCES "Section"("section_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "course_structure" ADD CONSTRAINT "course_structure_lesson_id_fkey" FOREIGN KEY ("lesson_id") REFERENCES "lesson"("lesson_id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -519,13 +515,13 @@ ALTER TABLE "class" ADD CONSTRAINT "class_course_id_fkey" FOREIGN KEY ("course_i
 ALTER TABLE "class" ADD CONSTRAINT "class_time_of_day_id_fkey" FOREIGN KEY ("time_of_day_id") REFERENCES "time_of_day"("time_of_day_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "class" ADD CONSTRAINT "class_tuition_lang_code_fkey" FOREIGN KEY ("tuition_lang_code") REFERENCES "tuition_language"("tuition_lang_code") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "class" ADD CONSTRAINT "class_tuition_lang_id_fkey" FOREIGN KEY ("tuition_lang_id") REFERENCES "tuition_language"("tuition_lang_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "class_call" ADD CONSTRAINT "class_call_class_id_fkey" FOREIGN KEY ("class_id") REFERENCES "class"("class_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "class_call" ADD CONSTRAINT "class_call_meeting_kind_id_fkey" FOREIGN KEY ("meeting_kind_id") REFERENCES "meeting_kind"("meeting_kind_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "class_call" ADD CONSTRAINT "class_call_meeting_kind_id_fkey" FOREIGN KEY ("meeting_kind_id") REFERENCES "MeetingKind"("meeting_kind_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "course" ADD CONSTRAINT "course_course_level_id_fkey" FOREIGN KEY ("course_level_id") REFERENCES "course_level"("course_level_id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -537,19 +533,19 @@ ALTER TABLE "course" ADD CONSTRAINT "course_subject_code_fkey" FOREIGN KEY ("sub
 ALTER TABLE "course_advice" ADD CONSTRAINT "course_advice_course_code_fkey" FOREIGN KEY ("course_code") REFERENCES "course"("course_code") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "course_task" ADD CONSTRAINT "course_task_course_id_fkey" FOREIGN KEY ("course_id") REFERENCES "course"("course_code") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "CourseTask" ADD CONSTRAINT "CourseTask_course_id_fkey" FOREIGN KEY ("course_id") REFERENCES "course"("course_code") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "course_task" ADD CONSTRAINT "course_task_module_id_fkey" FOREIGN KEY ("module_id") REFERENCES "module"("module_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "CourseTask" ADD CONSTRAINT "CourseTask_module_id_fkey" FOREIGN KEY ("module_id") REFERENCES "module"("module_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "course_task" ADD CONSTRAINT "course_task_section_id_fkey" FOREIGN KEY ("section_id") REFERENCES "section"("section_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "CourseTask" ADD CONSTRAINT "CourseTask_section_id_fkey" FOREIGN KEY ("section_id") REFERENCES "Section"("section_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "course_task" ADD CONSTRAINT "course_task_lesson_id_fkey" FOREIGN KEY ("lesson_id") REFERENCES "lesson"("lesson_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "CourseTask" ADD CONSTRAINT "CourseTask_lesson_id_fkey" FOREIGN KEY ("lesson_id") REFERENCES "lesson"("lesson_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "course_task" ADD CONSTRAINT "course_task_task_id_fkey" FOREIGN KEY ("task_id") REFERENCES "task"("task_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "CourseTask" ADD CONSTRAINT "CourseTask_task_id_fkey" FOREIGN KEY ("task_id") REFERENCES "task"("task_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "course_levels_per_subject" ADD CONSTRAINT "course_levels_per_subject_course_level_id_fkey" FOREIGN KEY ("course_level_id") REFERENCES "course_level"("course_level_id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -558,7 +554,7 @@ ALTER TABLE "course_levels_per_subject" ADD CONSTRAINT "course_levels_per_subjec
 ALTER TABLE "course_levels_per_subject" ADD CONSTRAINT "course_levels_per_subject_subject_code_fkey" FOREIGN KEY ("subject_code") REFERENCES "subject"("subject_code") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "lesson" ADD CONSTRAINT "lesson_section_id_fkey" FOREIGN KEY ("section_id") REFERENCES "section"("section_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "lesson" ADD CONSTRAINT "lesson_section_id_fkey" FOREIGN KEY ("section_id") REFERENCES "Section"("section_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "lesson" ADD CONSTRAINT "lesson_moduleModule_id_fkey" FOREIGN KEY ("moduleModule_id") REFERENCES "module"("module_id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -582,7 +578,7 @@ ALTER TABLE "mentor_pay_model" ADD CONSTRAINT "mentor_pay_model_class_size_id_fk
 ALTER TABLE "module" ADD CONSTRAINT "module_course_id_fkey" FOREIGN KEY ("course_id") REFERENCES "course"("course_code") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "section" ADD CONSTRAINT "section_module_id_fkey" FOREIGN KEY ("module_id") REFERENCES "module"("module_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Section" ADD CONSTRAINT "Section_module_id_fkey" FOREIGN KEY ("module_id") REFERENCES "module"("module_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "deck" ADD CONSTRAINT "deck_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("user_email") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -609,7 +605,7 @@ ALTER TABLE "vocabulary_inbox" ADD CONSTRAINT "vocabulary_inbox_user_id_fkey" FO
 ALTER TABLE "booking_request" ADD CONSTRAINT "booking_request_class_id_fkey" FOREIGN KEY ("class_id") REFERENCES "class"("class_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "class_homework" ADD CONSTRAINT "class_homework_course_task_id_fkey" FOREIGN KEY ("course_task_id") REFERENCES "course_task"("course_task_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "class_homework" ADD CONSTRAINT "class_homework_course_task_id_fkey" FOREIGN KEY ("course_task_id") REFERENCES "CourseTask"("course_task_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "class_homework" ADD CONSTRAINT "class_homework_class_id_fkey" FOREIGN KEY ("class_id") REFERENCES "class"("class_id") ON DELETE RESTRICT ON UPDATE CASCADE;
