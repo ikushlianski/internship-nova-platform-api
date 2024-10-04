@@ -15,7 +15,7 @@ model ClassTask {
 }
 
 model Student {
-  student_id       String    @id
+  student_id       Int    @id @default(autoincrement())
   user_id          String
   student_nickname String?
   /// When the student joined a particular class
@@ -24,10 +24,10 @@ model Student {
   created_date     DateTime?
   updated_date     DateTime?
   deleted          Boolean   @default(false)
-  class_id         String
+  class_id         String?
 
   user            User            @relation(fields: [user_id], references: [user_email])
-  class           Class           @relation(fields: [class_id], references: [class_id])
+  class           Class?           @relation(fields: [class_id], references: [class_id])
   student_task    StudentTask[]
   student_answers StudentAnswer[]
 
@@ -36,7 +36,7 @@ model Student {
 
 model StudentAnswer {
   student_answer_id Int    @id @default(autoincrement())
-  student_id        String
+  student_id        Int
   class_task_id     Int
   answer            String
 
@@ -55,7 +55,7 @@ enum StudentTaskStatus {
 
 model StudentTask {
   student_task_id Int               @id @default(autoincrement())
-  student_id      String
+  student_id      Int
   class_task_id   Int
   task_status     StudentTaskStatus
 

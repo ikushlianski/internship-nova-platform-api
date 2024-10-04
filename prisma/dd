@@ -1,0 +1,39 @@
+HOST="localhost"
+POSTGRES_PASSWORD="randompassword"
+POSTGRES_USER="postgres"
+DATABASE_PORT="5432"
+POSTGRES_DB="nova-platform-main-db-dev"
+DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${HOST}:${DATABASE_PORT}/${POSTGRES_DB}"
+
+# Environment
+#NODE_ENV=development, production
+#APP_ENV=dev,qa1,qa2,qa3,prod
+
+APP_ENV=dev
+NODE_ENV=development
+APP_DOMAIN=localhost
+DEFAULT_API_VERSION=1
+
+# Service ports
+FRONTEND_URL=http://localhost:8000
+
+GATEWAY_HOST=gateway
+GATEWAY_PORT=3000
+
+USERS_SERVICE_HOST=users
+USERS_SERVICE_PORT=3001
+
+LEARNING_SERVICE_HOST=learning
+LEARNING_SERVICE_PORT=3002
+
+# Google auth
+GOOGLE_CLIENT_ID=634293760963-9e379hughfejbm4j6093mpoi2s6btsos.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=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
+GOOGLE_CALLBACK_URL=http://localhost:3000/api/v1/auth/google/callback
+JWT_SECRET=supersecuresecret
+
+# RabbitMQ
+RABBITMQ_USER=guest
+RABBITMQ_PASSWORD=guest
+RABBITMQ_PORT=5672
+RABBITMQ_MC_PORT=15672

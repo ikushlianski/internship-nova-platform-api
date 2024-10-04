@@ -8,6 +8,7 @@ import {
   Res,
   UseGuards,
   Query,
+  HttpException,
 } from '@nestjs/common';
 import { GoogleOauthGuard } from './guards/google-oauth.guard';
 import { Request, Response } from 'express';
@@ -70,6 +71,7 @@ export class AuthController {
         return res.redirect(frontendUrl);
       }
     } catch (err) {
+     
       return res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .send({ success: false, message: err.message });
@@ -107,11 +109,12 @@ export class AuthController {
 
         return res.send({ success: true, token: token.jwt });
       } catch (err) {
+        
         return res
-          .status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .send({ success: false, message: err.message });
-      }
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .send({ success: false, message: err.message });
     }
+  }
 
     return res.status(HttpStatus.FORBIDDEN).send('Forbidden');
   }
