@@ -1,11 +1,11 @@
 import { Controller, HttpException, HttpStatus } from '@nestjs/common';
 import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
 import { ParsedUserData } from 'apps/gateway/src/auth/auth.types';
-import { UsersService } from 'apps/users/src/users.service';
+import { StudentsService } from './students.service';
 
 @Controller('students')
 export class StudentsController {
-  constructor(private readonly userService: UsersService) { }
+  constructor(private readonly userService: StudentsService) { }
 
   @MessagePattern({ cmd: 'create_student' })
   async handleFindOrCreateStudent(@Payload() userDto: ParsedUserData) {

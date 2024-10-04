@@ -12,6 +12,7 @@ import { CurriculumPrismaModule } from 'apps/curriculum/src/prisma/prisma.module
 import { LearningPrismaModule } from 'apps/learning/src/prisma/prisma.module';
 import { RMQ_Queue } from 'apps/shared-logic/src/RabbitMQ/rabbitmq.enums';
 import { StudentsRoutesController } from './gateway-students.controller';
+import { MentorsRoutesController } from './gateway-mentors.controller';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { StudentsRoutesController } from './gateway-students.controller';
     LearningRoutesController,
     StudentsRoutesController,
     CurriculumRoutesController,
+    MentorsRoutesController,
   ],
   providers: [
     {
