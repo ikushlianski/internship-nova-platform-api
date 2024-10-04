@@ -44,14 +44,6 @@ nodeSelector: {}
 tolerations: []
 affinity: {}
 env:
-  - name: POSTGRES_PASSWORD
-    value: randompassword
-  - name: POSTGRES_USER
-    value: postgres
-  - name: DATABASE_PORT
-    value: '5432'
-  - name: POSTGRES_DB
-    value: nova-platform-main-db-dev
   - name: APP_ENV
     value: dev
   - name: NODE_ENV
@@ -64,6 +56,13 @@ env:
     value: '80'
   - name: ENV_FILE
     value: .env.development.local
+  - name: DEFAULT_API_VERSION
+    value: 1
+
+DATABASE_PORT: 5432
+POSTGRES_DB: nova-platform-main-db-dev
+POSTGRES_USER: postgres
+POSTGRES_PASSWORD: randompassword
 application_environment: dev
 domain_name: nova.local
 build_hash: e7fa5157b9b91ccf5074017f3e361e7b47aff234
