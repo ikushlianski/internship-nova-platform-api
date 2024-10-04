@@ -10,7 +10,7 @@ export enum RabbitMQ {
   DELETE_CLASS_BY_ID = 'delete_class_by_id',
   UPDATE_CLASS_BY_ID = 'update_class_by_id',
   GET_ALL_COURSES = 'get_all_courses',
-  GET_COURSE_BY_CODE = 'get_class_by_code',
+  GET_COURSE_BY_CODE = 'get_course_by_code',
   CREATE_COURSE = 'create_course',
   DELETE_COURSE_BY_CODE = 'delete_course_by_code',
   UPDATE_COURSE_BY_CODE = 'update_course_by_code',

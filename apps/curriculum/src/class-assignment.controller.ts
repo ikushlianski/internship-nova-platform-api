@@ -8,8 +8,7 @@ import { RabbitMQ } from 'apps/shared-logic/src/RabbitMQ/rabbitmq.enums';
 export class ClassAssignmentController {
   constructor(private readonly classAssignmentService: ClassAssignmentService) {}
 
-
-  @MessagePattern({ cmd: RabbitMQ.ASSIGN_STUDENT_TO_CLASS })
+  @MessagePattern({ cmd: 'assign_student_to_class' })
   async assignStudentToClass(@Payload() studentDto: StudentDto) {
     try {
       return await this.classAssignmentService.assignStudent(studentDto);
@@ -18,7 +17,7 @@ export class ClassAssignmentController {
     }
   }
 
-  @MessagePattern({ cmd: RabbitMQ.GET_CLASS_ASSIGNMENTS })
+  @MessagePattern({ cmd: 'get_class_assignments' })
   async getClassAssignments(@Payload() classId: string) {
     try {
       return await this.classAssignmentService.getClassAssignments(classId);

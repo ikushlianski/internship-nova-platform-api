@@ -14,57 +14,57 @@ export class CurriculumController {
     return { success: true };
   }
 
-  @MessagePattern({ cmd: RabbitMQ.GET_ALL_CLASSES })
+  @MessagePattern({ cmd: 'get_all_classes' })
   getAllClasses() {
     return this.curriculumService.getAllClasses();
   }
 
-  @MessagePattern({ cmd: RabbitMQ.GET_CLASS_BY_ID })
+  @MessagePattern({ cmd: 'get_class_by_id' })
   getClassByID(@Payload() class_id: string) {
     return this.curriculumService.getClassByID(class_id);
   }
 
-  @MessagePattern({ cmd: RabbitMQ.CREATE_CLASS })
+  @MessagePattern({ cmd: 'create_class' })
   async createClass(@Payload() newClass: ClassSchema) {
     const createdClass = await this.curriculumService.createClass(newClass);
     return createdClass;
   }
 
-  @MessagePattern({ cmd: RabbitMQ.DELETE_CLASS_BY_ID })
+  @MessagePattern({ cmd: 'delete_class_by_id' })
   async deleteClass(@Payload() class_id: string) {
     const classID = this.curriculumService.deleteClass(class_id);
     return classID;
   }
 
-  @MessagePattern({ cmd: RabbitMQ.UPDATE_CLASS_BY_ID })
+  @MessagePattern({ cmd: 'update_class_by_id' })
   async updateClassInfo(@Payload() class_id: string, updatedClassData: ClassSchema) {
     const updatedClass = await this.curriculumService.updateClass(class_id, updatedClassData);
     return updatedClass;
   }
 
-  @MessagePattern({ cmd: RabbitMQ.GET_ALL_COURSES })
+  @MessagePattern({ cmd: 'get_all_courses' })
   getAllCourses() {
     return this.curriculumService.getAllCourses();
   }
 
-  @MessagePattern({ cmd: RabbitMQ.GET_COURSE_BY_CODE })
+  @MessagePattern({ cmd: 'get_course_by_code' })
   getCourseByID(@Payload() course_code: string) {
     return this.curriculumService.getCourseByID(course_code);
   }
 
-  @MessagePattern({ cmd: RabbitMQ.CREATE_COURSE })
+  @MessagePattern({ cmd: 'create_course' })
   async createCourse(@Payload() newCourse: CourseSchema) {
     const createdCourse = await this.curriculumService.createCourse(newCourse);
     return createdCourse;
   }
 
-  @MessagePattern({ cmd: RabbitMQ.DELETE_COURSE_BY_CODE })
+  @MessagePattern({ cmd: 'delete_course_by_code' })
   async deleteCourse(@Payload() course_code: string) {
     const courseCode = this.curriculumService.deleteCourse(course_code);
     return courseCode;
   }
 
-  @MessagePattern({ cmd: RabbitMQ.UPDATE_COURSE_BY_CODE })
+  @MessagePattern({ cmd: 'update_course_by_code' })
   async updateCourseInfo(@Payload() course_code: string, updatedCourseData: CourseSchema) {
     const updatedCourse = await this.curriculumService.updateCourse(course_code, updatedCourseData);
     return updatedCourse;

@@ -34,7 +34,7 @@ export class CurriculumRoutesController {
   @Public()
   @Get('class')
   getAllClasses() {
-    return this.client.send({ cmd: RabbitMQ.GET_ALL_CLASSES }, {});
+    return this.client.send({ cmd: 'get_all_classes' }, {});
   }
 
   @Post('assign-student')
@@ -42,7 +42,7 @@ export class CurriculumRoutesController {
   async assignStudentToClass(@Body() studentDto: StudentDto) {
     try {
       // Forward the assign student request to the curriculum microservice
-      return this.client.send({ cmd: RabbitMQ.ASSIGN_STUDENT_TO_CLASS }, studentDto);
+      return this.client.send({ cmd: 'assign_student_to_class' }, studentDto);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -53,7 +53,7 @@ export class CurriculumRoutesController {
   async getClassAssignments(@Param('id') classId: string) {
     try {
       // Forward the get class assignments request to the curriculum microservice
-      return this.client.send({ cmd: RabbitMQ.GET_CLASS_ASSIGNMENTS }, classId);
+      return this.client.send({ cmd: 'get_class_assignments' }, classId);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -62,19 +62,19 @@ export class CurriculumRoutesController {
   @Get('class/:class_id')
   @HttpCode(HttpStatus.OK)
   getClassByID(@Param('class_id', ValidateIdPipe) class_id: string) {
-    return this.client.send({ cmd: RabbitMQ.GET_CLASS_BY_ID }, { class_id });
+    return this.client.send({ cmd: 'get_class_by_id' }, { class_id });
   }
 
   @Post('class')
   @HttpCode(HttpStatus.CREATED)
   async createClass(@Body() newClass: ClassSchema) {
-    return this.client.send({ cmd: RabbitMQ.CREATE_CLASS }, { newClass });
+    return this.client.send({ cmd: 'create_class' }, { newClass });
   }
 
   @Delete('class/:class_id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteClass(@Param('class_id', ValidateIdPipe) class_id: string) {
-    return this.client.send({ cmd: RabbitMQ.DELETE_CLASS_BY_ID }, { class_id });
+    return this.client.send({ cmd: 'delete_class_by_id' }, { class_id });
   }
 
   @Put('class/:class_id')
@@ -82,31 +82,31 @@ export class CurriculumRoutesController {
     @Param('class_id', ValidateIdPipe) class_id: string,
     @Body() updatedClassData: ClassSchema,
   ) {
-    return this.client.send({ cmd: RabbitMQ.UPDATE_CLASS_BY_ID }, { class_id, updatedClassData });
+    return this.client.send({ cmd: 'update_class_by_id' }, { class_id, updatedClassData });
   }
 
   @Public()
   @Get('course')
   async getAllCourses() {
-    return this.client.send({ cmd: RabbitMQ.GET_ALL_COURSES }, {});
+    return this.client.send({ cmd: 'get_all_courses' }, {});
   }
 
   @Get('course/:course_code')
   @HttpCode(HttpStatus.OK)
   getCourseByID(@Param('course_code', ValidateIdPipe) course_code: string) {
-    return this.client.send({ cmd: RabbitMQ.GET_COURSE_BY_CODE }, { course_code });
+    return this.client.send({ cmd: 'get_course_by_code' }, { course_code });
   }
 
   @Post('course')
   @HttpCode(HttpStatus.CREATED)
   async createCourse(@Body() newCourse: CourseSchema) {
-    return this.client.send({ cmd: RabbitMQ.CREATE_COURSE }, { newCourse });
+    return this.client.send({ cmd: 'create_course' }, { newCourse });
   }
 
   @Delete('course/:course_code')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteCourse(@Param('course_code', ValidateIdPipe) course_code: string) {
-    return this.client.send({ cmd: RabbitMQ.DELETE_COURSE_BY_CODE }, { course_code });
+    return this.client.send({ cmd: 'delete_course_by_code'}, { course_code });
   }
 
   @Put('course/:course_code')
@@ -115,7 +115,7 @@ export class CurriculumRoutesController {
     @Body() updatedCourseData: CourseSchema,
   ) {
     return this.client.send(
-      { cmd: RabbitMQ.UPDATE_COURSE_BY_CODE },
+      { cmd: 'update_course_by_code' },
       { course_code, updatedCourseData },
     );
   }
