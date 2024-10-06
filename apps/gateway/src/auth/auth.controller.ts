@@ -90,9 +90,6 @@ export class AuthController {
     @Body() body: ParsedUserData,
   ): Promise<Response<AuthResponse>> {
 
-    
-    console.log("dev token wcreated",);
-
     if (this.configService.get<string>('APP_ENV') !== AppEnvironment.Prod) {
       try {
         const token = this.authService.generateJwtToken(body);
