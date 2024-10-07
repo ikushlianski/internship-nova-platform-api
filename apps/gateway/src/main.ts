@@ -29,8 +29,25 @@ async function bootstrap() {
 
   SwaggerModule.setup('api', app, document);
 
-  app.enableCors({origin: process.env.FRONTEND_URL});
-  
+  // CORS configuration
+  const allowedOrigins = [
+    process.env.FRONTEND_URL,
+    process.env.QA1_URL,
+    process.env.QA2_URL,
+    process.env.PROD_URL,
+  ].filter(Boolean);
+
+  app.enableCors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  });
+
   await app.listen(gatewayPort);
 }
 
