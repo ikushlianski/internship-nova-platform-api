@@ -1,7 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { LearningModule } from './cards.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { RMQ_Queue } from '../../shared-logic/src/RabbitMQ/rabbitmq.enums';
+import { RMQ_Queue } from 'apps/shared-logic/src/RabbitMQ/rabbitmq.enum';
+
+
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(

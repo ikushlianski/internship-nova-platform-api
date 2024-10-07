@@ -1,7 +1,9 @@
 import { Controller } from '@nestjs/common';
-import { CardsService } from './cards.service';
 import { MessagePattern } from '@nestjs/microservices';
-import { RabbitMQ } from '../../shared-logic/src/RabbitMQ/rabbitmq.enums';
+import { RabbitMQ } from 'apps/shared-logic/src/RabbitMQ/rabbitmq.enum';
+import { CardsService } from './cards.service';
+
+
 
 
 @Controller('user_cards')
@@ -19,5 +21,3 @@ export class CardsController {
     return this.cardsService.getCardsByUserEmail(userEmail);
   }
 }
-
-
