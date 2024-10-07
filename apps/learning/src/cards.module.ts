@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
+import { CardsController } from './cards.controller';
 import { CardsService } from './cards.service';
-import { LearningPrismaModule } from './prisma/prisma.module';
-
-
-
+import { PrismaModule } from '../../shared-logic/prisma/prisma.module';
 
 @Module({
-  imports: [LearningPrismaModule],
+  imports: [PrismaModule],
+  controllers: [CardsController],
   providers: [CardsService],
 })
 export class LearningModule {}
+

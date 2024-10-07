@@ -4,7 +4,7 @@ import { ParsedUserData } from '../../gateway/src/auth/auth.types';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prismaService: PrismaService) { }
+  constructor(private readonly prismaService: PrismaService) {}
 
   async createUser(userDto: ParsedUserData) {
     return await this.findOrCreateUser(userDto);

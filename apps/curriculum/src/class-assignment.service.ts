@@ -1,7 +1,8 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { StudentDto } from './assign-student.dto';
-import { PrismaService } from './prisma/prisma.service';
+
 import { ClassSize } from 'apps/shared-logic/src/envs/class-size.enum';
+import { PrismaService } from 'apps/shared-logic/prisma/prisma.service';
 
 @Injectable()
 export class ClassAssignmentService {

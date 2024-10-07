@@ -6,11 +6,11 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/guards/jwt-auth.guard';
 import { UsersRoutesController } from './gateway-users.controller';
-import { CurriculumRoutesController } from './gateway-curriculum.controller';
+import { PrismaModule } from 'apps/shared-logic/prisma/prisma.module';
 import { LearningRoutesController } from './gateway-learning.controller';
-import { CurriculumPrismaModule } from 'apps/curriculum/src/prisma/prisma.module';
-import { LearningPrismaModule } from 'apps/learning/src/prisma/prisma.module';
 import { RMQ_Queue } from 'apps/shared-logic/src/RabbitMQ/rabbitmq.enums';
+import { CurriculumRoutesController } from './gateway-curriculum.controller';
+
 
 @Module({
   imports: [
@@ -18,9 +18,7 @@ import { RMQ_Queue } from 'apps/shared-logic/src/RabbitMQ/rabbitmq.enums';
       envFilePath: ['.env.development.local', '.env.development', '.env'],
     }),
     AuthModule,
-    CurriculumPrismaModule, // Use separate Prisma module for curriculum
-    LearningPrismaModule, // Use separate Prisma module for learning
-
+    PrismaModule,
     ClientsModule.register([
       {
         name: SERVICE_NAMES.USERS_SERVICE,

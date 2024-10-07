@@ -17,7 +17,7 @@ RUN npm ci
 
 EXPOSE ${CURRICULUM_SERVICE_PORT}
 
-# command at this stage will come from docker-compose
+# command at this stage will come from docker compose
 
 
 FROM base as production

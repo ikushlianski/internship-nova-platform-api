@@ -2,11 +2,11 @@ import { Controller, Post, Body, HttpException, HttpStatus } from '@nestjs/commo
 import { ClassAssignmentService } from './class-assignment.service';
 import { StudentDto } from './assign-student.dto';
 import { MessagePattern, Payload } from '@nestjs/microservices';
+import { RabbitMQ } from 'apps/shared-logic/src/RabbitMQ/rabbitmq.enums';
 
 @Controller('class-assignment')
 export class ClassAssignmentController {
   constructor(private readonly classAssignmentService: ClassAssignmentService) {}
-
 
   @MessagePattern({ cmd: 'assign_student_to_class' })
   async assignStudentToClass(@Payload() studentDto: StudentDto) {
