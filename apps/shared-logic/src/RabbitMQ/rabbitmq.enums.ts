@@ -9,4 +9,6 @@ export enum RabbitMQ {
 export enum RMQ_Queue {
   USERS_QUEUE = 'users_queue',
   LEARNING_QUEUE = 'learning_queue',
+  CURRICULUM_QUEUE = 'curriculum_queue',
+  
 }

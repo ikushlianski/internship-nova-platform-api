@@ -1,4 +1,4 @@
-{{ $api_name := "gateway"}}
+{{ $api_name := "pgadmin4"}}
 
 apiVersion: apps/v1
 kind: Deployment
@@ -38,68 +38,37 @@ spec:
       serviceAccountName: {{ include "nova-api.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      initContainers:
-      - name: {{ .Chart.Name }}-npm-ci
-        image: node:20
-        # workingDir: /usr/src/server
-        workingDir: {{ .Values.workingDir }}
-        # command: ["npm"]
-        # args: ["ci"]
-        command: ["/bin/sh"]
-        args:
-          - -c
-          - >-
-              rm * -f -r &&
-              wget -O nova-platform-api.zip http://nginx-static-files.nova-dev.svc.cluster.local/{{.Release.Namespace}}/nova-platform-api.zip &&
-              unzip nova-platform-api.zip -d . &&
-              touch .env.development.local &&
-              npm ci
-        {{- with .Values.volumeMounts }}
-        volumeMounts:
-          {{- toYaml . | nindent 12 }}
-        {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image_node.repository }}:{{ .Values.image_node.tag | default .Chart.AppVersion }}"
+          # image: "{{ .Values.image_node.repository }}:{{ .Values.image_node.tag | default .Chart.AppVersion }}"
+          image: dpage/pgadmin4:8.11
           imagePullPolicy: {{ .Values.image_node.pullPolicy }}
-          workingDir: {{ .Values.workingDir }}
+          # workingDir: {{ .Values.workingDir }}
           env:          
-            {{- range $counter, $value := .Values.env }}
-            - name: {{ $value.name }}
-              value: "{{ $value.value }}"
-            {{- end }}
-            - name: "GATEWAY_HOST"
-              value: "{{ include "nova-api.fullname" . }}.{{.Release.Namespace}}.svc.cluster.local"
-            - name: "USER_SERVICE_HOST"
-              value: "{{ include "nova-api.fullname" . }}-users-service.{{.Release.Namespace}}.svc.cluster.local"
-            - name: "GOOGLE_CALLBACK_URL"
-              value: "https://{{ .Values.application_environment }}.{{ .Values.domain_name }}/api/v1/auth/google/callback"
-            - name: "GOOGLE_CLIENT_ID"
+            - name: "PGADMIN_DEFAULT_EMAIL"
               valueFrom:
                 secretKeyRef:
                   name: {{ include "nova-api.fullname" . }}-secrets
-                  key: GOOGLE_CLIENT_ID
-            - name: "GOOGLE_CLIENT_SECRET"
+                  key: PGADMIN_DEFAULT_EMAIL
+            - name: "PGADMIN_DEFAULT_PASSWORD"
               valueFrom:
                 secretKeyRef:
                   name: {{ include "nova-api.fullname" . }}-secrets
-                  key: GOOGLE_CLIENT_SECRET
-            - name: "JWT_SECRET"
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "nova-api.fullname" . }}-secrets
-                  key: JWT_SECRET
-            - name: "GOOGLE_CALLBACK_URL"
-              value: "https://{{ .Values.application_environment }}.admin.{{ .Values.domain_name }}/api/v1/auth/google/callback"
-            - name: DATABASE_URL
-              value: "postgresql://{{ .Values.POSTGRES_USER }}:{{ .Values.POSTGRES_PASSWORD }}@{{ include "nova-api.fullname" . }}-postgres-service.{{.Release.Namespace}}.svc.cluster.local:{{ .Values.DATABASE_PORT }}/{{ .Values.POSTGRES_DB }}"
-          command: ["npx"]
-          args: ["nest", "start", "gateway", "--watch"]
+                  key: PGADMIN_DEFAULT_PASSWORD
+            - name: SCRIPT_NAME
+              value: /pgadmin4
+          volumeMounts:
+          - name: pgadmin4-servers-volume
+            mountPath: /pgadmin4/servers.json
+            subPath: servers.json
+          - name: pgadmin4-pgpass-volume
+            mountPath: /pgpass
+            subPath: pgpass
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
+              containerPort: 80
               protocol: TCP
           livenessProbe:
             null
@@ -107,14 +76,20 @@ spec:
             null
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
-          volumeMounts:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-      {{- with .Values.volumes }}
       volumes:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        - name: pgadmin4-servers-volume
+          configMap:
+            name: {{ include "nova-api.fullname" . }}-{{ $api_name }}-configmap
+            items:
+            - key: servers.json
+              path: servers.json
+        - name: pgadmin4-pgpass-volume
+          configMap:
+            name: {{ include "nova-api.fullname" . }}-{{ $api_name }}-configmap
+            items:
+            - key: pgpass
+              path: pgpass
+            defaultMode: 384
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -132,20 +107,16 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  # name: {{ include "nova-api.fullname" . }}
   name: {{ include "nova-api.fullname" . }}-{{ $api_name }}-service
   labels:
-    # {{- include "nova-api.labels" . | nindent 4 }}
     app: {{ include "nova-api.fullname" . }}-{{ $api_name }}
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
+    - port: 80
+      targetPort: 80
       protocol: TCP
-      name: http
   selector:
-    # {{- include "nova-api.selectorLabels" . | nindent 4 }} 
     app: {{ include "nova-api.fullname" . }}-{{ $api_name }}
 
 ---
@@ -161,7 +132,7 @@ spec:
   - host: {{ .Values.application_environment }}.{{ .Values.domain_name }}
     http: &backend
       paths:
-      - path: /api/v1/
+      - path: /pgadmin4
         pathType: Prefix
         backend:
           service:
@@ -174,3 +145,28 @@ spec:
     http: *backend
   - host: {{ .Values.application_environment }}.admin.{{ .Values.domain_name }}
     http: *backend
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "nova-api.fullname" . }}-{{ $api_name }}-configmap
+data:
+  # /pgadmin4/servers.json
+  servers.json: |
+    {
+        "Servers": {
+            "postgres": {
+                "Name": "Minimally Defined Server",
+                "Group": "Server Group 1",
+                "Port": 5432,
+                "Username": "postgres",
+                "PassFile": "/pgpass",
+                "Host": "{{ include "nova-api.fullname" . }}-postgres-service.{{.Release.Namespace}}.svc.cluster.local",
+                "SSLMode": "prefer",
+                "MaintenanceDB": "postgres"
+            }
+        }
+    }
+  pgpass: |
+   {{ include "nova-api.fullname" . }}-postgres-service.{{.Release.Namespace}}.svc.cluster.local:5432:nova-platform-main-db-dev:postgres:randompassword

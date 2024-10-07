@@ -3,6 +3,7 @@ import { PrismaService } from 'apps/curriculum/src/prisma/prisma.service';
 
 
 
+
 @Injectable()
 export class CardsService {
   constructor(private readonly prisma: PrismaService) {}

@@ -1,12 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { ClassModule } from './class.module';
 import { RMQ_Queue } from 'apps/shared-logic/src/RabbitMQ/rabbitmq.enum';
+import { ClassAssignmentModule } from './class-assignment.module';
 
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    ClassModule,
+    ClassAssignmentModule,
     {
       transport: Transport.RMQ,
       options: {

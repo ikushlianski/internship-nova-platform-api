@@ -6,12 +6,11 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/guards/jwt-auth.guard';
 import { UsersRoutesController } from './gateway-users.controller';
-import { CurriculumPrismaModule } from 'apps/curriculum/src/prisma/prisma.module';
-import { RMQ_Queue } from 'apps/shared-logic/src/RabbitMQ/rabbitmq.enum';
-import { LearningPrismaModule } from 'apps/learning/src/prisma/prisma.module';
+import { CurriculumRoutesController } from './gateway-curriculum.controller';
 import { LearningRoutesController } from './gateway-learning.controller';
-import { CurriculumRoutesController } from './gateway-class.controller';
-import * as process from 'node:process';
+import { CurriculumPrismaModule } from 'apps/curriculum/src/prisma/prisma.module';
+import { LearningPrismaModule } from 'apps/learning/src/prisma/prisma.module';
+import { RMQ_Queue } from 'apps/shared-logic/src/RabbitMQ/rabbitmq.enums';
 
 @Module({
   imports: [

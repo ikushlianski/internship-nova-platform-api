@@ -11,11 +11,16 @@ services:
         - ENV_FILE=${ENV_FILE}
     env_file:
       - ${ENV_FILE}
+    healthcheck:
+      test: [ "CMD-SHELL", "nc -z localhost 3000 || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     volumes:
       - .:/usr/src/server
     ports:
       - "${GATEWAY_PORT}:${GATEWAY_PORT}"
-    entrypoint: sh -c "npx prisma migrate dev && npx nest start gateway --watch"
+    entrypoint: sh -c "npx prisma migrate dev && sleep 10 && npx nest start gateway --watch"
     networks:
       - local
     depends_on:
@@ -48,6 +53,8 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+      gateway:
+        condition: service_healthy
 
   learning:
     container_name: learning
@@ -73,8 +80,9 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+      gateway:
+        condition: service_healthy
 
-  
   curriculum:
     container_name: curriculum
     env_file:
@@ -99,6 +107,8 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+      gateway:
+        condition: service_healthy
 
   database:
     container_name: database
@@ -108,7 +118,7 @@ services:
       - ${ENV_FILE}
     healthcheck:
       test: "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
-      interval: 5s
+      interval: 15s
       timeout: 5s
       retries: 5
     ports:
